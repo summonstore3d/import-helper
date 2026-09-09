@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { bomDoProduto, cenarioSugerido, precoRapido, type Cenario, type ItemMP } from "@/lib/pricing";
 import { custearItem } from "@/lib/correcoes";
-import { parametros, produtos } from "@/data";
+import { insumos as insumosBase, parametros, produtos, type Insumo } from "@/data";
 
 /** Componente incluído durante a demonstração, antes do custeio. */
 export type ItemAdicionado = {
@@ -38,7 +38,15 @@ export type VersaoPreco = {
   origem: "Demonstrativo" | "Sessão de demonstração";
 };
 
+export type InsumoEntrada = {
+  codigo: string;
+  descricao: string;
+  custoUnitario: number | null;
+};
+
 type Ctx = {
+  listaInsumos: Insumo[];
+  salvarInsumo: (entrada: InsumoEntrada, fullOriginal?: string) => void;
   itensBom: (produto: string) => ItemMP[];
   adicionarItemBom: (produto: string, item: ItemAdicionado) => void;
   removerItemAdicionado: (produto: string, item: string) => void;
@@ -180,6 +188,39 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     ]);
   }, []);
 
+  const [listaInsumos, setListaInsumos] = useState<Insumo[]>(() => insumosBase);
+
+  const salvarInsumo = useCallback(
+    (entrada: InsumoEntrada, fullOriginal?: string) => {
+      const full = `${entrada.codigo} - ${entrada.descricao}`;
+      const novo: Insumo = {
+        codigo: entrada.codigo,
+        descricao: entrada.descricao,
+        full,
+        custoUnitario: entrada.custoUnitario,
+      };
+      const anterior = fullOriginal
+        ? listaInsumos.find((i) => i.full === fullOriginal)
+        : undefined;
+      setListaInsumos((prev) =>
+        anterior ? prev.map((i) => (i.full === fullOriginal ? novo : i)) : [novo, ...prev],
+      );
+      registrarAuditoria({
+        usuario: USUARIO,
+        modulo: "Insumos",
+        registro: full,
+        campo: anterior ? "Cadastro do insumo" : "Novo insumo",
+        valorAnterior: anterior
+          ? `${anterior.full} — ${anterior.custoUnitario ?? "sem custo"}`
+          : "—",
+        valorNovo: `${full} — ${entrada.custoUnitario ?? "sem custo"}`,
+        motivo: anterior ? "Edição feita durante a demonstração" : "Inclusão feita durante a demonstração",
+        origem: "Sessão de demonstração",
+      });
+    },
+    [listaInsumos, registrarAuditoria],
+  );
+
   const itensBom = useCallback(
     (produto: string) => [
       ...bomDoProduto(produto),
@@ -234,6 +275,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<Ctx>(
     () => ({
+      listaInsumos,
+      salvarInsumo,
       itensBom,
       adicionarItemBom,
       removerItemAdicionado,
@@ -244,6 +287,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
       usuario: USUARIO,
     }),
     [
+      listaInsumos,
+      salvarInsumo,
       itensBom,
       adicionarItemBom,
       removerItemAdicionado,
