@@ -5,7 +5,7 @@ import { parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
-import { despesasVigentes, frota, simplesVigente } from "@/lib/correcoes";
+import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 
 type Search = { produto?: string | undefined };
@@ -138,7 +138,7 @@ function Precificacao() {
     {
       rotulo: "8. Frete (frota própria)",
       base: frota
-        ? `${qtd(km)} km ÷ ${qtd(pecas)} peças × ${money(frota.custoTotalPorKm)}/km × ${qtd(
+        ? `${qtd(km)} km ÷ ${qtd(pecas)} peças × ${money(frotaParams.custoTotalPorKm)}/km × ${qtd(
             parametros.fatorFrete,
           )} (ida e volta)`
         : "Entrega não incluída (retirada no pátio)",
