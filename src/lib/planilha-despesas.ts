@@ -95,8 +95,6 @@ export function csvParaDespesas(texto: string, base: Despesas): ResultadoImporta
   }
   const totalMeses = base.meses.length;
 
-  const mapaLinhas = new Map<string, number[]>();
-  const mapaRodape = new Map<string, number[]>();
   const ignoradas: string[] = [];
   let atualizadas = 0;
 
@@ -142,8 +140,6 @@ export function csvParaDespesas(texto: string, base: Despesas): ResultadoImporta
     throw new Error("Nenhuma conta da planilha corresponde ao demonstrativo atual.");
   }
 
-  void mapaLinhas;
-  void mapaRodape;
   return { despesas: despesasAtualizadas, linhasAtualizadas: atualizadas, linhasIgnoradas: ignoradas };
 }
 
