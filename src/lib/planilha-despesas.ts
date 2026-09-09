@@ -1,4 +1,15 @@
 import type { Despesas } from "@/data";
+import {
+  baixarExcel,
+  lerExcel,
+  mapearColunas,
+  numeroCelula,
+  textoCelula,
+  type Celula,
+  type DefinicaoAba,
+  type FormatoColuna,
+  type TipoLinha,
+} from "@/lib/planilha-excel";
 
 /**
  * Exportação/importação do demonstrativo mensal em formato de planilha (CSV
