@@ -1,88 +1,155 @@
 import * as XLSX from "xlsx-js-style";
 
 /**
- * Utilitários de leitura e escrita de planilhas Excel (.xlsx) padronizadas.
- *
- * Padrão visual: cabeçalho em negrito com fundo escuro, colunas de dinheiro no
- * formato "R$ #.##0,00" e largura de coluna definida por aba.
+ * Geração e leitura de planilhas Excel (.xlsx) padronizadas com a identidade
+ * visual D'AGOSTINI, reproduzindo o visual das tabelas do sistema:
+ *   - cabeçalho azul marinho (#162B4D) com texto branco em negrito;
+ *   - linhas de grupo em cinza-azulado claro;
+ *   - linhas de total em verde suave (#E8F5E9) com borda #10B981;
+ *   - zebra discreta nas linhas de dados;
+ *   - formatos nativos de moeda, percentual e quantidade;
+ *   - largura de coluna calculada pelo conteúdo, com folga.
  */
 
 export type Celula = string | number | null;
 
 export const FORMATO_MOEDA = 'R$ #,##0.00';
 export const FORMATO_PERCENTUAL = "0.00%";
+export const FORMATO_QUANTIDADE = "#,##0";
+
+export type FormatoColuna = "texto" | "moeda" | "percentual" | "quantidade";
+export type TipoLinha = "dado" | "grupo" | "total";
+
+const NAVY = "FF162B4D";
+const VERDE_SUAVE = "FFE8F5E9";
+const VERDE_BORDA = "FF10B981";
+const CINZA_GRUPO = "FFEEF2F7";
+const ZEBRA = "FFF7F9FC";
+const BORDA_SUAVE = "FFD8DEE7";
+const TEXTO = "FF0F172A";
 
 export type DefinicaoAba = {
   nome: string;
-  /** Primeira linha: títulos das colunas. Demais linhas: dados. */
-  linhas: Celula[][];
-  larguras?: number[];
-  /** Índices (0-based) das colunas que devem sair formatadas como moeda. */
-  colunasMoeda?: number[];
-  /** Índices (0-based) das colunas formatadas como percentual. */
-  colunasPercentual?: number[];
-  /** Índices (0-based, contando a partir da 1ª linha de dados) de linhas de destaque. */
-  linhasDestaque?: number[];
+  /** Títulos das colunas (primeira linha da aba). */
+  cabecalho: string[];
+  /** Linhas de dados, na mesma ordem das colunas do cabeçalho. */
+  linhas: { celulas: Celula[]; tipo?: TipoLinha }[];
+  /** Formato de cada coluna, na mesma ordem do cabeçalho. */
+  formatos?: FormatoColuna[];
+  /** Largura mínima por coluna (caracteres); a final considera o conteúdo. */
+  largurasMinimas?: number[];
 };
 
-const ESTILO_CABECALHO = {
-  font: { name: "Arial", bold: true, sz: 11, color: { rgb: "FFFFFFFF" } },
-  fill: { patternType: "solid", fgColor: { rgb: "FF1F3A5F" } },
-  alignment: { vertical: "center", horizontal: "left", wrapText: true },
-  border: {
-    bottom: { style: "thin", color: { rgb: "FF1F3A5F" } },
-  },
-} as const;
+const borda = (cor: string) => ({
+  top: { style: "thin", color: { rgb: cor } },
+  bottom: { style: "thin", color: { rgb: cor } },
+  left: { style: "thin", color: { rgb: cor } },
+  right: { style: "thin", color: { rgb: cor } },
+});
 
-const ESTILO_CORPO = { font: { name: "Arial", sz: 10 } } as const;
-const ESTILO_DESTAQUE = {
-  font: { name: "Arial", sz: 10, bold: true },
-  fill: { patternType: "solid", fgColor: { rgb: "FFEFF3F8" } },
-} as const;
+function estiloCabecalho() {
+  return {
+    font: { name: "Arial", sz: 11, bold: true, color: { rgb: "FFFFFFFF" } },
+    fill: { patternType: "solid", fgColor: { rgb: NAVY } },
+    alignment: { vertical: "center", horizontal: "left", wrapText: true },
+    border: borda(NAVY),
+  };
+}
+
+function estiloCorpo(tipo: TipoLinha, zebra: boolean, alinharDireita: boolean) {
+  const fundo =
+    tipo === "total" ? VERDE_SUAVE : tipo === "grupo" ? CINZA_GRUPO : zebra ? ZEBRA : "FFFFFFFF";
+  return {
+    font: {
+      name: "Arial",
+      sz: 10,
+      bold: tipo !== "dado",
+      color: { rgb: TEXTO },
+    },
+    fill: { patternType: "solid", fgColor: { rgb: fundo } },
+    alignment: {
+      vertical: "center",
+      horizontal: alinharDireita ? "right" : "left",
+      wrapText: false,
+    },
+    border: borda(tipo === "total" ? VERDE_BORDA : BORDA_SUAVE),
+  };
+}
+
+function formatoNumero(f: FormatoColuna | undefined): string | undefined {
+  if (f === "moeda") return FORMATO_MOEDA;
+  if (f === "percentual") return FORMATO_PERCENTUAL;
+  if (f === "quantidade") return FORMATO_QUANTIDADE;
+  return undefined;
+}
+
+/** Largura visual aproximada de uma célula já formatada. */
+function larguraTexto(v: Celula, formato: FormatoColuna | undefined): number {
+  if (v === null || v === undefined) return 0;
+  if (typeof v === "number") {
+    if (formato === "moeda") return `R$ ${v.toFixed(2)}`.length + 3;
+    if (formato === "percentual") return 8;
+    return String(Math.round(v)).length + 4;
+  }
+  return String(v).length;
+}
 
 function montarAba(def: DefinicaoAba): XLSX.WorkSheet {
-  const sheet = XLSX.utils.aoa_to_sheet(def.linhas.map((l) => l.map((c) => (c === null ? "" : c))));
-  const totalColunas = def.linhas.reduce((m, l) => Math.max(m, l.length), 0);
-  const moeda = new Set(def.colunasMoeda ?? []);
-  const percentual = new Set(def.colunasPercentual ?? []);
-  const destaque = new Set(def.linhasDestaque ?? []);
+  const matriz: Celula[][] = [
+    def.cabecalho,
+    ...def.linhas.map((l) => l.celulas.map((c) => (c === null ? "" : c))),
+  ];
+  const sheet = XLSX.utils.aoa_to_sheet(matriz);
+  const colunas = def.cabecalho.length;
 
-  for (let r = 0; r < def.linhas.length; r += 1) {
-    for (let c = 0; c < totalColunas; c += 1) {
-      const ref = XLSX.utils.encode_cell({ r, c });
-      const cell = sheet[ref] as XLSX.CellObject | undefined;
-      if (!cell) continue;
-      if (r === 0) {
-        cell.s = ESTILO_CABECALHO;
-        continue;
-      }
-      cell.s = destaque.has(r - 1) ? { ...ESTILO_DESTAQUE } : { ...ESTILO_CORPO };
-      if (cell.t === "n") {
-        if (moeda.has(c)) cell.z = FORMATO_MOEDA;
-        else if (percentual.has(c)) cell.z = FORMATO_PERCENTUAL;
-      }
-    }
+  for (let c = 0; c < colunas; c += 1) {
+    const refCab = XLSX.utils.encode_cell({ r: 0, c });
+    const cab = sheet[refCab] as XLSX.CellObject | undefined;
+    if (cab) cab.s = estiloCabecalho();
   }
 
-  sheet["!cols"] = Array.from({ length: totalColunas }, (_, c) => ({
-    wch: def.larguras?.[c] ?? 16,
-  }));
+  def.linhas.forEach((linha, i) => {
+    const r = i + 1;
+    const tipo = linha.tipo ?? "dado";
+    for (let c = 0; c < colunas; c += 1) {
+      const ref = XLSX.utils.encode_cell({ r, c });
+      let cell = sheet[ref] as XLSX.CellObject | undefined;
+      if (!cell) {
+        cell = { t: "s", v: "" };
+        sheet[ref] = cell;
+      }
+      const formato = def.formatos?.[c];
+      const numerico = cell.t === "n";
+      cell.s = estiloCorpo(tipo, i % 2 === 1, numerico || formato !== "texto");
+      const z = formatoNumero(formato);
+      if (numerico && z) cell.z = z;
+    }
+  });
+
+  const ultimaCelula = XLSX.utils.encode_cell({
+    r: matriz.length - 1,
+    c: Math.max(colunas - 1, 0),
+  });
+  sheet["!ref"] = `A1:${ultimaCelula}`;
+
+  sheet["!cols"] = Array.from({ length: colunas }, (_, c) => {
+    const conteudo = Math.max(
+      (def.cabecalho[c] ?? "").length + 2,
+      ...def.linhas.map((l) => larguraTexto(l.celulas[c] ?? null, def.formatos?.[c])),
+    );
+    const minima = def.largurasMinimas?.[c] ?? 10;
+    return { wch: Math.min(Math.max(conteudo + 3, minima), 60) };
+  });
+  sheet["!rows"] = [{ hpt: 22 }];
   sheet["!freeze"] = { xSplit: 0, ySplit: 1 };
-  sheet["!autofilter"] = {
-    ref: XLSX.utils.encode_range({
-      s: { r: 0, c: 0 },
-      e: { r: Math.max(def.linhas.length - 1, 0), c: Math.max(totalColunas - 1, 0) },
-    }),
-  };
+  sheet["!autofilter"] = { ref: `A1:${ultimaCelula}` };
   return sheet;
 }
 
 /** Gera o arquivo .xlsx e dispara o download no navegador. */
 export function baixarExcel(nomeArquivo: string, abas: DefinicaoAba[]) {
   const wb = XLSX.utils.book_new();
-  abas.forEach((def) => {
-    XLSX.utils.book_append_sheet(wb, montarAba(def), def.nome.slice(0, 31));
-  });
+  abas.forEach((def) => XLSX.utils.book_append_sheet(wb, montarAba(def), def.nome.slice(0, 31)));
   const buffer = XLSX.write(wb, { bookType: "xlsx", type: "array" }) as ArrayBuffer;
   const blob = new Blob([buffer], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -97,7 +164,7 @@ export function baixarExcel(nomeArquivo: string, abas: DefinicaoAba[]) {
   URL.revokeObjectURL(url);
 }
 
-/** Lê a primeira aba (ou a aba informada) de um .xlsx como matriz de células. */
+/** Lê a aba informada (ou a primeira) de um .xlsx como matriz de células. */
 export async function lerExcel(arquivo: File, nomeAba?: string): Promise<Celula[][]> {
   const buffer = await arquivo.arrayBuffer();
   const wb = XLSX.read(buffer, { type: "array" });
@@ -119,7 +186,7 @@ export function textoCelula(v: Celula | undefined): string {
   return String(v).trim();
 }
 
-/** Converte uma célula em número, aceitando valores digitados no padrão brasileiro. */
+/** Converte uma célula em número, aceitando também o padrão brasileiro digitado. */
 export function numeroCelula(v: Celula | undefined): number | null {
   if (v === null || v === undefined || v === "") return null;
   if (typeof v === "number") return Number.isFinite(v) ? v : null;
@@ -137,38 +204,35 @@ export function numeroCelula(v: Celula | undefined): number | null {
   return negativo ? -n : n;
 }
 
+function normalizar(t: string) {
+  return t
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
 /**
- * Localiza as colunas obrigatórias no cabeçalho e devolve o índice de cada uma.
- * Lança um erro legível listando o que estiver faltando.
+ * Localiza as colunas obrigatórias no cabeçalho lido e devolve o índice de cada
+ * uma. Lança um erro legível listando as que estiverem faltando.
  */
 export function mapearColunas(
   cabecalho: Celula[],
   obrigatorias: Record<string, string[]>,
 ): Record<string, number> {
-  const normal = cabecalho.map((c) =>
-    textoCelula(c)
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, ""),
-  );
+  const normal = cabecalho.map((c) => normalizar(textoCelula(c)));
   const mapa: Record<string, number> = {};
   const faltando: string[] = [];
   for (const [chave, apelidos] of Object.entries(obrigatorias)) {
     const idx = normal.findIndex((h) =>
-      apelidos.some((a) => {
-        const alvo = a
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "");
-        return h === alvo || h.startsWith(alvo);
-      }),
+      apelidos.some((a) => h === normalizar(a) || h.startsWith(normalizar(a))),
     );
     if (idx === -1) faltando.push(apelidos[0] ?? chave);
     else mapa[chave] = idx;
   }
   if (faltando.length) {
     throw new Error(
-      `A planilha está fora do padrão: falta a coluna ${faltando
+      `Planilha fora do padrão: falta a coluna ${faltando
         .map((f) => `"${f}"`)
         .join(", ")}. Exporte o modelo por esta tela e preencha sem renomear o cabeçalho.`,
     );
