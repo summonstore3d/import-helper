@@ -49,6 +49,10 @@ type Ctx = {
   importarDemonstrativo: (novo: Despesas, arquivo: string) => void;
   listaInsumos: Insumo[];
   salvarInsumo: (entrada: InsumoEntrada, fullOriginal?: string) => void;
+  importarInsumos: (
+    entradas: InsumoEntrada[],
+    arquivo: string,
+  ) => { atualizados: number; novos: number };
   itensBom: (produto: string) => ItemMP[];
   adicionarItemBom: (produto: string, item: ItemAdicionado) => void;
   removerItemAdicionado: (produto: string, item: string) => void;
