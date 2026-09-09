@@ -275,6 +275,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<Ctx>(
     () => ({
+      listaInsumos,
+      salvarInsumo,
       itensBom,
       adicionarItemBom,
       removerItemAdicionado,
@@ -285,6 +287,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
       usuario: USUARIO,
     }),
     [
+      listaInsumos,
+      salvarInsumo,
       itensBom,
       adicionarItemBom,
       removerItemAdicionado,
