@@ -21,6 +21,7 @@ import { Route as InsumosRouteImport } from './routes/insumos'
 import { Route as LogisticaRouteImport } from './routes/logistica'
 import { Route as PrecificacaoRouteImport } from './routes/precificacao'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as RelatorioRouteImport } from './routes/relatorio'
 import { Route as SalariosRouteImport } from './routes/salarios'
 import { Route as ValidacoesRouteImport } from './routes/validacoes'
 
@@ -84,6 +85,11 @@ const ProdutosRoute = ProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RelatorioRoute = RelatorioRouteImport.update({
+  id: '/relatorio',
+  path: '/relatorio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SalariosRoute = SalariosRouteImport.update({
   id: '/salarios',
   path: '/salarios',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/logistica': typeof LogisticaRoute
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
+  '/relatorio': typeof RelatorioRoute
   '/salarios': typeof SalariosRoute
   '/validacoes': typeof ValidacoesRoute
 }
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/logistica': typeof LogisticaRoute
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
+  '/relatorio': typeof RelatorioRoute
   '/salarios': typeof SalariosRoute
   '/validacoes': typeof ValidacoesRoute
 }
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/logistica': typeof LogisticaRoute
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
+  '/relatorio': typeof RelatorioRoute
   '/salarios': typeof SalariosRoute
   '/validacoes': typeof ValidacoesRoute
 }
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/logistica'
     | '/precificacao'
     | '/produtos'
+    | '/relatorio'
     | '/salarios'
     | '/validacoes'
   fileRoutesByTo: FileRoutesByTo
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/logistica'
     | '/precificacao'
     | '/produtos'
+    | '/relatorio'
     | '/salarios'
     | '/validacoes'
   id:
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/logistica'
     | '/precificacao'
     | '/produtos'
+    | '/relatorio'
     | '/salarios'
     | '/validacoes'
   fileRoutesById: FileRoutesById
@@ -208,6 +220,7 @@ export interface RootRouteChildren {
   LogisticaRoute: typeof LogisticaRoute
   PrecificacaoRoute: typeof PrecificacaoRoute
   ProdutosRoute: typeof ProdutosRoute
+  RelatorioRoute: typeof RelatorioRoute
   SalariosRoute: typeof SalariosRoute
   ValidacoesRoute: typeof ValidacoesRoute
 }
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/relatorio': {
+      id: '/relatorio'
+      path: '/relatorio'
+      fullPath: '/relatorio'
+      preLoaderRoute: typeof RelatorioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/salarios': {
       id: '/salarios'
       path: '/salarios'
@@ -328,6 +348,7 @@ const rootRouteChildren: RootRouteChildren = {
   LogisticaRoute: LogisticaRoute,
   PrecificacaoRoute: PrecificacaoRoute,
   ProdutosRoute: ProdutosRoute,
+  RelatorioRoute: RelatorioRoute,
   SalariosRoute: SalariosRoute,
   ValidacoesRoute: ValidacoesRoute,
 }

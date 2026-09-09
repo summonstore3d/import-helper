@@ -147,3 +147,115 @@
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
+
+/* ===== Impressão / geração de PDF do Relatório Técnico ===== */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html,
+  body {
+    background: #fff;
+    font-size: 10.5pt;
+  }
+
+  /* Oculta navegação, cabeçalho da aplicação, rodapé e botões de ação */
+  aside,
+  body > div > div > header,
+  body > div > div > footer,
+  .no-print,
+  button {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  .relatorio {
+    max-width: none !important;
+  }
+
+  /* Cabeçalho corporativo apenas no PDF */
+  .relatorio .print-header {
+    display: flex !important;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 2px solid #162b4d;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+  }
+
+  .print-header-marca {
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: #162b4d;
+  }
+
+  .print-header-titulo {
+    font-size: 8.5pt;
+    color: #475569;
+    text-align: right;
+  }
+
+  /* Quebras de página controladas */
+  .capa {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .quebra-pagina {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  section,
+  table,
+  li {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  /* Tabelas e painéis legíveis com fundos e bordas preservados */
+  .relatorio table {
+    width: 100%;
+    font-size: 8.5pt;
+    border-collapse: collapse;
+  }
+
+  .relatorio th,
+  .relatorio td {
+    border: 1px solid #cbd5e1 !important;
+    padding: 4px 6px !important;
+    white-space: normal !important;
+  }
+
+  .relatorio th {
+    position: static !important;
+    background: #162b4d !important;
+    color: #fff !important;
+  }
+
+  .relatorio section,
+  .relatorio .shadow-panel {
+    box-shadow: none !important;
+  }
+
+  .relatorio .overflow-x-auto {
+    overflow: visible !important;
+  }
+}
