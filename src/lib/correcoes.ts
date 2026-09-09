@@ -318,13 +318,13 @@ export function itensSobrescritos() {
  * Sistema :  taxa agregada ponderada = Σ despesas ÷ Σ receita dos meses fechados.
  * ------------------------------------------------------------------ */
 
-function rodapePor(nome: string): (number | null)[] {
-  return despesas.rodape.find((r) => r.nome.toLowerCase().startsWith(nome))?.valores ?? [];
+function rodapePor(nome: string, fonte: typeof despesas = despesas): (number | null)[] {
+  return fonte.rodape.find((r) => r.nome.toLowerCase().startsWith(nome))?.valores ?? [];
 }
 
-export function despesasPonderadas() {
-  const totais = rodapePor("total depesas por mês");
-  const receita = rodapePor("faturamento por mês");
+export function despesasPonderadas(fonte: typeof despesas = despesas) {
+  const totais = rodapePor("total depesas por mês", fonte);
+  const receita = rodapePor("faturamento por mês", fonte);
   let somaDespesas = 0;
   let somaReceita = 0;
   let meses = 0;
