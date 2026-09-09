@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
-import { bom, insumos } from "@/data";
+import { Pencil, Plus, Search, SlidersHorizontal } from "lucide-react";
+import { bom } from "@/data";
 import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
+import { usePrototype } from "@/state/prototype";
 
 export const Route = createFileRoute("/insumos")({
   head: () => ({
@@ -24,8 +25,41 @@ export const Route = createFileRoute("/insumos")({
   component: Insumos,
 });
 
+type ColunaId = "codigo" | "descricao" | "custoUnitario" | "unidade" | "produtos" | "consumo" | "custoAcumulado";
+
+const COLUNAS: { id: ColunaId; rotulo: string }[] = [
+  { id: "codigo", rotulo: "Código" },
+  { id: "descricao", rotulo: "Descrição" },
+  { id: "custoUnitario", rotulo: "Custo unitário" },
+  { id: "unidade", rotulo: "Unidade" },
+  { id: "produtos", rotulo: "Produtos que usam" },
+  { id: "consumo", rotulo: "Consumo total (BOM)" },
+  { id: "custoAcumulado", rotulo: "Custo acumulado" },
+];
+
+const VISIVEIS_PADRAO: Record<ColunaId, boolean> = {
+  codigo: true,
+  descricao: true,
+  custoUnitario: true,
+  unidade: true,
+  produtos: false,
+  consumo: false,
+  custoAcumulado: false,
+};
+
+type Formulario = {
+  fullOriginal?: string;
+  codigo: string;
+  descricao: string;
+  custoUnitario: string;
+};
+
 function Insumos() {
+  const { listaInsumos, salvarInsumo } = usePrototype();
   const [busca, setBusca] = useState("");
+  const [visiveis, setVisiveis] = useState<Record<ColunaId, boolean>>(VISIVEIS_PADRAO);
+  const [painelColunas, setPainelColunas] = useState(false);
+  const [form, setForm] = useState<Formulario | null>(null);
 
   const linhas = useMemo(() => {
     const uso = new Map<string, { produtos: Set<string>; consumo: number; custo: number }>();
@@ -36,7 +70,7 @@ function Insumos() {
       at.custo += isNum(l.custoTotal) ? l.custoTotal : 0;
       uso.set(l.item, at);
     }
-    return insumos
+    return listaInsumos
       .map((i) => {
         const u = uso.get(i.full);
         return {
@@ -48,11 +82,27 @@ function Insumos() {
         };
       })
       .sort((a, b) => b.custoAcumulado - a.custoAcumulado);
-  }, []);
+  }, [listaInsumos]);
 
   const filtradas = linhas.filter((l) => l.full.toLowerCase().includes(busca.toLowerCase()));
   const semCusto = linhas.filter((l) => !isNum(l.custoUnitario)).length;
   const semUso = linhas.filter((l) => l.produtos === 0).length;
+
+  const mostrar = (id: ColunaId) => visiveis[id];
+
+  function enviar() {
+    if (!form) return;
+    const codigo = form.codigo.trim();
+    const descricao = form.descricao.trim();
+    if (!codigo || !descricao) return;
+    const bruto = form.custoUnitario.replace(/\./g, "").replace(",", ".").trim();
+    const custo = bruto === "" ? null : Number(bruto);
+    salvarInsumo(
+      { codigo, descricao, custoUnitario: Number.isFinite(custo as number) ? custo : null },
+      form.fullOriginal,
+    );
+    setForm(null);
+  }
 
   return (
     <>
@@ -60,10 +110,19 @@ function Insumos() {
         titulo="Insumos"
         aba="Insumos"
         descricao="Base única de custos de matéria-prima. Quando um insumo é atualizado aqui, todos os produtos que o consomem são reprecificados — sem propagar fórmulas manualmente."
+        acoes={
+          <button
+            type="button"
+            onClick={() => setForm({ codigo: "", descricao: "", custoUnitario: "" })}
+            className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"
+          >
+            <Plus className="size-4" /> Novo insumo
+          </button>
+        }
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KPI rotulo="Insumos cadastrados" valor={qtd(insumos.length)} />
+        <KPI rotulo="Insumos cadastrados" valor={qtd(listaInsumos.length)} />
         <KPI rotulo="Sem custo unitário" valor={qtd(semCusto)} detalhe="Bloqueia o cálculo do preço" />
         <KPI rotulo="Sem uso em estruturas" valor={qtd(semUso)} detalhe="Possível cadastro obsoleto" />
         <KPI
@@ -74,6 +133,59 @@ function Insumos() {
         />
       </div>
 
+      {form ? (
+        <Panel
+          className="mt-4"
+          titulo={form.fullOriginal ? "Editar insumo" : "Novo insumo"}
+          subtitulo="Código, descrição e custo unitário alimentam o custeio das estruturas"
+        >
+          <div className="grid gap-3 sm:grid-cols-3">
+            <label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+              Código
+              <input
+                value={form.codigo}
+                onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+                className="mt-1 h-8 w-full rounded-sm border border-input bg-background px-2 text-sm font-normal text-foreground normal-case outline-none focus:border-ring"
+              />
+            </label>
+            <label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+              Descrição
+              <input
+                value={form.descricao}
+                onChange={(e) => setForm({ ...form, descricao: e.target.value })}
+                className="mt-1 h-8 w-full rounded-sm border border-input bg-background px-2 text-sm font-normal text-foreground normal-case outline-none focus:border-ring"
+              />
+            </label>
+            <label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+              Custo unitário (R$)
+              <input
+                value={form.custoUnitario}
+                onChange={(e) => setForm({ ...form, custoUnitario: e.target.value })}
+                inputMode="decimal"
+                placeholder="0,00"
+                className="mt-1 h-8 w-full rounded-sm border border-input bg-background px-2 text-sm font-normal text-foreground normal-case outline-none focus:border-ring"
+              />
+            </label>
+          </div>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              onClick={enviar}
+              className="h-8 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"
+            >
+              Salvar
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm(null)}
+              className="h-8 rounded-sm border border-border px-3 text-sm font-semibold text-foreground"
+            >
+              Cancelar
+            </button>
+          </div>
+        </Panel>
+      ) : null}
+
       <Panel
         className="mt-4"
         titulo={`${qtd(filtradas.length)} insumos`}
@@ -81,6 +193,32 @@ function Insumos() {
         acoes={
           <>
             <RealTag />
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setPainelColunas((v) => !v)}
+                className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-2 text-sm text-foreground"
+              >
+                <SlidersHorizontal className="size-4" /> Colunas
+              </button>
+              {painelColunas ? (
+                <div className="absolute right-0 z-20 mt-1 w-60 rounded-md border border-border bg-card p-2 shadow-panel">
+                  {COLUNAS.map((c) => (
+                    <label
+                      key={c.id}
+                      className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1 text-sm hover:bg-secondary/60"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={visiveis[c.id]}
+                        onChange={(e) => setVisiveis({ ...visiveis, [c.id]: e.target.checked })}
+                      />
+                      {c.rotulo}
+                    </label>
+                  ))}
+                </div>
+              ) : null}
+            </div>
             <div className="relative">
               <Search className="pointer-events-none absolute top-2 left-2 size-4 text-muted-foreground" />
               <input
@@ -98,26 +236,52 @@ function Insumos() {
           <table className="w-full">
             <thead>
               <tr>
-                <Th>Código</Th>
-                <Th>Descrição</Th>
-                <Th align="right">Custo unitário</Th>
-                <Th>Unidade</Th>
-                <Th align="right">Produtos que usam</Th>
-                <Th align="right">Consumo total (BOM)</Th>
-                <Th align="right">Custo acumulado</Th>
+                {mostrar("codigo") ? <Th>Código</Th> : null}
+                {mostrar("descricao") ? <Th>Descrição</Th> : null}
+                {mostrar("custoUnitario") ? <Th align="right">Custo unitário</Th> : null}
+                {mostrar("unidade") ? <Th>Unidade</Th> : null}
+                {mostrar("produtos") ? <Th align="right">Produtos que usam</Th> : null}
+                {mostrar("consumo") ? <Th align="right">Consumo total (BOM)</Th> : null}
+                {mostrar("custoAcumulado") ? <Th align="right">Custo acumulado</Th> : null}
+                <Th align="right">Ações</Th>
               </tr>
             </thead>
             <tbody>
               {filtradas.map((l) => (
                 <tr key={l.full} className="odd:bg-secondary/30">
-                  <Td className="font-semibold">{l.codigo}</Td>
-                  <Td className="max-w-[24rem] truncate">{l.descricao}</Td>
-                  <Td align="right">{moneyPreciso(l.custoUnitario)}</Td>
-                  <Td>{l.unidade}</Td>
-                  <Td align="right">{qtd(l.produtos)}</Td>
-                  <Td align="right">{qtd(l.consumo)}</Td>
-                  <Td align="right" className="font-semibold">
-                    {money(l.custoAcumulado)}
+                  {mostrar("codigo") ? <Td className="font-semibold">{l.codigo}</Td> : null}
+                  {mostrar("descricao") ? (
+                    <Td className="max-w-[24rem] truncate">{l.descricao}</Td>
+                  ) : null}
+                  {mostrar("custoUnitario") ? (
+                    <Td align="right">{moneyPreciso(l.custoUnitario)}</Td>
+                  ) : null}
+                  {mostrar("unidade") ? <Td>{l.unidade}</Td> : null}
+                  {mostrar("produtos") ? <Td align="right">{qtd(l.produtos)}</Td> : null}
+                  {mostrar("consumo") ? <Td align="right">{qtd(l.consumo)}</Td> : null}
+                  {mostrar("custoAcumulado") ? (
+                    <Td align="right" className="font-semibold">
+                      {money(l.custoAcumulado)}
+                    </Td>
+                  ) : null}
+                  <Td align="right">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setForm({
+                          fullOriginal: l.full,
+                          codigo: l.codigo,
+                          descricao: l.descricao,
+                          custoUnitario:
+                            l.custoUnitario === null
+                              ? ""
+                              : String(l.custoUnitario).replace(".", ","),
+                        })
+                      }
+                      className="inline-flex items-center gap-1 rounded-sm border border-border px-2 py-0.5 text-xs font-semibold text-foreground"
+                    >
+                      <Pencil className="size-3" /> Editar
+                    </button>
                   </Td>
                 </tr>
               ))}
