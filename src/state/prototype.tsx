@@ -1,5 +1,16 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { bomDoProduto, cenarioSugerido, precoRapido, type Cenario, type ItemMP } from "@/lib/pricing";
+import { custearItem } from "@/lib/correcoes";
+
+/** Componente incluído durante a demonstração, antes do custeio. */
+export type ItemAdicionado = {
+  item: string;
+  tipo: string;
+  quantidade: number | null;
+  unidade: string | null;
+  custoUnitario: number | null;
+  custoTotal: number | null;
+};
 import { parametros, produtos } from "@/data";
 
 export type AuditoriaEntrada = {
@@ -29,7 +40,7 @@ export type VersaoPreco = {
 
 type Ctx = {
   itensBom: (produto: string) => ItemMP[];
-  adicionarItemBom: (produto: string, item: ItemMP) => void;
+  adicionarItemBom: (produto: string, item: ItemAdicionado) => void;
   removerItemAdicionado: (produto: string, item: string) => void;
   auditoria: AuditoriaEntrada[];
   registrarAuditoria: (e: Omit<AuditoriaEntrada, "id" | "data">) => void;
