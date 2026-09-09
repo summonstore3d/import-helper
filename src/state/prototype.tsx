@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { bomDoProduto, cenarioSugerido, precoRapido, type Cenario, type ItemMP } from "@/lib/pricing";
 import { custearItem } from "@/lib/correcoes";
-import { parametros, produtos } from "@/data";
+import { insumos as insumosBase, parametros, produtos, type Insumo } from "@/data";
 
 /** Componente incluído durante a demonstração, antes do custeio. */
 export type ItemAdicionado = {
@@ -38,7 +38,15 @@ export type VersaoPreco = {
   origem: "Demonstrativo" | "Sessão de demonstração";
 };
 
+export type InsumoEntrada = {
+  codigo: string;
+  descricao: string;
+  custoUnitario: number | null;
+};
+
 type Ctx = {
+  listaInsumos: Insumo[];
+  salvarInsumo: (entrada: InsumoEntrada, fullOriginal?: string) => void;
   itensBom: (produto: string) => ItemMP[];
   adicionarItemBom: (produto: string, item: ItemAdicionado) => void;
   removerItemAdicionado: (produto: string, item: string) => void;
