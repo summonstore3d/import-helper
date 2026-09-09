@@ -3,25 +3,28 @@ import {
   categoriaDoProduto,
   centroCustos,
   impostos,
-  logistica,
-  mpTotais,
   parametros,
   type BomLinha,
 } from "@/data";
 import { isNum } from "./format";
+import {
+  custearItem,
+  DESPESAS_PERCENTUAL,
+  descricaoProblema,
+  fretePorPeca,
+  producaoCorrigida,
+  simplesVigente,
+  type ItemCusteado,
+} from "./correcoes";
 
-export type ItemMP = {
-  item: string;
-  tipo: string;
-  quantidade: number | null;
-  unidade: string | null;
-  custoUnitario: number | null;
-  custoTotal: number | null;
-  demonstrativo?: boolean;
-};
+export type ItemMP = ItemCusteado;
 
-/** BOM real do produto (uma linha por componente). */
-export function bomDoProduto(produto: string): BomLinha[] {
+/** BOM real do produto, já com os custos recalculados (Quantidade × Custo unitário). */
+export function bomDoProduto(produto: string): ItemMP[] {
+  return bom.filter((l) => l.produto === produto).map((l) => custearItem(l));
+}
+
+export function bomBruto(produto: string): BomLinha[] {
   return bom.filter((l) => l.produto === produto);
 }
 
@@ -30,18 +33,17 @@ export function totalMP(itens: ItemMP[]): number {
 }
 
 export function custoMPOriginal(produto: string): number | null {
-  const v = mpTotais[produto];
-  return isNum(v) ? v : null;
+  const itens = bomDoProduto(produto);
+  return itens.length ? totalMP(itens) : null;
 }
 
 export function roteiroDoProduto(produto: string) {
   return centroCustos.roteiro.find((r) => r.produto === produto) ?? null;
 }
 
-/** Custo de produção (Centro de Custos) — coluna "Custo" da planilha. */
+/** Custo de produção corrigido (armação contada uma única vez). */
 export function custoProducao(produto: string): number | null {
-  const r = roteiroDoProduto(produto);
-  return r && isNum(r.custoProducao) ? r.custoProducao : null;
+  return producaoCorrigida(produto).valor;
 }
 
 export type Cenario = "Venda Normal" | "Venda com Base Reduzida" | "Venda com Material Via Tonial";
@@ -59,14 +61,16 @@ export type RegraTributaria = {
 export function regraTributaria(produto: string, cenario: Cenario): RegraTributaria {
   const categoria = categoriaDoProduto(produto);
   if (cenario === "Venda com Material Via Tonial") {
+    const s = simplesVigente;
     return {
       cenario,
       categoria,
-      total: impostos.tonial.aliquota,
+      total: s.aliquotaEfetiva,
       detalhe: null,
-      demonstrativo: true,
-      observacao:
-        "Cenário do Simples (alíquota por faixa de faturamento). Aplicação por produto: regra a validar.",
+      demonstrativo: false,
+      observacao: `Simples Nacional: alíquota efetiva = (RBT12 × ${
+        s.aliquotaNominal !== null ? (s.aliquotaNominal * 100).toFixed(2) : "—"
+      }% − dedução) ÷ RBT12, calculada sobre o faturamento dos últimos 12 meses.`,
     };
   }
   const nome = cenario === "Venda Normal" ? "VENDA NORMAL" : "VENDA COM BASE REDUZIDA";
@@ -124,6 +128,7 @@ export type ResultadoCalculo = {
   cenario: Cenario;
   custoMP: number;
   custoProducao: number | null;
+  custoProducaoPlanilha: number | null;
   producaoDemonstrativa: boolean;
   despesas: number;
   logistica: number;
@@ -135,14 +140,19 @@ export type ResultadoCalculo = {
   inadimplencia: number;
   margem: number;
   somaPercentuais: number;
+  precoBruto: number | null;
   preco: number | null;
+  bloqueios: string[];
+  alertas: string[];
+  reconciliacao: { diferenca: number; ok: boolean } | null;
   itensMP: ItemMP[];
   regra: RegraTributaria;
+  producao: ReturnType<typeof producaoCorrigida>;
 };
 
 export function parametrosPadrao() {
   return {
-    despesas: parametros.despesasPercentual,
+    despesas: DESPESAS_PERCENTUAL,
     margem: parametros.margemPadrao,
     comissao: parametros.comissao,
     inadimplencia: parametros.inadimplencia,
@@ -152,32 +162,57 @@ export function parametrosPadrao() {
 }
 
 /**
- * Regra de preço reimplementada em código (não é a fórmula da planilha):
- * preço = (MP + produção) / (1 - (despesas + margem + impostos + comissão + inadimplência)) + frete
- * frete = (km / peças por entrega) * custo por km * 1,5, apenas quando a entrega usa frota própria.
+ * Markup divisor (auditoria, item 6):
+ *   Preço bruto = Custos absolutos / (1 − p), com 0 ≤ p < 100%
+ *   p = despesas% + impostos% + comissão% + inadimplência% + margem%
+ * O frete de entrega é somado depois, por não ser proporcional ao preço.
  */
 export function calcularPreco(e: EntradaCalculo): ResultadoCalculo {
   const custoMP = totalMP(e.itensMP);
-  const producao = custoProducao(e.produto);
+  const producao = producaoCorrigida(e.produto);
   const regra = regraTributaria(e.produto, e.cenario);
-  const frete =
-    e.frota && e.pecasPorEntrega > 0
-      ? (e.km / e.pecasPorEntrega) * logistica.custoTotalPorKm * parametros.fatorFrete
-      : 0;
-  const custoAbsoluto = custoMP + (isNum(producao) ? producao : 0);
+  const frete = e.frota ? fretePorPeca(e.km, e.pecasPorEntrega, parametros.fatorFrete) : 0;
+  const custoAbsoluto = custoMP + (isNum(producao.valor) ? producao.valor : 0);
   const somaPercentuais =
     e.despesas + e.margem + (isNum(regra.total) ? regra.total : 0) + e.comissao + e.inadimplencia;
-  const preco =
-    isNum(producao) && isNum(regra.total) && somaPercentuais < 1
-      ? custoAbsoluto / (1 - somaPercentuais) + frete
-      : null;
+
+  const bloqueios: string[] = [];
+  const alertas: string[] = [...producao.alertas];
+
+  if (!e.itensMP.length) bloqueios.push("Produto sem estrutura (BOM) cadastrada.");
+  for (const item of e.itensMP) {
+    for (const p of item.problemas) {
+      const texto = `${item.item}: ${descricaoProblema(p)}`;
+      if (p === "sem-cadastro" || p === "custo-zero") bloqueios.push(texto);
+      else alertas.push(texto);
+    }
+  }
+  if (!isNum(producao.valor)) bloqueios.push("Custo de produção indisponível para este produto.");
+  if (!isNum(regra.total)) bloqueios.push("Cenário tributário sem alíquota definida.");
+  if (!(somaPercentuais >= 0 && somaPercentuais < 1))
+    bloqueios.push(
+      "Soma dos percentuais fora do intervalo válido (0% a 100%). O markup divisor não pode ser aplicado.",
+    );
+
+  const precoBruto =
+    bloqueios.length === 0 ? custoAbsoluto / (1 - somaPercentuais) : null;
+  const preco = precoBruto === null ? null : Math.round((precoBruto + frete) * 100) / 100;
+
+  const reconciliacao =
+    precoBruto === null
+      ? null
+      : (() => {
+          const diferenca = precoBruto - (custoAbsoluto + precoBruto * somaPercentuais);
+          return { diferenca, ok: Math.abs(diferenca) < 0.01 };
+        })();
 
   const resultado: ResultadoCalculo = {
     produto: e.produto,
     cenario: e.cenario,
     custoMP,
-    custoProducao: producao,
-    producaoDemonstrativa: !isNum(producao),
+    custoProducao: producao.valor,
+    custoProducaoPlanilha: producao.original,
+    producaoDemonstrativa: producao.armacaoEstimada,
     despesas: e.despesas,
     logistica: frete,
     custoAbsoluto,
@@ -187,9 +222,14 @@ export function calcularPreco(e: EntradaCalculo): ResultadoCalculo {
     inadimplencia: e.inadimplencia,
     margem: e.margem,
     somaPercentuais,
+    precoBruto,
     preco,
+    bloqueios,
+    alertas,
+    reconciliacao,
     itensMP: e.itensMP,
     regra,
+    producao,
   };
   if (regra.observacao) resultado.observacaoImpostos = regra.observacao;
   return resultado;
