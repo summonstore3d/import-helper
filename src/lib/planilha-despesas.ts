@@ -86,9 +86,10 @@ export function csvParaDespesas(texto: string, base: Despesas): ResultadoImporta
   const linhas = conteudo.split(/\r?\n/).filter((l) => l.trim().length > 0);
   if (linhas.length < 2) throw new Error("A planilha está vazia ou fora do padrão exportado.");
 
-  const sep = (linhas[0].split(";").length >= linhas[0].split(",").length ? ";" : ",") as string;
-  const cabecalho = separarLinhaCsv(linhas[0], sep);
-  if (cabecalho.length < 3 || cabecalho[1].toLowerCase() !== "conta") {
+  const primeira = linhas[0] ?? "";
+  const sep = primeira.split(";").length >= primeira.split(",").length ? ";" : ",";
+  const cabecalho = separarLinhaCsv(primeira, sep);
+  if (cabecalho.length < 3 || (cabecalho[1] ?? "").toLowerCase() !== "conta") {
     throw new Error(
       'Cabeçalho inesperado. Use o arquivo exportado por esta tela (colunas "Tipo", "Conta" e os meses).',
     );
@@ -102,7 +103,7 @@ export function csvParaDespesas(texto: string, base: Despesas): ResultadoImporta
 
   const valoresPorChave = new Map<string, (number | null)[]>();
   for (let i = 1; i < linhas.length; i += 1) {
-    const campos = separarLinhaCsv(linhas[i], sep);
+    const campos = separarLinhaCsv(linhas[i] ?? "", sep);
     const tipo = (campos[0] ?? "").toLowerCase();
     const nome = campos[1] ?? "";
     if (!nome) continue;
