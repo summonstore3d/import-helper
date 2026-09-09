@@ -3,6 +3,7 @@ import { useState } from "react";
 import { centroCustos, guiaCdc } from "@/data";
 import { isNum, money, pct, qtd, REF_INCONSISTENTE } from "@/lib/format";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
+import { producaoCorrigida, resumoCentroCustos, TAXA_ARMACAO_PADRAO } from "@/lib/correcoes";
 
 export const Route = createFileRoute("/centro-de-custos")({
   head: () => ({
@@ -31,6 +32,7 @@ function valor(v: number | string | null, tipo: "money" | "pct" | "num") {
 function CentroDeCustos() {
   const [aba, setAba] = useState<"setores" | "roteiro" | "guia">("setores");
   const quebrados = centroCustos.setores.filter((s) => !isNum(s.horaReal)).length;
+  const resumo = resumoCentroCustos();
 
   return (
     <>
@@ -50,6 +52,16 @@ function CentroDeCustos() {
           detalhe="Erro herdado da planilha"
           destaque
         />
+      </div>
+
+      <div className="mt-4 rounded-md border border-warn bg-demo px-3 py-2 text-sm text-demo-foreground">
+        <strong>Correções aplicadas no custo de produção:</strong> a armação passa a ser contada uma
+        única vez (horas × {money(TAXA_ARMACAO_PADRAO)} por hora) — a planilha multiplicava pelas
+        horas duas vezes em {qtd(resumo.duplaMultiplicacao)} produtos. Outros{" "}
+        {qtd(resumo.armacaoEstimada)} produtos tinham horas de armação sem custo e agora recebem a
+        taxa do setor. {qtd(resumo.referenciaQuebrada)} produto(s) com referência quebrada ficam
+        bloqueados para preço, em vez de gerar valor incorreto. Impacto médio no custo de produção:{" "}
+        {money(resumo.impactoMedio)} por peça.
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
@@ -140,11 +152,14 @@ function CentroDeCustos() {
                   <Th align="right">Armação</Th>
                   <Th align="right">Pintura</Th>
                   <Th align="right">Kg/produto</Th>
-                  <Th align="right">Custo produção</Th>
+                  <Th align="right">Custo na planilha</Th>
+                  <Th align="right">Custo corrigido</Th>
                 </tr>
               </thead>
               <tbody>
-                {centroCustos.roteiro.slice(0, 300).map((r, i) => (
+                {centroCustos.roteiro.slice(0, 300).map((r, i) => {
+                  const c = producaoCorrigida(r.produto);
+                  return (
                   <tr key={`${r.produto}-${i}`} className="odd:bg-secondary/30">
                     <Td className="max-w-[20rem] truncate">{r.produto}</Td>
                     <Td className="text-xs">{r.setor ?? "—"}</Td>
@@ -154,11 +169,24 @@ function CentroDeCustos() {
                     <Td align="right">{valor(r.custoArmacao, "money")}</Td>
                     <Td align="right">{valor(r.pintura, "money")}</Td>
                     <Td align="right">{valor(r.kgPorProduto, "num")}</Td>
-                    <Td align="right" className="font-semibold">
+                    <Td align="right" className="text-muted-foreground">
                       {valor(r.custoProducao, "money")}
                     </Td>
+                    <Td align="right" className="font-semibold">
+                      {c.valor === null ? (
+                        <span className="text-xs text-destructive">Bloqueado</span>
+                      ) : (
+                        money(c.valor)
+                      )}
+                      {c.armacaoEstimada ? (
+                        <span className="ml-1 text-warn" title={c.alertas.join(" ")}>
+                          *
+                        </span>
+                      ) : null}
+                    </Td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
