@@ -3,7 +3,13 @@ import { useMemo, useRef, useState } from "react";
 import { Download, Upload } from "lucide-react";
 import { isNum, money, pct } from "@/lib/format";
 import { despesasPonderadas } from "@/lib/correcoes";
-import { baixarArquivo, csvParaDespesas, despesasParaCsv } from "@/lib/planilha-despesas";
+import {
+  baixarArquivo,
+  csvParaDespesas,
+  despesasParaCsv,
+  exportarDespesasExcel,
+  importarDespesasExcel,
+} from "@/lib/planilha-despesas";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { usePrototype } from "@/state/prototype";
 
@@ -43,10 +49,20 @@ function Despesas() {
     });
   }
 
+  function exportarExcel() {
+    exportarDespesasExcel(demonstrativo);
+    setAviso({
+      tipo: "ok",
+      texto:
+        "Planilha Excel exportada com uma coluna por mês. Preencha os valores mantendo as colunas Tipo e Conta e importe o arquivo de volta.",
+    });
+  }
+
   async function importar(arquivo: File) {
     try {
-      const texto = await arquivo.text();
-      const resultado = csvParaDespesas(texto, demonstrativo);
+      const resultado = arquivo.name.toLowerCase().endsWith(".xlsx")
+        ? await importarDespesasExcel(arquivo, demonstrativo)
+        : csvParaDespesas(await arquivo.text(), demonstrativo);
       importarDemonstrativo(resultado.despesas, arquivo.name);
       setAviso({
         tipo: "ok",
@@ -68,25 +84,32 @@ function Despesas() {
         aba="Despesas"
         descricao="O demonstrativo mensal alimenta o percentual de despesas usado na precificação. No sistema, este número deixa de ser digitado e passa a ser calculado a partir do resultado contábil."
         acoes={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={exportarExcel}
+              className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
+            >
+              <Download className="size-4" /> Exportar Excel
+            </button>
             <button
               type="button"
               onClick={exportar}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
             >
-              <Download className="size-4" /> Exportar planilha
+              <Download className="size-4" /> Exportar CSV
             </button>
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"
             >
-              <Upload className="size-4" /> Importar planilha
+              <Upload className="size-4" /> Importar planilha (Excel ou CSV)
             </button>
             <input
               ref={inputRef}
               type="file"
-              accept=".csv,text/csv"
+              accept=".xlsx,.csv"
               className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0];
