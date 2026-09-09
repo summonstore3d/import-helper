@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Save } from "lucide-react";
-import { logistica, parametros, produtos } from "@/data";
+import { parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
