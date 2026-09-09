@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Pencil, Plus, Search, SlidersHorizontal } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { Download, Pencil, Plus, Search, SlidersHorizontal, Upload } from "lucide-react";
 import { bom } from "@/data";
 import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { usePrototype } from "@/state/prototype";
+import { exportarInsumosExcel, importarInsumosExcel } from "@/lib/planilha-insumos";
 
 export const Route = createFileRoute("/insumos")({
   head: () => ({
@@ -55,7 +56,9 @@ type Formulario = {
 };
 
 function Insumos() {
-  const { listaInsumos, salvarInsumo } = usePrototype();
+  const { listaInsumos, salvarInsumo, importarInsumos } = usePrototype();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   const [busca, setBusca] = useState("");
   const [visiveis, setVisiveis] = useState<Record<ColunaId, boolean>>(VISIVEIS_PADRAO);
   const [painelColunas, setPainelColunas] = useState(false);
