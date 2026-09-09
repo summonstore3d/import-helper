@@ -1,6 +1,17 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { bomDoProduto, cenarioSugerido, precoRapido, type Cenario, type ItemMP } from "@/lib/pricing";
+import { custearItem } from "@/lib/correcoes";
 import { parametros, produtos } from "@/data";
+
+/** Componente incluído durante a demonstração, antes do custeio. */
+export type ItemAdicionado = {
+  item: string;
+  tipo: string;
+  quantidade: number | null;
+  unidade: string | null;
+  custoUnitario: number | null;
+  custoTotal: number | null;
+};
 
 export type AuditoriaEntrada = {
   id: string;
@@ -29,7 +40,7 @@ export type VersaoPreco = {
 
 type Ctx = {
   itensBom: (produto: string) => ItemMP[];
-  adicionarItemBom: (produto: string, item: ItemMP) => void;
+  adicionarItemBom: (produto: string, item: ItemAdicionado) => void;
   removerItemAdicionado: (produto: string, item: string) => void;
   auditoria: AuditoriaEntrada[];
   registrarAuditoria: (e: Omit<AuditoriaEntrada, "id" | "data">) => void;
@@ -158,7 +169,7 @@ function auditoriaInicial(): AuditoriaEntrada[] {
 }
 
 export function PrototypeProvider({ children }: { children: ReactNode }) {
-  const [adicionados, setAdicionados] = useState<Record<string, ItemMP[]>>({});
+  const [adicionados, setAdicionados] = useState<Record<string, ItemAdicionado[]>>({});
   const [auditoria, setAuditoria] = useState<AuditoriaEntrada[]>(() => auditoriaInicial());
   const [historico, setHistorico] = useState<VersaoPreco[]>(() => historicoInicial());
 
@@ -170,12 +181,15 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const itensBom = useCallback(
-    (produto: string) => [...bomDoProduto(produto), ...(adicionados[produto] ?? [])],
+    (produto: string) => [
+      ...bomDoProduto(produto),
+      ...(adicionados[produto] ?? []).map((i) => custearItem({ ...i, demonstrativo: true })),
+    ],
     [adicionados],
   );
 
   const adicionarItemBom = useCallback(
-    (produto: string, item: ItemMP) => {
+    (produto: string, item: ItemAdicionado) => {
       setAdicionados((prev) => ({ ...prev, [produto]: [...(prev[produto] ?? []), item] }));
       registrarAuditoria({
         usuario: USUARIO,

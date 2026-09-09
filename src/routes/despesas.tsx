@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { despesas } from "@/data";
 import { isNum, money, pct } from "@/lib/format";
+import { despesasVigentes } from "@/lib/correcoes";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/despesas")({
@@ -37,12 +38,21 @@ function Despesas() {
         <KPI rotulo="Meses no demonstrativo" valor={String(despesas.meses.length)} detalhe={`${mesesComDado} meses fechados`} />
         <KPI rotulo="Linhas de conta" valor={String(despesas.linhas.length)} />
         <KPI
-          rotulo="% médio de despesas aplicado no preço"
-          valor={pct(despesas.mediaDespesas, 4)}
-          detalhe="Parâmetro usado no motor de cálculo"
+          rotulo="% de despesas aplicado no preço"
+          valor={pct(despesasVigentes.ponderada, 4)}
+          detalhe={`Taxa ponderada: ${money(despesasVigentes.somaDespesas)} de despesa sobre ${money(
+            despesasVigentes.somaReceita,
+          )} de receita em ${despesasVigentes.meses} meses`}
           destaque
         />
       </div>
+
+      <p className="mt-4 rounded-md border border-warn bg-demo px-3 py-2 text-sm text-demo-foreground">
+        <strong>Correção aplicada:</strong> a planilha usava a média simples das razões mensais (
+        {pct(despesasVigentes.mediaSimples, 4)}), dando o mesmo peso a meses de faturamento alto e
+        baixo. O sistema usa a taxa ponderada (soma das despesas ÷ soma das receitas):{" "}
+        {pct(despesasVigentes.ponderada, 4)} — diferença de {pct(despesasVigentes.diferenca, 4)}.
+      </p>
 
       <Panel
         className="mt-4"

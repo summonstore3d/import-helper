@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { impostos } from "@/data";
 import { money, pct } from "@/lib/format";
+import { simplesVigente } from "@/lib/correcoes";
 import { DemoTag, KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/impostos")({
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/impostos")({
 
 function Impostos() {
   const t = impostos.tonial;
+  const s = simplesVigente;
 
   return (
     <>
@@ -36,9 +38,9 @@ function Impostos() {
       <div className="grid gap-4 sm:grid-cols-3">
         <KPI rotulo="Cenários cadastrados" valor={String(impostos.cenarios.length + 1)} />
         <KPI
-          rotulo="Alíquota — Simples"
-          valor={pct(t.aliquota, 2)}
-          detalhe={t.nome}
+          rotulo="Alíquota efetiva — Simples"
+          valor={pct(s.aliquotaEfetiva, 4)}
+          detalhe={`Nominal ${pct(s.aliquotaNominal, 2)} menos a dedução da faixa`}
         />
         <KPI rotulo="Faturamento 12 meses" valor={money(t.faturamento12m)} destaque />
       </div>
@@ -86,8 +88,9 @@ function Impostos() {
             {[
               ["Faturamento 12 meses", money(t.faturamento12m)],
               ["Faturamento do mês", money(t.faturamentoMes)],
-              ["Alíquota aplicada", pct(t.aliquota, 4)],
-              ["Valor a deduzir", money(t.valorDeduzir)],
+              ["Alíquota nominal da faixa", pct(s.aliquotaNominal, 4)],
+              ["Parcela a deduzir", money(s.valorDeduzir)],
+              ["Alíquota efetiva aplicada no preço", pct(s.aliquotaEfetiva, 4)],
               ["Tributo do mês", money(t.tributoMes)],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-3 border-b border-border pb-1 text-sm">
@@ -117,8 +120,9 @@ function Impostos() {
             </tbody>
           </table>
           <p className="mt-3 rounded-sm border border-warn bg-demo px-2 py-1.5 text-xs text-demo-foreground">
-            <DemoTag>Regra a validar</DemoTag> A aplicação da alíquota do Simples por produto ainda
-            depende de definição fiscal. O protótipo usa a alíquota efetiva do mês.
+            <DemoTag>Correção aplicada</DemoTag> A planilha aplicava a alíquota nominal da faixa
+            (10%). O sistema aplica a alíquota efetiva: (faturamento de 12 meses × alíquota nominal −
+            parcela a deduzir) ÷ faturamento de 12 meses.
           </p>
         </Panel>
       </div>

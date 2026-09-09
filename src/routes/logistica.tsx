@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { logistica, parametros } from "@/data";
 import { money, moneyPreciso, qtd } from "@/lib/format";
+import { CONSTANTES, frota, fretePorPeca } from "@/lib/correcoes";
 import { KPI, PageHeader, Panel, RealTag, Td, Th, DemoTag } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/logistica")({
@@ -27,9 +28,8 @@ function Logistica() {
   const [km, setKm] = useState(parametros.kmPadrao);
   const [pecas, setPecas] = useState(parametros.pecasPorEntregaPadrao);
 
-  const custoViagem = km * logistica.custoTotalPorKm;
-  const fretePorPeca =
-    pecas > 0 ? (km / pecas) * logistica.custoTotalPorKm * parametros.fatorFrete : 0;
+  const custoViagem = km * frota.custoTotalPorKm;
+  const frete = fretePorPeca(km, pecas, parametros.fatorFrete);
 
   return (
     <>
@@ -41,9 +41,15 @@ function Logistica() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KPI rotulo="Custos fixos / mês" valor={money(logistica.totalFixos)} />
-        <KPI rotulo="Custo variável / km" valor={moneyPreciso(logistica.totalVariaveisPorKm)} />
+        <KPI
+          rotulo="Custo variável / km"
+          valor={moneyPreciso(frota.variavelPorKm)}
+          detalhe={`Diesel ${moneyPreciso(frota.dieselPorKm)} + manutenção ${moneyPreciso(
+            frota.manutencaoPorKm,
+          )}`}
+        />
         <KPI rotulo="Km rodados / mês" valor={qtd(logistica.kmRodadosMes)} />
-        <KPI rotulo="Custo total / km" valor={moneyPreciso(logistica.custoTotalPorKm)} destaque />
+        <KPI rotulo="Custo total / km" valor={moneyPreciso(frota.custoTotalPorKm)} destaque />
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-3">
@@ -79,15 +85,25 @@ function Logistica() {
               </tr>
             </thead>
             <tbody>
-              {logistica.variaveis.map((f) => (
-                <tr key={f.item} className="odd:bg-secondary/30">
-                  <Td>{f.item}</Td>
-                  <Td align="right">{moneyPreciso(f.valor)}</Td>
-                </tr>
-              ))}
+              <tr className="odd:bg-secondary/30">
+                <Td>Preço do diesel (R$/litro)</Td>
+                <Td align="right">{moneyPreciso(frota.precoDiesel)}</Td>
+              </tr>
+              <tr className="odd:bg-secondary/30">
+                <Td>Rendimento médio (km por litro)</Td>
+                <Td align="right">{qtd(frota.rendimentoKmPorLitro)}</Td>
+              </tr>
+              <tr className="odd:bg-secondary/30">
+                <Td>Diesel por km</Td>
+                <Td align="right">{moneyPreciso(frota.dieselPorKm)}</Td>
+              </tr>
+              <tr className="odd:bg-secondary/30">
+                <Td>Manutenção da frota (mês)</Td>
+                <Td align="right">{money(frota.manutencaoMes)}</Td>
+              </tr>
               <tr className="bg-table-total font-bold">
                 <Td>Custo variável por km</Td>
-                <Td align="right">{moneyPreciso(logistica.totalVariaveisPorKm)}</Td>
+                <Td align="right">{moneyPreciso(frota.variavelPorKm)}</Td>
               </tr>
             </tbody>
           </table>
@@ -124,13 +140,28 @@ function Logistica() {
               </div>
               <div className="flex justify-between border-t border-border pt-1.5">
                 <dt className="font-semibold">Frete por peça</dt>
-                <dd className="font-bold">{money(fretePorPeca)}</dd>
+                <dd className="font-bold">{money(frete)}</dd>
               </div>
             </dl>
             <p className="text-xs text-muted-foreground">
               <DemoTag>Protótipo</DemoTag> Em produção, a distância viria do endereço do cliente via
               geolocalização, eliminando a digitação manual do km.
             </p>
+            <div className="rounded-md border border-border bg-secondary/30 p-3 text-xs">
+              <p className="mb-1.5 font-semibold">Parâmetros documentados</p>
+              <ul className="space-y-1 text-muted-foreground">
+                {CONSTANTES.filter((c) => c.origem.includes("Logística") || c.origem.includes("Precificação")).map(
+                  (c) => (
+                    <li key={c.simbolo}>
+                      <strong className="text-foreground">
+                        {c.simbolo}: {qtd(c.valor)} {c.unidade}
+                      </strong>{" "}
+                      — {c.racional}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
           </div>
         </Panel>
       </div>

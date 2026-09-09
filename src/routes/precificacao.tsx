@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Save } from "lucide-react";
-import { logistica, parametros, produtos } from "@/data";
+import { parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
+import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 
 type Search = { produto?: string | undefined };
@@ -78,8 +79,23 @@ function Precificacao() {
     },
     {
       rotulo: "2. Custo de produção",
-      base: "Centro de Custos — rateio do setor",
-      valor: r.custoProducao === null ? "Sem roteiro" : money(r.custoProducao),
+      base:
+        r.producao.componentes === null
+          ? "Centro de Custos — indisponível"
+          : `Setor ${money(r.producao.componentes.setor)} + central ${money(
+              r.producao.componentes.central,
+            )} + armação ${money(r.producao.componentes.armacao)} + pintura ${money(
+              r.producao.componentes.pintura,
+            )}`,
+      valor: r.custoProducao === null ? "Bloqueado" : money(r.custoProducao),
+    },
+    {
+      rotulo: "2a. Armação (correção)",
+      base:
+        r.producao.horasArmacao > 0
+          ? `${qtd(r.producao.horasArmacao)} h × ${money(r.producao.taxaArmacao)}/h — contada uma única vez`
+          : "Produto sem etapa de armação",
+      valor: money(r.producao.componentes?.armacao ?? 0),
     },
     {
       rotulo: "Custo absoluto",
@@ -89,7 +105,7 @@ function Precificacao() {
     },
     {
       rotulo: "3. Despesas operacionais",
-      base: "Média dos últimos 12 meses",
+      base: `Taxa ponderada: soma das despesas ÷ soma das receitas de ${despesasVigentes.meses} meses`,
       valor: pct(r.despesas, 4),
     },
     {
@@ -99,7 +115,9 @@ function Precificacao() {
             r.regra.detalhe.cofins,
             1,
           )} · IRPJ ${pct(r.regra.detalhe.irpj, 2)} · CSLL ${pct(r.regra.detalhe.csll, 1)}`
-        : "Alíquota do Simples por faixa de faturamento",
+        : `Simples: alíquota efetiva = (RBT12 × ${pct(simplesVigente.aliquotaNominal, 2)} − ${money(
+            simplesVigente.valorDeduzir,
+          )}) ÷ RBT12`,
       valor: pct(r.impostos, 2),
     },
     { rotulo: "5. Comissão", base: "Parâmetro comercial", valor: pct(r.comissao, 2) },
@@ -112,23 +130,23 @@ function Precificacao() {
       tipo: "grupo",
     },
     {
-      rotulo: "Preço antes do frete",
+      rotulo: "Preço bruto (markup divisor)",
       base: "Custo absoluto ÷ (1 − soma dos percentuais)",
-      valor: r.somaPercentuais < 1 ? money(r.custoAbsoluto / (1 - r.somaPercentuais)) : "—",
+      valor: r.precoBruto === null ? "Bloqueado" : money(r.precoBruto),
       tipo: "grupo",
     },
     {
       rotulo: "8. Frete (frota própria)",
       base: frota
-        ? `${qtd(km)} km ÷ ${qtd(pecas)} peças × ${money(logistica.custoTotalPorKm)}/km × ${qtd(
+        ? `${qtd(km)} km ÷ ${qtd(pecas)} peças × ${money(frotaParams.custoTotalPorKm)}/km × ${qtd(
             parametros.fatorFrete,
-          )}`
+          )} (ida e volta)`
         : "Entrega não incluída (retirada no pátio)",
       valor: money(r.logistica),
     },
     {
       rotulo: "Preço de venda sugerido",
-      base: "Preço antes do frete + frete",
+      base: "Preço bruto + frete, arredondado em 2 casas",
       valor: money(preco),
       tipo: "total",
     },
@@ -313,13 +331,42 @@ function Precificacao() {
             />
           </div>
 
-          {preco === null ? (
+          {r.bloqueios.length ? (
             <EmptyNote>
-              O sistema não emite preço para este produto porque falta informação de base (estrutura,
-              roteiro de produção ou regra tributária). Na planilha, o resultado apareceria como erro
-              de célula ou como um valor incompleto — aqui, o cálculo é bloqueado e o motivo é
-              explicado.
+              <strong>O preço está bloqueado até estes pontos serem resolvidos:</strong>
+              <ul className="mt-1.5 list-disc space-y-1 pl-4">
+                {r.bloqueios.slice(0, 6).map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
             </EmptyNote>
+          ) : null}
+
+          {r.alertas.length ? (
+            <div className="rounded-md border border-warn bg-demo px-3 py-2 text-sm text-demo-foreground">
+              <strong>Avisos do cálculo:</strong>
+              <ul className="mt-1 list-disc space-y-1 pl-4">
+                {Array.from(new Set(r.alertas))
+                  .slice(0, 5)
+                  .map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {r.reconciliacao ? (
+            <p
+              className={
+                r.reconciliacao.ok
+                  ? "rounded-md border border-green bg-green-soft px-3 py-2 text-sm font-medium text-accent-foreground"
+                  : "rounded-md border border-destructive px-3 py-2 text-sm font-medium text-destructive"
+              }
+            >
+              Validação de integridade: preço − (custos absolutos + preço × soma dos percentuais) ={" "}
+              {moneyPreciso(r.reconciliacao.diferenca)}{" "}
+              {r.reconciliacao.ok ? "— cálculo consistente com a DRE." : "— divergência detectada."}
+            </p>
           ) : null}
 
           <Panel

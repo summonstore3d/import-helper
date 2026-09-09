@@ -1,6 +1,7 @@
 import { bom, categoriaDoProduto, centroCustos, impostos, insumos, produtos } from "@/data";
 import { isNum } from "./format";
 import { bomDoProduto } from "./pricing";
+import { itensCriticosBom, itensSobrescritos, resumoCentroCustos } from "./correcoes";
 
 export type Severidade = "CRÍTICO" | "ALTO" | "MÉDIO" | "BAIXO";
 
@@ -28,13 +29,7 @@ export function produtosSemRoteiro(): string[] {
 }
 
 export function itensBomSemCusto(): string[] {
-  return Array.from(
-    new Set(
-      bom
-        .filter((l) => !isNum(l.custoUnitario) || l.custoUnitario === 0)
-        .map((l) => `${l.produto} → ${l.item}`),
-    ),
-  );
+  return Array.from(new Set(itensCriticosBom().map((l) => `${l.produto} → ${l.item}`)));
 }
 
 export function insumosSemCusto(): string[] {
@@ -84,7 +79,40 @@ export function checks(): Check[] {
   const semRegra = categoriasSemRegraTributaria();
   const unidades = unidadesDivergentes();
 
+  const cc = resumoCentroCustos();
+  const sobrescritos = itensSobrescritos();
+
   const lista: Check[] = [
+    {
+      severidade: "CRÍTICO",
+      problema: "Custo de armação multiplicado duas vezes pelas horas",
+      origem: "Centro de Custos (fórmula herdada da planilha)",
+      impacto: "Custo de produção subavaliado nos produtos com etapa de armação.",
+      acao: "Corrigido: o sistema calcula armação = horas × taxa do setor, uma única vez.",
+      ocorrencias: cc.duplaMultiplicacao,
+      exemplos: ["Correção já aplicada no motor de cálculo"],
+      fonte: "dados reais",
+    },
+    {
+      severidade: "CRÍTICO",
+      problema: "Horas de armação lançadas sem custo de armação",
+      origem: "Centro de Custos",
+      impacto: "Etapa de armação ficava fora do custo do produto.",
+      acao: "Corrigido: aplicada a taxa horária do setor de armação, com aviso na tela.",
+      ocorrencias: cc.armacaoEstimada,
+      exemplos: ["Correção já aplicada, sujeita a validação da engenharia"],
+      fonte: "dados reais",
+    },
+    {
+      severidade: "ALTO",
+      problema: "Custo total de componente digitado por cima da fórmula",
+      origem: "Custo MP por Produto",
+      impacto: "O custo não acompanhava a atualização do preço do insumo.",
+      acao: "Corrigido: custo total recalculado como quantidade × custo unitário.",
+      ocorrencias: sobrescritos.length,
+      exemplos: sobrescritos.slice(0, 5).map((i) => `${i.produto} → ${i.item}`),
+      fonte: "dados reais",
+    },
     {
       severidade: "CRÍTICO",
       problema: "Produto sem estrutura (BOM)",

@@ -4,6 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { insumos, parametros, produtos } from "@/data";
 import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { custoMPOriginal, totalMP } from "@/lib/pricing";
+import { descricaoProblema } from "@/lib/correcoes";
 import { usePrototype } from "@/state/prototype";
 import { DemoTag, EmptyNote, KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 
@@ -59,7 +60,6 @@ function Bom() {
       unidade,
       custoUnitario: cu,
       custoTotal: cu !== null && Number.isFinite(q) ? cu * q : null,
-      demonstrativo: true,
     });
     setModal(false);
     setQuantidade("1");
@@ -150,6 +150,14 @@ function Bom() {
                     <Td align="right">{moneyPreciso(l.custoUnitario)}</Td>
                     <Td align="right" className="font-semibold">
                       {money(l.custoTotal)}
+                      {l.problemas.length ? (
+                        <span
+                          className="ml-1 text-destructive"
+                          title={l.problemas.map(descricaoProblema).join(" ")}
+                        >
+                          !
+                        </span>
+                      ) : null}
                     </Td>
                     <Td align="center">
                       {l.demonstrativo ? (
