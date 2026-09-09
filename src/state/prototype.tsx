@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { bomDoProduto, cenarioSugerido, precoRapido, type Cenario, type ItemMP } from "@/lib/pricing";
 import { custearItem } from "@/lib/correcoes";
-import { insumos as insumosBase, parametros, produtos, type Insumo } from "@/data";
+import { despesas as despesasBase, insumos as insumosBase, parametros, produtos, type Despesas, type Insumo } from "@/data";
 
 /** Componente incluído durante a demonstração, antes do custeio. */
 export type ItemAdicionado = {
@@ -45,6 +45,8 @@ export type InsumoEntrada = {
 };
 
 type Ctx = {
+  demonstrativo: Despesas;
+  importarDemonstrativo: (novo: Despesas, arquivo: string) => void;
   listaInsumos: Insumo[];
   salvarInsumo: (entrada: InsumoEntrada, fullOriginal?: string) => void;
   itensBom: (produto: string) => ItemMP[];
@@ -188,6 +190,25 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     ]);
   }, []);
 
+  const [demonstrativo, setDemonstrativo] = useState<Despesas>(() => despesasBase);
+
+  const importarDemonstrativo = useCallback(
+    (novo: Despesas, arquivo: string) => {
+      setDemonstrativo(novo);
+      registrarAuditoria({
+        usuario: USUARIO,
+        modulo: "Despesas",
+        registro: "Demonstrativo mensal",
+        campo: "Importação de planilha",
+        valorAnterior: "Valores da planilha original",
+        valorNovo: arquivo,
+        motivo: "Planilha preenchida externamente e reimportada",
+        origem: "Sessão de demonstração",
+      });
+    },
+    [registrarAuditoria],
+  );
+
   const [listaInsumos, setListaInsumos] = useState<Insumo[]>(() => insumosBase);
 
   const salvarInsumo = useCallback(
@@ -275,6 +296,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<Ctx>(
     () => ({
+      demonstrativo,
+      importarDemonstrativo,
       listaInsumos,
       salvarInsumo,
       itensBom,
@@ -287,6 +310,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
       usuario: USUARIO,
     }),
     [
+      demonstrativo,
+      importarDemonstrativo,
       listaInsumos,
       salvarInsumo,
       itensBom,
