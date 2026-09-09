@@ -342,8 +342,8 @@ export function despesasPonderadas(fonte: typeof despesas = despesas) {
     somaReceita,
     meses,
     ponderada,
-    mediaSimples: despesas.mediaDespesas,
-    diferenca: ponderada === null ? null : ponderada - despesas.mediaDespesas,
+    mediaSimples: fonte.mediaDespesas,
+    diferenca: ponderada === null ? null : ponderada - fonte.mediaDespesas,
   };
 }
 
