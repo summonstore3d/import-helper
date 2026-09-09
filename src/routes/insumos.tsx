@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Pencil, Plus, Search, SlidersHorizontal } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { Download, Pencil, Plus, Search, SlidersHorizontal, Upload } from "lucide-react";
 import { bom } from "@/data";
 import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { usePrototype } from "@/state/prototype";
+import { exportarInsumosExcel, importarInsumosExcel } from "@/lib/planilha-insumos";
 
 export const Route = createFileRoute("/insumos")({
   head: () => ({
@@ -55,7 +56,9 @@ type Formulario = {
 };
 
 function Insumos() {
-  const { listaInsumos, salvarInsumo } = usePrototype();
+  const { listaInsumos, salvarInsumo, importarInsumos } = usePrototype();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   const [busca, setBusca] = useState("");
   const [visiveis, setVisiveis] = useState<Record<ColunaId, boolean>>(VISIVEIS_PADRAO);
   const [painelColunas, setPainelColunas] = useState(false);
@@ -104,6 +107,44 @@ function Insumos() {
     setForm(null);
   }
 
+  function exportarExcel() {
+    exportarInsumosExcel(
+      linhas.map((l) => ({
+        codigo: l.codigo,
+        descricao: l.descricao,
+        full: l.full,
+        custoUnitario: l.custoUnitario,
+        unidade: l.unidade,
+      })),
+    );
+    setAviso({
+      tipo: "ok",
+      texto:
+        "Planilha de insumos exportada. Ajuste os custos unitários no Excel sem renomear o cabeçalho e importe o arquivo de volta.",
+    });
+  }
+
+  async function importarExcel(arquivo: File) {
+    try {
+      const { entradas, problemas } = await importarInsumosExcel(arquivo);
+      const { atualizados, novos } = importarInsumos(entradas, arquivo.name);
+      const partes = [
+        `${atualizados} insumos atualizados`,
+        novos ? `${novos} novos cadastrados` : "",
+        problemas.length ? `${problemas.length} linhas ignoradas: ${problemas[0]}` : "",
+      ].filter(Boolean);
+      setAviso({
+        tipo: problemas.length ? "erro" : "ok",
+        texto: `Planilha "${arquivo.name}" importada — ${partes.join(", ")}.`,
+      });
+    } catch (e) {
+      setAviso({
+        tipo: "erro",
+        texto: e instanceof Error ? e.message : "Não foi possível ler a planilha.",
+      });
+    }
+  }
+
   return (
     <>
       <PageHeader
@@ -111,15 +152,55 @@ function Insumos() {
         aba="Insumos"
         descricao="Base única de custos de matéria-prima. Quando um insumo é atualizado aqui, todos os produtos que o consomem são reprecificados — sem propagar fórmulas manualmente."
         acoes={
-          <button
-            type="button"
-            onClick={() => setForm({ codigo: "", descricao: "", custoUnitario: "" })}
-            className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"
-          >
-            <Plus className="size-4" /> Novo insumo
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={exportarExcel}
+              className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
+            >
+              <Download className="size-4" /> Exportar Excel
+            </button>
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
+            >
+              <Upload className="size-4" /> Importar Excel
+            </button>
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".xlsx"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void importarExcel(f);
+                e.target.value = "";
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setForm({ codigo: "", descricao: "", custoUnitario: "" })}
+              className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"
+            >
+              <Plus className="size-4" /> Novo insumo
+            </button>
+          </div>
         }
       />
+
+      {aviso ? (
+        <p
+          className={`mb-4 rounded-md border px-3 py-2 text-sm ${
+            aviso.tipo === "ok"
+              ? "border-border bg-secondary/40"
+              : "border-destructive bg-destructive/10 text-destructive"
+          }`}
+        >
+          {aviso.texto}
+        </p>
+      ) : null}
+
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KPI rotulo="Insumos cadastrados" valor={qtd(listaInsumos.length)} />

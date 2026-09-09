@@ -49,6 +49,10 @@ type Ctx = {
   importarDemonstrativo: (novo: Despesas, arquivo: string) => void;
   listaInsumos: Insumo[];
   salvarInsumo: (entrada: InsumoEntrada, fullOriginal?: string) => void;
+  importarInsumos: (
+    entradas: InsumoEntrada[],
+    arquivo: string,
+  ) => { atualizados: number; novos: number };
   itensBom: (produto: string) => ItemMP[];
   adicionarItemBom: (produto: string, item: ItemAdicionado) => void;
   removerItemAdicionado: (produto: string, item: string) => void;
@@ -242,6 +246,75 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     [listaInsumos, registrarAuditoria],
   );
 
+  /** Importação em lote (planilha Excel): atualiza custos e cria códigos novos. */
+  const importarInsumos = useCallback(
+    (entradas: InsumoEntrada[], arquivo: string) => {
+      let atualizados = 0;
+      let novos = 0;
+      const porCodigo = new Map(listaInsumos.map((i) => [i.codigo.toUpperCase(), i]));
+      const alteracoes: { full: string; antes: string; depois: string; novo: boolean }[] = [];
+
+      const proximos = listaInsumos.map((i) => ({ ...i }));
+      const adicionar: Insumo[] = [];
+
+      entradas.forEach((e) => {
+        const existente = porCodigo.get(e.codigo.toUpperCase());
+        const full = `${e.codigo} - ${e.descricao}`;
+        if (existente) {
+          if (
+            existente.descricao === e.descricao &&
+            existente.custoUnitario === e.custoUnitario
+          )
+            return;
+          const alvo = proximos.find((i) => i.codigo.toUpperCase() === e.codigo.toUpperCase());
+          if (!alvo) return;
+          alteracoes.push({
+            full,
+            antes: `${existente.descricao} — ${existente.custoUnitario ?? "sem custo"}`,
+            depois: `${e.descricao} — ${e.custoUnitario ?? "sem custo"}`,
+            novo: false,
+          });
+          alvo.descricao = e.descricao;
+          alvo.full = full;
+          alvo.custoUnitario = e.custoUnitario;
+          atualizados += 1;
+        } else {
+          adicionar.push({
+            codigo: e.codigo,
+            descricao: e.descricao,
+            full,
+            custoUnitario: e.custoUnitario,
+          });
+          alteracoes.push({
+            full,
+            antes: "—",
+            depois: `${e.descricao} — ${e.custoUnitario ?? "sem custo"}`,
+            novo: true,
+          });
+          novos += 1;
+        }
+      });
+
+      if (atualizados || novos) setListaInsumos([...adicionar, ...proximos]);
+
+      alteracoes.slice(0, 50).forEach((a) => {
+        registrarAuditoria({
+          usuario: USUARIO,
+          modulo: "Insumos",
+          registro: a.full,
+          campo: a.novo ? "Novo insumo (planilha)" : "Custo unitário (planilha)",
+          valorAnterior: a.antes,
+          valorNovo: a.depois,
+          motivo: `Importação da planilha ${arquivo}`,
+          origem: "Sessão de demonstração",
+        });
+      });
+
+      return { atualizados, novos };
+    },
+    [listaInsumos, registrarAuditoria],
+  );
+
   const itensBom = useCallback(
     (produto: string) => [
       ...bomDoProduto(produto),
@@ -300,6 +373,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
       importarDemonstrativo,
       listaInsumos,
       salvarInsumo,
+      importarInsumos,
       itensBom,
       adicionarItemBom,
       removerItemAdicionado,
@@ -314,6 +388,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
       importarDemonstrativo,
       listaInsumos,
       salvarInsumo,
+      importarInsumos,
       itensBom,
       adicionarItemBom,
       removerItemAdicionado,

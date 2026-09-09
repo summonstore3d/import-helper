@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Save } from "lucide-react";
+import { Download, Save } from "lucide-react";
 import { parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
+import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planilha-precificacao";
 import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 
@@ -152,6 +153,87 @@ function Precificacao() {
     },
   ];
 
+  /** Mesma memória de cálculo da tela, com valores numéricos para o Excel. */
+  const linhasExcel: LinhaMemoriaExport[] = [
+    { rotulo: "1. Matéria-prima (BOM)", base: `${qtd(itens.length)} componentes`, valor: r.custoMP, formato: "moeda" },
+    {
+      rotulo: "2. Custo de produção",
+      base: linhasMemoria[1]?.base ?? "",
+      valor: r.custoProducao,
+      formato: "moeda",
+    },
+    {
+      rotulo: "2a. Armação (correção)",
+      base: linhasMemoria[2]?.base ?? "",
+      valor: r.producao.componentes?.armacao ?? 0,
+      formato: "moeda",
+    },
+    { rotulo: "Custo absoluto", base: "1 + 2", valor: r.custoAbsoluto, formato: "moeda", tipo: "grupo" },
+    {
+      rotulo: "3. Despesas operacionais",
+      base: linhasMemoria[4]?.base ?? "",
+      valor: r.despesas,
+      formato: "percentual",
+    },
+    {
+      rotulo: "4. Impostos do cenário",
+      base: linhasMemoria[5]?.base ?? "",
+      valor: r.impostos,
+      formato: "percentual",
+    },
+    { rotulo: "5. Comissão", base: "Parâmetro comercial", valor: r.comissao, formato: "percentual" },
+    {
+      rotulo: "6. Inadimplência",
+      base: "Parâmetro comercial",
+      valor: r.inadimplencia,
+      formato: "percentual",
+    },
+    { rotulo: "7. Margem de lucro", base: "Parâmetro comercial", valor: r.margem, formato: "percentual" },
+    {
+      rotulo: "Soma dos percentuais",
+      base: "3 + 4 + 5 + 6 + 7",
+      valor: r.somaPercentuais,
+      formato: "percentual",
+      tipo: "grupo",
+    },
+    {
+      rotulo: "Preço bruto (markup divisor)",
+      base: "Custo absoluto ÷ (1 − soma dos percentuais)",
+      valor: r.precoBruto,
+      formato: "moeda",
+      tipo: "grupo",
+    },
+    {
+      rotulo: "8. Frete (frota própria)",
+      base: linhasMemoria[11]?.base ?? "",
+      valor: r.logistica,
+      formato: "moeda",
+    },
+    {
+      rotulo: "Preço de venda sugerido",
+      base: "Preço bruto + frete",
+      valor: preco,
+      formato: "moeda",
+      tipo: "total",
+    },
+  ];
+
+  function exportarExcel() {
+    exportarPrecificacaoExcel({
+      produto: selecionado,
+      cenario,
+      linhas: linhasExcel,
+      itens: itens.map((i) => ({
+        item: i.item,
+        quantidade: i.quantidade,
+        unidade: i.unidade,
+        custoUnitario: i.custoUnitario,
+        custoTotal: i.custoTotal,
+      })),
+      nomeArquivo: `precificacao-${selecionado.split(" ")[0] ?? "produto"}.xlsx`,
+    });
+  }
+
   function salvar() {
     if (preco === null) return;
     registrarVersao({
@@ -198,6 +280,13 @@ function Precificacao() {
                 </option>
               ))}
             </select>
+            <button
+              type="button"
+              onClick={exportarExcel}
+              className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-2 text-sm font-semibold"
+            >
+              <Download className="size-4" /> Exportar Excel
+            </button>
             <button
               type="button"
               onClick={salvar}

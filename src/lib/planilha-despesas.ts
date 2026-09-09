@@ -1,4 +1,15 @@
 import type { Despesas } from "@/data";
+import {
+  baixarExcel,
+  lerExcel,
+  mapearColunas,
+  numeroCelula,
+  textoCelula,
+  type Celula,
+  type DefinicaoAba,
+  type FormatoColuna,
+  type TipoLinha,
+} from "@/lib/planilha-excel";
 
 /**
  * Exportação/importação do demonstrativo mensal em formato de planilha (CSV
@@ -154,4 +165,123 @@ export function baixarArquivo(nome: string, conteudo: string, tipo = "text/csv;c
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+/* ------------------------------------------------------------------ */
+/* Versão Excel (.xlsx) do mesmo demonstrativo                         */
+/* ------------------------------------------------------------------ */
+
+export const ABA_DESPESAS = "Demonstrativo";
+
+const CABECALHO_FIXO = ["Tipo", "Conta"];
+
+/** Exporta o demonstrativo mensal em Excel, com uma coluna por mês. */
+export function exportarDespesasExcel(fonte: Despesas, nomeArquivo = "demonstrativo-mensal.xlsx") {
+  const formatos: FormatoColuna[] = [
+    "texto",
+    "texto",
+    ...fonte.meses.map((): FormatoColuna => "moeda"),
+  ];
+  const aba: DefinicaoAba = {
+    nome: ABA_DESPESAS,
+    cabecalho: [...CABECALHO_FIXO, ...fonte.meses],
+    formatos,
+    largurasMinimas: [12, 40, ...fonte.meses.map(() => 16)],
+    linhas: [
+      ...fonte.linhas.map((l) => ({
+        celulas: [l.tipo, l.nome, ...l.valores.map((v) => v.valor)] as Celula[],
+        tipo: (l.tipo === "grupo" ? "grupo" : "dado") as TipoLinha,
+      })),
+      ...fonte.rodape.map((r) => ({
+        celulas: ["rodape", r.nome, ...r.valores] as Celula[],
+        tipo: "total" as TipoLinha,
+      })),
+    ],
+  };
+  baixarExcel(nomeArquivo, [aba]);
+}
+
+/** Lê o Excel exportado e devolve o demonstrativo com os valores atualizados. */
+export async function importarDespesasExcel(
+  arquivo: File,
+  base: Despesas,
+): Promise<ResultadoImportacao> {
+  const matriz = await lerExcel(arquivo, ABA_DESPESAS);
+  if (matriz.length < 2) throw new Error("A planilha está vazia ou não tem linhas de dados.");
+
+  const cabecalho = matriz[0] ?? [];
+  const colunas = mapearColunas(cabecalho, { tipo: ["Tipo"], conta: ["Conta"] });
+  const iTipo = colunas["tipo"] ?? 0;
+  const iConta = colunas["conta"] ?? 1;
+  const primeiroMes = Math.max(iTipo, iConta) + 1;
+  const mesesArquivo = cabecalho.slice(primeiroMes).map((c) => textoCelula(c)).filter(Boolean);
+
+  if (mesesArquivo.length < base.meses.length) {
+    throw new Error(
+      `Planilha fora do padrão: são esperadas ${base.meses.length} colunas de meses (${base.meses[0]} a ${
+        base.meses[base.meses.length - 1]
+      }) e o arquivo trouxe ${mesesArquivo.length}.`,
+    );
+  }
+
+  const chave = (tipo: string, nome: string) => `${tipo}::${nome.trim().toLowerCase()}`;
+  const valoresPorChave = new Map<string, (number | null)[]>();
+  const invalidos: string[] = [];
+
+  for (let i = 1; i < matriz.length; i += 1) {
+    const linha = matriz[i] ?? [];
+    const nome = textoCelula(linha[iConta]);
+    if (!nome) continue;
+    const tipo = textoCelula(linha[iTipo]).toLowerCase() || "conta";
+    const valores: (number | null)[] = [];
+    for (let m = 0; m < base.meses.length; m += 1) {
+      const celula = linha[primeiroMes + m];
+      const texto = textoCelula(celula);
+      const numero = numeroCelula(celula);
+      if (texto !== "" && numero === null) {
+        invalidos.push(`"${nome}" — ${base.meses[m] ?? `mês ${m + 1}`}: "${texto}" não é número`);
+      }
+      valores.push(numero);
+    }
+    valoresPorChave.set(chave(tipo, nome), valores);
+  }
+
+  if (invalidos.length) {
+    throw new Error(
+      `A planilha tem valores inválidos: ${invalidos.slice(0, 3).join("; ")}${
+        invalidos.length > 3 ? ` e mais ${invalidos.length - 3}` : ""
+      }. Corrija as células e importe novamente.`,
+    );
+  }
+
+  const ignoradas: string[] = [];
+  let atualizadas = 0;
+
+  const despesas: Despesas = {
+    ...base,
+    linhas: base.linhas.map((l) => {
+      const valores = valoresPorChave.get(chave(l.tipo, l.nome));
+      if (!valores) {
+        ignoradas.push(l.nome);
+        return l;
+      }
+      atualizadas += 1;
+      return { ...l, valores: l.valores.map((v, i) => ({ ...v, valor: valores[i] ?? null })) };
+    }),
+    rodape: base.rodape.map((r) => {
+      const valores = valoresPorChave.get(chave("rodape", r.nome));
+      if (!valores) {
+        ignoradas.push(r.nome);
+        return r;
+      }
+      atualizadas += 1;
+      return { ...r, valores: r.valores.map((_, i) => valores[i] ?? null) };
+    }),
+  };
+
+  if (atualizadas === 0) {
+    throw new Error("Nenhuma conta da planilha corresponde ao demonstrativo atual.");
+  }
+
+  return { despesas, linhasAtualizadas: atualizadas, linhasIgnoradas: ignoradas };
 }
