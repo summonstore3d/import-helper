@@ -10,33 +10,206 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ArquiteturaRouteImport } from './routes/arquitetura'
+import { Route as AuditoriaRouteImport } from './routes/auditoria'
+import { Route as BomRouteImport } from './routes/bom'
+import { Route as CentroDeCustosRouteImport } from './routes/centro-de-custos'
+import { Route as DespesasRouteImport } from './routes/despesas'
+import { Route as HistoricoRouteImport } from './routes/historico'
+import { Route as ImpostosRouteImport } from './routes/impostos'
+import { Route as InsumosRouteImport } from './routes/insumos'
+import { Route as LogisticaRouteImport } from './routes/logistica'
+import { Route as PrecificacaoRouteImport } from './routes/precificacao'
+import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as SalariosRouteImport } from './routes/salarios'
+import { Route as ValidacoesRouteImport } from './routes/validacoes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArquiteturaRoute = ArquiteturaRouteImport.update({
+  id: '/arquitetura',
+  path: '/arquitetura',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditoriaRoute = AuditoriaRouteImport.update({
+  id: '/auditoria',
+  path: '/auditoria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BomRoute = BomRouteImport.update({
+  id: '/bom',
+  path: '/bom',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CentroDeCustosRoute = CentroDeCustosRouteImport.update({
+  id: '/centro-de-custos',
+  path: '/centro-de-custos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DespesasRoute = DespesasRouteImport.update({
+  id: '/despesas',
+  path: '/despesas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImpostosRoute = ImpostosRouteImport.update({
+  id: '/impostos',
+  path: '/impostos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsumosRoute = InsumosRouteImport.update({
+  id: '/insumos',
+  path: '/insumos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogisticaRoute = LogisticaRouteImport.update({
+  id: '/logistica',
+  path: '/logistica',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrecificacaoRoute = PrecificacaoRouteImport.update({
+  id: '/precificacao',
+  path: '/precificacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosRoute = ProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalariosRoute = SalariosRouteImport.update({
+  id: '/salarios',
+  path: '/salarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ValidacoesRoute = ValidacoesRouteImport.update({
+  id: '/validacoes',
+  path: '/validacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/arquitetura': typeof ArquiteturaRoute
+  '/auditoria': typeof AuditoriaRoute
+  '/bom': typeof BomRoute
+  '/centro-de-custos': typeof CentroDeCustosRoute
+  '/despesas': typeof DespesasRoute
+  '/historico': typeof HistoricoRoute
+  '/impostos': typeof ImpostosRoute
+  '/insumos': typeof InsumosRoute
+  '/logistica': typeof LogisticaRoute
+  '/precificacao': typeof PrecificacaoRoute
+  '/produtos': typeof ProdutosRoute
+  '/salarios': typeof SalariosRoute
+  '/validacoes': typeof ValidacoesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/arquitetura': typeof ArquiteturaRoute
+  '/auditoria': typeof AuditoriaRoute
+  '/bom': typeof BomRoute
+  '/centro-de-custos': typeof CentroDeCustosRoute
+  '/despesas': typeof DespesasRoute
+  '/historico': typeof HistoricoRoute
+  '/impostos': typeof ImpostosRoute
+  '/insumos': typeof InsumosRoute
+  '/logistica': typeof LogisticaRoute
+  '/precificacao': typeof PrecificacaoRoute
+  '/produtos': typeof ProdutosRoute
+  '/salarios': typeof SalariosRoute
+  '/validacoes': typeof ValidacoesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/arquitetura': typeof ArquiteturaRoute
+  '/auditoria': typeof AuditoriaRoute
+  '/bom': typeof BomRoute
+  '/centro-de-custos': typeof CentroDeCustosRoute
+  '/despesas': typeof DespesasRoute
+  '/historico': typeof HistoricoRoute
+  '/impostos': typeof ImpostosRoute
+  '/insumos': typeof InsumosRoute
+  '/logistica': typeof LogisticaRoute
+  '/precificacao': typeof PrecificacaoRoute
+  '/produtos': typeof ProdutosRoute
+  '/salarios': typeof SalariosRoute
+  '/validacoes': typeof ValidacoesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/arquitetura'
+    | '/auditoria'
+    | '/bom'
+    | '/centro-de-custos'
+    | '/despesas'
+    | '/historico'
+    | '/impostos'
+    | '/insumos'
+    | '/logistica'
+    | '/precificacao'
+    | '/produtos'
+    | '/salarios'
+    | '/validacoes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/arquitetura'
+    | '/auditoria'
+    | '/bom'
+    | '/centro-de-custos'
+    | '/despesas'
+    | '/historico'
+    | '/impostos'
+    | '/insumos'
+    | '/logistica'
+    | '/precificacao'
+    | '/produtos'
+    | '/salarios'
+    | '/validacoes'
+  id:
+    | '__root__'
+    | '/'
+    | '/arquitetura'
+    | '/auditoria'
+    | '/bom'
+    | '/centro-de-custos'
+    | '/despesas'
+    | '/historico'
+    | '/impostos'
+    | '/insumos'
+    | '/logistica'
+    | '/precificacao'
+    | '/produtos'
+    | '/salarios'
+    | '/validacoes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ArquiteturaRoute: typeof ArquiteturaRoute
+  AuditoriaRoute: typeof AuditoriaRoute
+  BomRoute: typeof BomRoute
+  CentroDeCustosRoute: typeof CentroDeCustosRoute
+  DespesasRoute: typeof DespesasRoute
+  HistoricoRoute: typeof HistoricoRoute
+  ImpostosRoute: typeof ImpostosRoute
+  InsumosRoute: typeof InsumosRoute
+  LogisticaRoute: typeof LogisticaRoute
+  PrecificacaoRoute: typeof PrecificacaoRoute
+  ProdutosRoute: typeof ProdutosRoute
+  SalariosRoute: typeof SalariosRoute
+  ValidacoesRoute: typeof ValidacoesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +221,115 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/arquitetura': {
+      id: '/arquitetura'
+      path: '/arquitetura'
+      fullPath: '/arquitetura'
+      preLoaderRoute: typeof ArquiteturaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auditoria': {
+      id: '/auditoria'
+      path: '/auditoria'
+      fullPath: '/auditoria'
+      preLoaderRoute: typeof AuditoriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bom': {
+      id: '/bom'
+      path: '/bom'
+      fullPath: '/bom'
+      preLoaderRoute: typeof BomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/centro-de-custos': {
+      id: '/centro-de-custos'
+      path: '/centro-de-custos'
+      fullPath: '/centro-de-custos'
+      preLoaderRoute: typeof CentroDeCustosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/despesas': {
+      id: '/despesas'
+      path: '/despesas'
+      fullPath: '/despesas'
+      preLoaderRoute: typeof DespesasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/impostos': {
+      id: '/impostos'
+      path: '/impostos'
+      fullPath: '/impostos'
+      preLoaderRoute: typeof ImpostosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insumos': {
+      id: '/insumos'
+      path: '/insumos'
+      fullPath: '/insumos'
+      preLoaderRoute: typeof InsumosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logistica': {
+      id: '/logistica'
+      path: '/logistica'
+      fullPath: '/logistica'
+      preLoaderRoute: typeof LogisticaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/precificacao': {
+      id: '/precificacao'
+      path: '/precificacao'
+      fullPath: '/precificacao'
+      preLoaderRoute: typeof PrecificacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos': {
+      id: '/produtos'
+      path: '/produtos'
+      fullPath: '/produtos'
+      preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salarios': {
+      id: '/salarios'
+      path: '/salarios'
+      fullPath: '/salarios'
+      preLoaderRoute: typeof SalariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/validacoes': {
+      id: '/validacoes'
+      path: '/validacoes'
+      fullPath: '/validacoes'
+      preLoaderRoute: typeof ValidacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ArquiteturaRoute: ArquiteturaRoute,
+  AuditoriaRoute: AuditoriaRoute,
+  BomRoute: BomRoute,
+  CentroDeCustosRoute: CentroDeCustosRoute,
+  DespesasRoute: DespesasRoute,
+  HistoricoRoute: HistoricoRoute,
+  ImpostosRoute: ImpostosRoute,
+  InsumosRoute: InsumosRoute,
+  LogisticaRoute: LogisticaRoute,
+  PrecificacaoRoute: PrecificacaoRoute,
+  ProdutosRoute: ProdutosRoute,
+  SalariosRoute: SalariosRoute,
+  ValidacoesRoute: ValidacoesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

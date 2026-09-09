@@ -1,0 +1,42 @@
+{
+ "fixos": [
+  {
+   "item": "Mão de obra",
+   "valor": 52804.7
+  },
+  {
+   "item": "Seguro",
+   "valor": 4003.84
+  },
+  {
+   "item": "Pedágios",
+   "valor": 13520.27
+  },
+  {
+   "item": "IPVA",
+   "valor": 23794.32
+  },
+  {
+   "item": "Serviços",
+   "valor": 33552.17
+  }
+ ],
+ "variaveis": [
+  {
+   "item": "Valor Diesel (L)",
+   "valor": 6.5
+  },
+  {
+   "item": "Consumo Diesel/Km",
+   "valor": 2.69
+  },
+  {
+   "item": "Manutenção",
+   "valor": 50467.85
+  }
+ ],
+ "totalFixos": 127675.3,
+ "totalVariaveisPorKm": 4.6076016,
+ "kmRodadosMes": 23031.59,
+ "custoTotalPorKm": 10.15108774
+}

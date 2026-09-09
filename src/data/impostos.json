@@ -1,0 +1,141 @@
+{
+ "cenarios": [
+  {
+   "nome": "VENDA NORMAL",
+   "itens": [
+    {
+     "produto": "CONE",
+     "icms": 0.17,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.2293
+    },
+    {
+     "produto": "GRADIL",
+     "icms": 0.17,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.2293
+    },
+    {
+     "produto": "GRELHA FARROUPILHA",
+     "icms": 0.17,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.2293
+    },
+    {
+     "produto": "LAJE EXCENTRICA",
+     "icms": 0.17,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.2293
+    }
+   ]
+  },
+  {
+   "nome": "VENDA COM BASE REDUZIDA",
+   "itens": [
+    {
+     "produto": "ANEL",
+     "icms": 0.12,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.1793
+    },
+    {
+     "produto": "GALERIA",
+     "icms": 0.12,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.1793
+    },
+    {
+     "produto": "MEIO FIO",
+     "icms": 0.12,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.1793
+    },
+    {
+     "produto": "CAIXA DE INSPEÇÃO",
+     "icms": 0.12,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.1793
+    },
+    {
+     "produto": "TUBO",
+     "icms": 0.12,
+     "pis": 0.0065,
+     "cofins": 0.03,
+     "irpj": 0.0108,
+     "csll": 0.012,
+     "total": 0.1793
+    }
+   ]
+  }
+ ],
+ "tonial": {
+  "nome": "VENDA COM MATERIAL VIA TONIAL",
+  "faturamento12m": 400000.0,
+  "faturamentoMes": 5444.0,
+  "aliquota": 0.1,
+  "valorDeduzir": 13860.0,
+  "tributoMes": 355.7654,
+  "faixas": [
+   {
+    "de": 0.0,
+    "ate": 180000.0,
+    "aliquota": 0.045,
+    "deduzir": 0.0
+   },
+   {
+    "de": 180000.01,
+    "ate": 360000.0,
+    "aliquota": 0.078,
+    "deduzir": 5940.0
+   },
+   {
+    "de": 360000.01,
+    "ate": 720000.0,
+    "aliquota": 0.1,
+    "deduzir": 13860.0
+   },
+   {
+    "de": 720000.01,
+    "ate": 1800000.0,
+    "aliquota": 0.112,
+    "deduzir": 22500.0
+   },
+   {
+    "de": 1800000.01,
+    "ate": 3600000.0,
+    "aliquota": 0.147,
+    "deduzir": 85500.0
+   },
+   {
+    "de": 3600000.01,
+    "ate": 4800000.0,
+    "aliquota": 0.3,
+    "deduzir": 720000.0
+   }
+  ]
+ }
+}

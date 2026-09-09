@@ -1,0 +1,15 @@
+{
+ "produtoExemplo": "TB004 - TUBO DN 300 X 2000 X 50 PBJE EA2",
+ "despesasPercentual": 0.30805916,
+ "margemPadrao": 0.15,
+ "comissao": 0.01,
+ "inadimplencia": 0.01,
+ "pecasPorEntregaPadrao": 4.0,
+ "kmPadrao": 50.0,
+ "fatorFrete": 1.5,
+ "cenarios": [
+  "Venda Normal",
+  "Venda com Base Reduzida",
+  "Venda com Material Via Tonial"
+ ]
+}
