@@ -1,0 +1,5091 @@
+{
+ "meses": [
+  "OUTUBRO",
+  "NOVEMBRO",
+  "DEZEMBRO",
+  "JANEIRO",
+  "FEVEREIRO",
+  "MARÇO",
+  "ABRIL",
+  "MAIO",
+  "JUNHO",
+  "JULHO",
+  "AGOSTO",
+  "SETEMBRO"
+ ],
+ "linhas": [
+  {
+   "nome": "(-) 005 - CUSTO MERC.(CMV)",
+   "tipo": "grupo",
+   "valores": [
+    {
+     "valor": 928786.07,
+     "percentual": 0.6036
+    },
+    {
+     "valor": 1402704.63,
+     "percentual": 0.6614
+    },
+    {
+     "valor": 1823147.81,
+     "percentual": 0.7846
+    },
+    {
+     "valor": 967022.17,
+     "percentual": null
+    },
+    {
+     "valor": 968317.27,
+     "percentual": null
+    },
+    {
+     "valor": 1170415.47,
+     "percentual": null
+    },
+    {
+     "valor": 734807.59,
+     "percentual": null
+    },
+    {
+     "valor": 1194486.64,
+     "percentual": null
+    },
+    {
+     "valor": 823058.32,
+     "percentual": null
+    },
+    {
+     "valor": 1056724.52,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MATERIA PRIMA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 611471.3,
+     "percentual": 0.30026249
+    },
+    {
+     "valor": 897467.66,
+     "percentual": 0.34117647
+    },
+    {
+     "valor": 1238813.84,
+     "percentual": 0.45211748
+    },
+    {
+     "valor": 521589.92,
+     "percentual": null
+    },
+    {
+     "valor": 615051.71,
+     "percentual": null
+    },
+    {
+     "valor": 783352.54,
+     "percentual": null
+    },
+    {
+     "valor": 407594.0,
+     "percentual": null
+    },
+    {
+     "valor": 806864.39,
+     "percentual": null
+    },
+    {
+     "valor": 478789.78,
+     "percentual": null
+    },
+    {
+     "valor": 729508.64,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MATERIAL PARA USO NA FABRICAÇÃO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 8583.06,
+     "percentual": 0.00532267
+    },
+    {
+     "valor": 29500.95,
+     "percentual": 0.01329652
+    },
+    {
+     "valor": 26832.87,
+     "percentual": 0.010158
+    },
+    {
+     "valor": 44016.79,
+     "percentual": null
+    },
+    {
+     "valor": 18528.57,
+     "percentual": null
+    },
+    {
+     "valor": 11209.86,
+     "percentual": null
+    },
+    {
+     "valor": 3483.62,
+     "percentual": null
+    },
+    {
+     "valor": 3693.44,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "TOTAL MÃO DE OBRA MOD",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 308731.71,
+     "percentual": 0.14499176
+    },
+    {
+     "valor": 475736.02,
+     "percentual": 0.15474235
+    },
+    {
+     "valor": 557501.1,
+     "percentual": 0.15635043
+    },
+    {
+     "valor": 401415.46,
+     "percentual": null
+    },
+    {
+     "valor": 334736.99,
+     "percentual": null
+    },
+    {
+     "valor": 375853.07,
+     "percentual": null
+    },
+    {
+     "valor": 323729.33,
+     "percentual": null
+    },
+    {
+     "valor": 383928.81,
+     "percentual": null
+    },
+    {
+     "valor": 344268.54,
+     "percentual": null
+    },
+    {
+     "valor": 327215.88,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "SALÁRIO MOD (MÃO DE OBRA DIRETA)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 102173.25,
+     "percentual": 0.02434778
+    },
+    {
+     "valor": 198938.55,
+     "percentual": 0.02047481
+    },
+    {
+     "valor": 200658.0,
+     "percentual": 0.02265458
+    },
+    {
+     "valor": 128895.0,
+     "percentual": null
+    },
+    {
+     "valor": 120749.75,
+     "percentual": null
+    },
+    {
+     "valor": 124047.0,
+     "percentual": null
+    },
+    {
+     "valor": 106628.83,
+     "percentual": null
+    },
+    {
+     "valor": 119469.0,
+     "percentual": null
+    },
+    {
+     "valor": 122286.5,
+     "percentual": null
+    },
+    {
+     "valor": 114862.5,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "SALÁRIO MOD TERCEIROS (NOVA ERA)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 38591.13,
+     "percentual": 0.01895744
+    },
+    {
+     "valor": 46500.43,
+     "percentual": 0.01867135
+    },
+    {
+     "valor": 81924.65,
+     "percentual": 0.02987559
+    },
+    {
+     "valor": 61681.16,
+     "percentual": null
+    },
+    {
+     "valor": 34345.37,
+     "percentual": null
+    },
+    {
+     "valor": 28220.88,
+     "percentual": null
+    },
+    {
+     "valor": 17728.24,
+     "percentual": null
+    },
+    {
+     "valor": 20297.01,
+     "percentual": null
+    },
+    {
+     "valor": 19596.56,
+     "percentual": null
+    },
+    {
+     "valor": 5834.49,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "AJUDA DE CUSTO/CARTÃO BENEFICIO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 5600.0,
+     "percentual": 0.00275093
+    },
+    {
+     "valor": 5400.0,
+     "percentual": 0.00216827
+    },
+    {
+     "valor": 7200.0,
+     "percentual": 0.00262563
+    },
+    {
+     "valor": 8200.0,
+     "percentual": null
+    },
+    {
+     "valor": 7400.0,
+     "percentual": null
+    },
+    {
+     "valor": 7400.0,
+     "percentual": null
+    },
+    {
+     "valor": 7000.0,
+     "percentual": null
+    },
+    {
+     "valor": 8470.0,
+     "percentual": null
+    },
+    {
+     "valor": 9240.0,
+     "percentual": null
+    },
+    {
+     "valor": 9030.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ALMOÇOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 18772.42,
+     "percentual": 0.00930867
+    },
+    {
+     "valor": 15656.5,
+     "percentual": 0.00627421
+    },
+    {
+     "valor": 16792.62,
+     "percentual": 0.00625287
+    },
+    {
+     "valor": 14235.75,
+     "percentual": null
+    },
+    {
+     "valor": 13283.63,
+     "percentual": null
+    },
+    {
+     "valor": 15383.8,
+     "percentual": null
+    },
+    {
+     "valor": 15657.9,
+     "percentual": null
+    },
+    {
+     "valor": 13871.33,
+     "percentual": null
+    },
+    {
+     "valor": 13110.71,
+     "percentual": null
+    },
+    {
+     "valor": 16216.5,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ALMOÇO - SÁBADO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1501.0,
+     "percentual": 0.00073735
+    },
+    {
+     "valor": 1972.02,
+     "percentual": 0.00079183
+    },
+    {
+     "valor": 494.0,
+     "percentual": 0.00018015
+    },
+    {
+     "valor": 1315.0,
+     "percentual": null
+    },
+    {
+     "valor": 1085.0,
+     "percentual": null
+    },
+    {
+     "valor": 1740.0,
+     "percentual": null
+    },
+    {
+     "valor": 850.0,
+     "percentual": null
+    },
+    {
+     "valor": 460.0,
+     "percentual": null
+    },
+    {
+     "valor": 720.0,
+     "percentual": null
+    },
+    {
+     "valor": 1360.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CESTA BASICA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 6383.04,
+     "percentual": 0.00313559
+    },
+    {
+     "valor": 6678.46,
+     "percentual": 0.00268667
+    },
+    {
+     "valor": 6784.56,
+     "percentual": 0.00247414
+    },
+    {
+     "valor": 7559.99,
+     "percentual": null
+    },
+    {
+     "valor": 6697.74,
+     "percentual": null
+    },
+    {
+     "valor": 6780.25,
+     "percentual": null
+    },
+    {
+     "valor": 6624.45,
+     "percentual": null
+    },
+    {
+     "valor": 6567.0,
+     "percentual": null
+    },
+    {
+     "valor": 8501.68,
+     "percentual": null
+    },
+    {
+     "valor": 8609.92,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "EPIs e UNIFORMES",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 3514.85,
+     "percentual": null
+    },
+    {
+     "valor": 8570.8,
+     "percentual": null
+    },
+    {
+     "valor": 12757.85,
+     "percentual": null
+    },
+    {
+     "valor": 3949.28,
+     "percentual": null
+    },
+    {
+     "valor": 5683.12,
+     "percentual": null
+    },
+    {
+     "valor": 4834.48,
+     "percentual": null
+    },
+    {
+     "valor": 4631.52,
+     "percentual": null
+    },
+    {
+     "valor": 6761.98,
+     "percentual": null
+    },
+    {
+     "valor": 7894.35,
+     "percentual": null
+    },
+    {
+     "valor": 7124.38,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "FÉRIAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 7853.38,
+     "percentual": 0.00356075
+    },
+    {
+     "valor": 4919.03,
+     "percentual": 0.00175242
+    },
+    {
+     "valor": 7441.16,
+     "percentual": 0.00288229
+    },
+    {
+     "valor": 9444.61,
+     "percentual": null
+    },
+    {
+     "valor": 10002.06,
+     "percentual": null
+    },
+    {
+     "valor": 7308.27,
+     "percentual": null
+    },
+    {
+     "valor": 10278.81,
+     "percentual": null
+    },
+    {
+     "valor": 11116.62,
+     "percentual": null
+    },
+    {
+     "valor": 7950.03,
+     "percentual": null
+    },
+    {
+     "valor": 6353.82,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "FGTS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 13856.01,
+     "percentual": 0.01504612
+    },
+    {
+     "valor": 22176.94,
+     "percentual": 0.01101413
+    },
+    {
+     "valor": 21789.61,
+     "percentual": 0.01176327
+    },
+    {
+     "valor": 15558.04,
+     "percentual": null
+    },
+    {
+     "valor": 15047.15,
+     "percentual": null
+    },
+    {
+     "valor": 15528.98,
+     "percentual": null
+    },
+    {
+     "valor": 14219.24,
+     "percentual": null
+    },
+    {
+     "valor": 15330.79,
+     "percentual": null
+    },
+    {
+     "valor": 16631.75,
+     "percentual": null
+    },
+    {
+     "valor": 15993.44,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "INSS EMPRESA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 31216.58,
+     "percentual": 0.01618046
+    },
+    {
+     "valor": 39250.39,
+     "percentual": 0.01585985
+    },
+    {
+     "valor": 63515.05,
+     "percentual": 0.0143051
+    },
+    {
+     "valor": 35977.1,
+     "percentual": null
+    },
+    {
+     "valor": 34335.83,
+     "percentual": null
+    },
+    {
+     "valor": 36266.26,
+     "percentual": null
+    },
+    {
+     "valor": 33229.26,
+     "percentual": null
+    },
+    {
+     "valor": 37768.99,
+     "percentual": null
+    },
+    {
+     "valor": 39070.29,
+     "percentual": null
+    },
+    {
+     "valor": 38080.26,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "INSS TERCEIROS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 9052.81,
+     "percentual": 0.00469234
+    },
+    {
+     "valor": 11382.61,
+     "percentual": 0.00459935
+    },
+    {
+     "valor": 18419.36,
+     "percentual": 0.00411637
+    },
+    {
+     "valor": 10433.36,
+     "percentual": null
+    },
+    {
+     "valor": 9957.39,
+     "percentual": null
+    },
+    {
+     "valor": 10517.17,
+     "percentual": null
+    },
+    {
+     "valor": 9636.46,
+     "percentual": null
+    },
+    {
+     "valor": 10953.71,
+     "percentual": null
+    },
+    {
+     "valor": 11330.35,
+     "percentual": null
+    },
+    {
+     "valor": 11043.32,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MEDICINA OCUPACIONAL",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 85.0,
+     "percentual": 0.00090288
+    },
+    {
+     "valor": 2035.61,
+     "percentual": 0.00081736
+    },
+    {
+     "valor": 2990.05,
+     "percentual": 0.00109039
+    },
+    {
+     "valor": 910.87,
+     "percentual": null
+    },
+    {
+     "valor": 1190.92,
+     "percentual": null
+    },
+    {
+     "valor": 2455.65,
+     "percentual": null
+    },
+    {
+     "valor": 1764.33,
+     "percentual": null
+    },
+    {
+     "valor": 1431.12,
+     "percentual": null
+    },
+    {
+     "valor": 786.54,
+     "percentual": null
+    },
+    {
+     "valor": 1721.74,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "PROCESSOS TRABALHISTAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 6693.09,
+     "percentual": 0.00110307
+    },
+    {
+     "valor": 26236.83,
+     "percentual": 0.00083077
+    },
+    {
+     "valor": 5991.48,
+     "percentual": 0.00074026
+    },
+    {
+     "valor": 7648.0,
+     "percentual": null
+    },
+    {
+     "valor": 8989.43,
+     "percentual": null
+    },
+    {
+     "valor": 7167.0,
+     "percentual": null
+    },
+    {
+     "valor": 3210.0,
+     "percentual": null
+    },
+    {
+     "valor": 15484.32,
+     "percentual": null
+    },
+    {
+     "valor": 8494.66,
+     "percentual": null
+    },
+    {
+     "valor": 7533.72,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "PROVISÃO 13º SALÁRIO (INCLUINDO 13S DAS FÉRIAS)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 20109.26,
+     "percentual": 0.00987844
+    },
+    {
+     "valor": 24034.94,
+     "percentual": 0.00965077
+    },
+    {
+     "valor": 20331.33,
+     "percentual": 0.00741426
+    },
+    {
+     "valor": 21179.58,
+     "percentual": null
+    },
+    {
+     "valor": 21255.1,
+     "percentual": null
+    },
+    {
+     "valor": 24373.75,
+     "percentual": null
+    },
+    {
+     "valor": 16916.25,
+     "percentual": null
+    },
+    {
+     "valor": 24443.93,
+     "percentual": null
+    },
+    {
+     "valor": 23090.95,
+     "percentual": null
+    },
+    {
+     "valor": 23329.33,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "PROVISÃO DE FÉRIAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 24248.8,
+     "percentual": 0.01191194
+    },
+    {
+     "valor": 31337.31,
+     "percentual": 0.01258289
+    },
+    {
+     "valor": 31742.89,
+     "percentual": 0.01157573
+    },
+    {
+     "valor": 33498.24,
+     "percentual": null
+    },
+    {
+     "valor": 30848.21,
+     "percentual": null
+    },
+    {
+     "valor": 47763.27,
+     "percentual": null
+    },
+    {
+     "valor": 18316.11,
+     "percentual": null
+    },
+    {
+     "valor": 38969.57,
+     "percentual": null
+    },
+    {
+     "valor": 29640.76,
+     "percentual": null
+    },
+    {
+     "valor": 28417.68,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "RAT",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 7038.25,
+     "percentual": 0.00364764
+    },
+    {
+     "valor": 8849.59,
+     "percentual": 0.00357583
+    },
+    {
+     "valor": 14320.43,
+     "percentual": 0.00320034
+    },
+    {
+     "valor": 8092.69,
+     "percentual": null
+    },
+    {
+     "valor": 7723.48,
+     "percentual": null
+    },
+    {
+     "valor": 8157.73,
+     "percentual": null
+    },
+    {
+     "valor": 7474.59,
+     "percentual": null
+    },
+    {
+     "valor": 8496.65,
+     "percentual": null
+    },
+    {
+     "valor": 8788.46,
+     "percentual": null
+    },
+    {
+     "valor": 8565.77,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "RECRUTAMENTO E SELEÇÃO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1800.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 840.0,
+     "percentual": 0.01208379
+    },
+    {
+     "valor": 420.0,
+     "percentual": 0.01411352
+    },
+    {
+     "valor": 1075.65,
+     "percentual": null
+    },
+    {
+     "valor": 844.0,
+     "percentual": null
+    },
+    {
+     "valor": 1881.17,
+     "percentual": null
+    },
+    {
+     "valor": 2291.97,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 2844.4,
+     "percentual": null
+    },
+    {
+     "valor": 1962.38,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "RESCISÕES",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 0.0,
+     "percentual": 0.00050486
+    },
+    {
+     "valor": 13647.86,
+     "percentual": 0.0004227
+    },
+    {
+     "valor": 35718.63,
+     "percentual": 0.00036438
+    },
+    {
+     "valor": 27841.77,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 17772.71,
+     "percentual": null
+    },
+    {
+     "valor": 40098.86,
+     "percentual": null
+    },
+    {
+     "valor": 38136.9,
+     "percentual": null
+    },
+    {
+     "valor": 6728.22,
+     "percentual": null
+    },
+    {
+     "valor": 11641.9,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "VALE TRANSPORTE",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 10242.84,
+     "percentual": 0.00501694
+    },
+    {
+     "valor": 7308.15,
+     "percentual": 0.00293445
+    },
+    {
+     "valor": 8209.43,
+     "percentual": 0.00297551
+    },
+    {
+     "valor": 3919.37,
+     "percentual": null
+    },
+    {
+     "valor": 5298.81,
+     "percentual": null
+    },
+    {
+     "valor": 8254.7,
+     "percentual": null
+    },
+    {
+     "valor": 7172.51,
+     "percentual": null
+    },
+    {
+     "valor": 5899.89,
+     "percentual": null
+    },
+    {
+     "valor": 7562.33,
+     "percentual": null
+    },
+    {
+     "valor": 9534.73,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "(-) 007 - DESPESAS VARIÁVEIS",
+   "tipo": "grupo",
+   "valores": [
+    {
+     "valor": 218630.24,
+     "percentual": 0.10605716
+    },
+    {
+     "valor": 273074.44,
+     "percentual": 0.10919144
+    },
+    {
+     "valor": 214378.01,
+     "percentual": 0.07663134
+    },
+    {
+     "valor": 235979.25,
+     "percentual": null
+    },
+    {
+     "valor": 283580.1,
+     "percentual": null
+    },
+    {
+     "valor": 433676.37,
+     "percentual": null
+    },
+    {
+     "valor": 237025.08,
+     "percentual": null
+    },
+    {
+     "valor": 253270.93,
+     "percentual": null
+    },
+    {
+     "valor": 413738.85,
+     "percentual": null
+    },
+    {
+     "valor": 336373.12,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "AGUA E ESGOTO FABRICA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 515.66,
+     "percentual": 0.00025331
+    },
+    {
+     "valor": 515.66,
+     "percentual": 0.00020705
+    },
+    {
+     "valor": 515.66,
+     "percentual": 0.00018805
+    },
+    {
+     "valor": 515.66,
+     "percentual": null
+    },
+    {
+     "valor": 515.66,
+     "percentual": null
+    },
+    {
+     "valor": 515.66,
+     "percentual": null
+    },
+    {
+     "valor": 547.12,
+     "percentual": null
+    },
+    {
+     "valor": 547.12,
+     "percentual": null
+    },
+    {
+     "valor": 547.12,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "COMBUSTIVEIS VEÍCULOS COMERCIAL",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 526.94,
+     "percentual": 0.00025885
+    },
+    {
+     "valor": 2029.58,
+     "percentual": 0.00081494
+    },
+    {
+     "valor": 1975.7,
+     "percentual": 0.00072048
+    },
+    {
+     "valor": 1415.94,
+     "percentual": null
+    },
+    {
+     "valor": 1418.6,
+     "percentual": null
+    },
+    {
+     "valor": 3900.64,
+     "percentual": null
+    },
+    {
+     "valor": 2595.96,
+     "percentual": null
+    },
+    {
+     "valor": 1689.99,
+     "percentual": null
+    },
+    {
+     "valor": 1818.67,
+     "percentual": null
+    },
+    {
+     "valor": 1024.64,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "COMBUSTIVEIS VEÍCULOS FÁBRICA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 40816.04,
+     "percentual": 0.0200504
+    },
+    {
+     "valor": 91099.53,
+     "percentual": 0.03657925
+    },
+    {
+     "valor": 47165.05,
+     "percentual": 0.01719975
+    },
+    {
+     "valor": 75613.41,
+     "percentual": null
+    },
+    {
+     "valor": 47688.06,
+     "percentual": null
+    },
+    {
+     "valor": 120737.08,
+     "percentual": null
+    },
+    {
+     "valor": 32630.7,
+     "percentual": null
+    },
+    {
+     "valor": 62923.57,
+     "percentual": null
+    },
+    {
+     "valor": 97036.13,
+     "percentual": null
+    },
+    {
+     "valor": 58634.7,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CONSULTA DE CREDITO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 460.0,
+     "percentual": 0.00022597
+    },
+    {
+     "valor": 741.63,
+     "percentual": 0.00029779
+    },
+    {
+     "valor": 760.9,
+     "percentual": 0.00027748
+    },
+    {
+     "valor": 846.37,
+     "percentual": null
+    },
+    {
+     "valor": 1539.67,
+     "percentual": null
+    },
+    {
+     "valor": 2169.9,
+     "percentual": null
+    },
+    {
+     "valor": 2769.63,
+     "percentual": null
+    },
+    {
+     "valor": 2944.41,
+     "percentual": null
+    },
+    {
+     "valor": 3630.75,
+     "percentual": null
+    },
+    {
+     "valor": 2954.81,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CREA, ABTC",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 2212.64,
+     "percentual": 0.00108693
+    },
+    {
+     "valor": 1700.0,
+     "percentual": 0.0006826
+    },
+    {
+     "valor": 2278.05,
+     "percentual": 0.00083074
+    },
+    {
+     "valor": 3066.32,
+     "percentual": null
+    },
+    {
+     "valor": 3066.35,
+     "percentual": null
+    },
+    {
+     "valor": 3510.56,
+     "percentual": null
+    },
+    {
+     "valor": 883.1,
+     "percentual": null
+    },
+    {
+     "valor": 3225.01,
+     "percentual": null
+    },
+    {
+     "valor": 5488.49,
+     "percentual": null
+    },
+    {
+     "valor": 507.71,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "DESPESAS COM CAMINHÕES",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 51386.0,
+     "percentual": 0.02524277
+    },
+    {
+     "valor": 50821.65,
+     "percentual": 0.02040645
+    },
+    {
+     "valor": 48237.24,
+     "percentual": 0.01759075
+    },
+    {
+     "valor": 46378.07,
+     "percentual": null
+    },
+    {
+     "valor": 77876.7,
+     "percentual": null
+    },
+    {
+     "valor": 122228.71,
+     "percentual": null
+    },
+    {
+     "valor": 54743.14,
+     "percentual": null
+    },
+    {
+     "valor": 62454.41,
+     "percentual": null
+    },
+    {
+     "valor": 92445.87,
+     "percentual": null
+    },
+    {
+     "valor": 105293.55,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "DESPESAS COM CARROS (strada e kombi)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1644.0,
+     "percentual": 0.0008076
+    },
+    {
+     "valor": 2107.5,
+     "percentual": 0.00084623
+    },
+    {
+     "valor": 1967.68,
+     "percentual": 0.00071756
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 75.0,
+     "percentual": null
+    },
+    {
+     "valor": 2271.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "DESPESAS COM EMPILHADEIRAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 6039.31,
+     "percentual": 0.00296674
+    },
+    {
+     "valor": 13841.25,
+     "percentual": 0.00555769
+    },
+    {
+     "valor": 9507.5,
+     "percentual": 0.00346711
+    },
+    {
+     "valor": 10770.96,
+     "percentual": null
+    },
+    {
+     "valor": 10695.18,
+     "percentual": null
+    },
+    {
+     "valor": 16875.04,
+     "percentual": null
+    },
+    {
+     "valor": 11055.33,
+     "percentual": null
+    },
+    {
+     "valor": 14185.3,
+     "percentual": null
+    },
+    {
+     "valor": 11019.0,
+     "percentual": null
+    },
+    {
+     "valor": 13061.54,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "DESPESAS COM VEICULOS COMERCIAL",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 246.56,
+     "percentual": 0.00012112
+    },
+    {
+     "valor": 622.34,
+     "percentual": 0.00024989
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 600.0,
+     "percentual": null
+    },
+    {
+     "valor": 1355.92,
+     "percentual": null
+    },
+    {
+     "valor": 1412.91,
+     "percentual": null
+    },
+    {
+     "valor": 1895.91,
+     "percentual": null
+    },
+    {
+     "valor": 227.09,
+     "percentual": null
+    },
+    {
+     "valor": 36.84,
+     "percentual": null
+    },
+    {
+     "valor": 30.25,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "DESPESAS VIAGENS COMERCIAL",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 643.7,
+     "percentual": 0.00031621
+    },
+    {
+     "valor": 1696.47,
+     "percentual": 0.00068118
+    },
+    {
+     "valor": 1015.67,
+     "percentual": 0.00037039
+    },
+    {
+     "valor": 463.2,
+     "percentual": null
+    },
+    {
+     "valor": 364.48,
+     "percentual": null
+    },
+    {
+     "valor": 2455.01,
+     "percentual": null
+    },
+    {
+     "valor": 286.44,
+     "percentual": null
+    },
+    {
+     "valor": 871.19,
+     "percentual": null
+    },
+    {
+     "valor": 373.28,
+     "percentual": null
+    },
+    {
+     "valor": 876.99,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ENERGIA ELETRICA FABRICA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 18466.79,
+     "percentual": 0.00772238
+    },
+    {
+     "valor": 11356.43,
+     "percentual": 0.00410313
+    },
+    {
+     "valor": 10165.58,
+     "percentual": 0.00319656
+    },
+    {
+     "valor": 9407.93,
+     "percentual": null
+    },
+    {
+     "valor": 13045.3,
+     "percentual": null
+    },
+    {
+     "valor": 9407.93,
+     "percentual": null
+    },
+    {
+     "valor": 9427.97,
+     "percentual": null
+    },
+    {
+     "valor": 9674.53,
+     "percentual": null
+    },
+    {
+     "valor": 23036.98,
+     "percentual": null
+    },
+    {
+     "valor": 26110.13,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "FERRAMENTAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 617.5,
+     "percentual": 0.00030334
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 6117.46,
+     "percentual": 0.00223086
+    },
+    {
+     "valor": 1272.53,
+     "percentual": null
+    },
+    {
+     "valor": 6655.36,
+     "percentual": null
+    },
+    {
+     "valor": 817.7,
+     "percentual": null
+    },
+    {
+     "valor": 1503.4,
+     "percentual": null
+    },
+    {
+     "valor": 2051.65,
+     "percentual": null
+    },
+    {
+     "valor": 8058.95,
+     "percentual": null
+    },
+    {
+     "valor": 7794.59,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "FRETE TERCEIRIZADO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 31645.0,
+     "percentual": 0.01554523
+    },
+    {
+     "valor": 23074.44,
+     "percentual": 0.0092651
+    },
+    {
+     "valor": 47682.18,
+     "percentual": 0.01633078
+    },
+    {
+     "valor": 19140.0,
+     "percentual": null
+    },
+    {
+     "valor": 30596.45,
+     "percentual": null
+    },
+    {
+     "valor": 49280.0,
+     "percentual": null
+    },
+    {
+     "valor": 28580.42,
+     "percentual": null
+    },
+    {
+     "valor": 28760.0,
+     "percentual": null
+    },
+    {
+     "valor": 112426.0,
+     "percentual": null
+    },
+    {
+     "valor": 56115.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "LICITAÇÕES",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 342.0,
+     "percentual": 0.00017485
+    },
+    {
+     "valor": 510.0,
+     "percentual": 0.00020529
+    },
+    {
+     "valor": 150.0,
+     "percentual": 7.658e-05
+    },
+    {
+     "valor": 3244.0,
+     "percentual": null
+    },
+    {
+     "valor": 60.0,
+     "percentual": null
+    },
+    {
+     "valor": 806.0,
+     "percentual": null
+    },
+    {
+     "valor": 140.0,
+     "percentual": null
+    },
+    {
+     "valor": 140.0,
+     "percentual": null
+    },
+    {
+     "valor": 140.0,
+     "percentual": null
+    },
+    {
+     "valor": 140.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "LOCAÇÃO DE EQUIPAMENTOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 460.0,
+     "percentual": 0.0001847
+    },
+    {
+     "valor": 7026.0,
+     "percentual": 0.00256218
+    },
+    {
+     "valor": 460.0,
+     "percentual": null
+    },
+    {
+     "valor": 460.0,
+     "percentual": null
+    },
+    {
+     "valor": 460.0,
+     "percentual": null
+    },
+    {
+     "valor": 7667.55,
+     "percentual": null
+    },
+    {
+     "valor": 648.0,
+     "percentual": null
+    },
+    {
+     "valor": 812.5,
+     "percentual": null
+    },
+    {
+     "valor": 627.14,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MANUTENÇÃO DE MAQUINAS E EQUIPAMENTOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 41415.04,
+     "percentual": 0.02034465
+    },
+    {
+     "valor": 36336.34,
+     "percentual": 0.01459015
+    },
+    {
+     "valor": 22118.6,
+     "percentual": 0.00806602
+    },
+    {
+     "valor": 57552.24,
+     "percentual": null
+    },
+    {
+     "valor": 62329.33,
+     "percentual": null
+    },
+    {
+     "valor": 87956.51,
+     "percentual": null
+    },
+    {
+     "valor": 76102.92,
+     "percentual": null
+    },
+    {
+     "valor": 49991.55,
+     "percentual": null
+    },
+    {
+     "valor": 44458.69,
+     "percentual": null
+    },
+    {
+     "valor": 52078.13,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MAQUINAS E EQUIPAMENTOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 10109.23,
+     "percentual": 0.00496604
+    },
+    {
+     "valor": 35216.34,
+     "percentual": 0.01414044
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 880.0,
+     "percentual": null
+    },
+    {
+     "valor": 16162.53,
+     "percentual": null
+    },
+    {
+     "valor": 6194.92,
+     "percentual": null
+    },
+    {
+     "valor": 1125.54,
+     "percentual": null
+    },
+    {
+     "valor": 1572.99,
+     "percentual": null
+    },
+    {
+     "valor": 2953.59,
+     "percentual": null
+    },
+    {
+     "valor": 4034.64,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MARKETING",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 2282.42,
+     "percentual": 0.00112121
+    },
+    {
+     "valor": 682.42,
+     "percentual": 0.00027401
+    },
+    {
+     "valor": 1482.42,
+     "percentual": 0.0005406
+    },
+    {
+     "valor": 1482.42,
+     "percentual": null
+    },
+    {
+     "valor": 2549.63,
+     "percentual": null
+    },
+    {
+     "valor": 1488.17,
+     "percentual": null
+    },
+    {
+     "valor": 1488.17,
+     "percentual": null
+    },
+    {
+     "valor": 1695.34,
+     "percentual": null
+    },
+    {
+     "valor": 1515.84,
+     "percentual": null
+    },
+    {
+     "valor": 1150.85,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MULTAS DE VEICULOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1337.06,
+     "percentual": 0.00065681
+    },
+    {
+     "valor": 262.86,
+     "percentual": 0.00010555
+    },
+    {
+     "valor": 87.62,
+     "percentual": 3.195e-05
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 1002.66,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 312.36,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "PEDÁGIOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 7924.35,
+     "percentual": 0.00389274
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 6124.7,
+     "percentual": 0.0022335
+    },
+    {
+     "valor": 2870.2,
+     "percentual": null
+    },
+    {
+     "valor": 6198.22,
+     "percentual": null
+    },
+    {
+     "valor": 3459.63,
+     "percentual": null
+    },
+    {
+     "valor": 3194.42,
+     "percentual": null
+    },
+    {
+     "valor": 7397.78,
+     "percentual": null
+    },
+    {
+     "valor": 7940.15,
+     "percentual": null
+    },
+    {
+     "valor": 5938.45,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "(-) 009 - DESPESAS COM PESSOAL",
+   "tipo": "grupo",
+   "valores": [
+    {
+     "valor": 166481.9,
+     "percentual": 0.08850064
+    },
+    {
+     "valor": 225143.34,
+     "percentual": 0.08404362
+    },
+    {
+     "valor": 265757.5,
+     "percentual": 0.07848474
+    },
+    {
+     "valor": 190248.67,
+     "percentual": null
+    },
+    {
+     "valor": 195112.4,
+     "percentual": null
+    },
+    {
+     "valor": 221118.58,
+     "percentual": null
+    },
+    {
+     "valor": 204039.17,
+     "percentual": null
+    },
+    {
+     "valor": 301384.43,
+     "percentual": null
+    },
+    {
+     "valor": 182398.61,
+     "percentual": null
+    },
+    {
+     "valor": 183713.34,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "SALÁRIO MOI (MÃO DE OBRA INDIRETA)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 58850.67,
+     "percentual": 0.01234701
+    },
+    {
+     "valor": 115824.27,
+     "percentual": 0.00885408
+    },
+    {
+     "valor": 113503.95,
+     "percentual": 0.01147517
+    },
+    {
+     "valor": 62434.19,
+     "percentual": null
+    },
+    {
+     "valor": 71418.53,
+     "percentual": null
+    },
+    {
+     "valor": 85321.5,
+     "percentual": null
+    },
+    {
+     "valor": 85065.0,
+     "percentual": null
+    },
+    {
+     "valor": 61457.63,
+     "percentual": null
+    },
+    {
+     "valor": 81009.69,
+     "percentual": null
+    },
+    {
+     "valor": 78335.69,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "AJUDA DE CUSTO/CARTÃO BENEFICIO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 4400.0,
+     "percentual": 0.00216145
+    },
+    {
+     "valor": 4770.0,
+     "percentual": 0.0019153
+    },
+    {
+     "valor": 4800.0,
+     "percentual": 0.00175042
+    },
+    {
+     "valor": 4600.0,
+     "percentual": null
+    },
+    {
+     "valor": 4600.0,
+     "percentual": null
+    },
+    {
+     "valor": 4800.0,
+     "percentual": null
+    },
+    {
+     "valor": 4800.0,
+     "percentual": null
+    },
+    {
+     "valor": 4640.0,
+     "percentual": null
+    },
+    {
+     "valor": 3570.0,
+     "percentual": null
+    },
+    {
+     "valor": 3570.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ALMOÇO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 7149.55,
+     "percentual": 0.00351213
+    },
+    {
+     "valor": 5418.43,
+     "percentual": 0.00217567
+    },
+    {
+     "valor": 6832.74,
+     "percentual": 0.00249171
+    },
+    {
+     "valor": 5155.65,
+     "percentual": null
+    },
+    {
+     "valor": 8496.71,
+     "percentual": null
+    },
+    {
+     "valor": 11828.36,
+     "percentual": null
+    },
+    {
+     "valor": 11145.28,
+     "percentual": null
+    },
+    {
+     "valor": 10338.87,
+     "percentual": null
+    },
+    {
+     "valor": 10772.14,
+     "percentual": null
+    },
+    {
+     "valor": 11435.81,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ALMOÇO - SÁBADO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 190.0,
+     "percentual": 9.334e-05
+    },
+    {
+     "valor": 191.62,
+     "percentual": 7.694e-05
+    },
+    {
+     "valor": 76.0,
+     "percentual": 2.772e-05
+    },
+    {
+     "valor": 171.0,
+     "percentual": null
+    },
+    {
+     "valor": 190.0,
+     "percentual": null
+    },
+    {
+     "valor": 320.0,
+     "percentual": null
+    },
+    {
+     "valor": 1218.0,
+     "percentual": null
+    },
+    {
+     "valor": 20.0,
+     "percentual": null
+    },
+    {
+     "valor": 120.0,
+     "percentual": null
+    },
+    {
+     "valor": 60.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CESTA BASICA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 4388.34,
+     "percentual": 0.00215572
+    },
+    {
+     "valor": 4200.96,
+     "percentual": 0.00168681
+    },
+    {
+     "valor": 4523.04,
+     "percentual": 0.00164942
+    },
+    {
+     "valor": 4608.97,
+     "percentual": null
+    },
+    {
+     "valor": 4525.5,
+     "percentual": null
+    },
+    {
+     "valor": 5131.0,
+     "percentual": null
+    },
+    {
+     "valor": 4921.02,
+     "percentual": null
+    },
+    {
+     "valor": 4378.0,
+     "percentual": null
+    },
+    {
+     "valor": 3477.96,
+     "percentual": null
+    },
+    {
+     "valor": 3522.24,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "FÉRIAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1434.05,
+     "percentual": 0.00063579
+    },
+    {
+     "valor": 4925.17,
+     "percentual": 0.00123546
+    },
+    {
+     "valor": 8269.15,
+     "percentual": 0.00426161
+    },
+    {
+     "valor": 20638.15,
+     "percentual": null
+    },
+    {
+     "valor": 17700.12,
+     "percentual": null
+    },
+    {
+     "valor": 7729.5,
+     "percentual": null
+    },
+    {
+     "valor": 9761.92,
+     "percentual": null
+    },
+    {
+     "valor": 7796.18,
+     "percentual": null
+    },
+    {
+     "valor": 3318.51,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "FGTS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 8248.92,
+     "percentual": 0.01034355
+    },
+    {
+     "valor": 13712.19,
+     "percentual": 0.00665784
+    },
+    {
+     "valor": 15586.25,
+     "percentual": 0.00819492
+    },
+    {
+     "valor": 11195.51,
+     "percentual": null
+    },
+    {
+     "valor": 10754.11,
+     "percentual": null
+    },
+    {
+     "valor": 10807.57,
+     "percentual": null
+    },
+    {
+     "valor": 9700.85,
+     "percentual": null
+    },
+    {
+     "valor": 10429.19,
+     "percentual": null
+    },
+    {
+     "valor": 8106.37,
+     "percentual": null
+    },
+    {
+     "valor": 7660.01,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "INSS EMPRESA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 22167.29,
+     "percentual": 0.01053819
+    },
+    {
+     "valor": 25522.54,
+     "percentual": 0.01014847
+    },
+    {
+     "valor": 49315.06,
+     "percentual": 0.01048539
+    },
+    {
+     "valor": 28654.55,
+     "percentual": null
+    },
+    {
+     "valor": 27590.48,
+     "percentual": null
+    },
+    {
+     "valor": 27640.19,
+     "percentual": null
+    },
+    {
+     "valor": 25158.09,
+     "percentual": null
+    },
+    {
+     "valor": 28594.11,
+     "percentual": null
+    },
+    {
+     "valor": 22774.02,
+     "percentual": null
+    },
+    {
+     "valor": 20811.7,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "INSS TERCEIROS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 6252.43,
+     "percentual": 0.00296956
+    },
+    {
+     "valor": 7225.45,
+     "percentual": 0.00287235
+    },
+    {
+     "valor": 14213.33,
+     "percentual": 0.00304075
+    },
+    {
+     "valor": 8215.8,
+     "percentual": null
+    },
+    {
+     "valor": 7907.19,
+     "percentual": null
+    },
+    {
+     "valor": 7921.63,
+     "percentual": null
+    },
+    {
+     "valor": 7201.83,
+     "percentual": null
+    },
+    {
+     "valor": 8197.57,
+     "percentual": null
+    },
+    {
+     "valor": 6510.44,
+     "percentual": null
+    },
+    {
+     "valor": 5941.38,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MEDICINA OCUPACIONAL",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1752.97,
+     "percentual": 0.0
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 244.4,
+     "percentual": null
+    },
+    {
+     "valor": 226.71,
+     "percentual": null
+    },
+    {
+     "valor": 689.39,
+     "percentual": null
+    },
+    {
+     "valor": 360.45,
+     "percentual": null
+    },
+    {
+     "valor": 197.4,
+     "percentual": null
+    },
+    {
+     "valor": 160.5,
+     "percentual": null
+    },
+    {
+     "valor": 386.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "PROVISÃO DO 13º SALÁRIO  (INCLUINDO 13S DAS FÉRIAS)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 10792.88,
+     "percentual": 0.00530187
+    },
+    {
+     "valor": 15801.58,
+     "percentual": 0.00634482
+    },
+    {
+     "valor": 13174.9,
+     "percentual": 0.00480451
+    },
+    {
+     "valor": 14987.86,
+     "percentual": null
+    },
+    {
+     "valor": 14296.68,
+     "percentual": null
+    },
+    {
+     "valor": 16591.36,
+     "percentual": null
+    },
+    {
+     "valor": 12714.48,
+     "percentual": null
+    },
+    {
+     "valor": 15440.57,
+     "percentual": null
+    },
+    {
+     "valor": 11407.76,
+     "percentual": null
+    },
+    {
+     "valor": 11522.81,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "PROVISÃO DE FÉRIAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 13601.42,
+     "percentual": 0.00668154
+    },
+    {
+     "valor": 19231.92,
+     "percentual": 0.00772221
+    },
+    {
+     "valor": 20463.18,
+     "percentual": 0.00746234
+    },
+    {
+     "valor": 21230.48,
+     "percentual": null
+    },
+    {
+     "valor": 19059.23,
+     "percentual": null
+    },
+    {
+     "valor": 23693.17,
+     "percentual": null
+    },
+    {
+     "valor": 14067.46,
+     "percentual": null
+    },
+    {
+     "valor": 25069.13,
+     "percentual": null
+    },
+    {
+     "valor": 14841.24,
+     "percentual": null
+    },
+    {
+     "valor": 15081.86,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "RAT",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 4861.05,
+     "percentual": 0.00230923
+    },
+    {
+     "valor": 5617.54,
+     "percentual": 0.00223316
+    },
+    {
+     "valor": 11050.37,
+     "percentual": 0.00236409
+    },
+    {
+     "valor": 6372.63,
+     "percentual": null
+    },
+    {
+     "valor": 6133.26,
+     "percentual": null
+    },
+    {
+     "valor": 6144.44,
+     "percentual": null
+    },
+    {
+     "valor": 5586.13,
+     "percentual": null
+    },
+    {
+     "valor": 6358.14,
+     "percentual": null
+    },
+    {
+     "valor": 5049.87,
+     "percentual": null
+    },
+    {
+     "valor": 4608.45,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "RESCISÕES",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 18504.86,
+     "percentual": 0.00088423
+    },
+    {
+     "valor": 669.45,
+     "percentual": 0.00033729
+    },
+    {
+     "valor": 673.97,
+     "percentual": 0.00015316
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 9148.01,
+     "percentual": null
+    },
+    {
+     "valor": 9997.23,
+     "percentual": null
+    },
+    {
+     "valor": 116499.57,
+     "percentual": null
+    },
+    {
+     "valor": 9266.91,
+     "percentual": null
+    },
+    {
+     "valor": 18039.24,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "TREINAMENTOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 691.64,
+     "percentual": 0.01011659
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.00133435
+    },
+    {
+     "valor": 321.18,
+     "percentual": 0.00024999
+    },
+    {
+     "valor": 321.18,
+     "percentual": null
+    },
+    {
+     "valor": 321.18,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "VALE TRANSPORTE",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 3195.83,
+     "percentual": 0.00156991
+    },
+    {
+     "valor": 2032.22,
+     "percentual": 0.000816
+    },
+    {
+     "valor": 2954.38,
+     "percentual": 0.00107738
+    },
+    {
+     "valor": 1418.3,
+     "percentual": null
+    },
+    {
+     "valor": 1892.7,
+     "percentual": null
+    },
+    {
+     "valor": 3352.46,
+     "percentual": null
+    },
+    {
+     "valor": 2341.43,
+     "percentual": null
+    },
+    {
+     "valor": 1968.07,
+     "percentual": null
+    },
+    {
+     "valor": 2013.2,
+     "percentual": null
+    },
+    {
+     "valor": 2738.15,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "(-) 010 - DESPESAS OPERACIONAIS",
+   "tipo": "grupo",
+   "valores": [
+    {
+     "valor": 119899.94,
+     "percentual": 0.05834122
+    },
+    {
+     "valor": 73794.19,
+     "percentual": 0.03547706
+    },
+    {
+     "valor": 159004.35,
+     "percentual": 0.05646235
+    },
+    {
+     "valor": 112081.93,
+     "percentual": null
+    },
+    {
+     "valor": 83697.0,
+     "percentual": null
+    },
+    {
+     "valor": 101891.91,
+     "percentual": null
+    },
+    {
+     "valor": 85826.82,
+     "percentual": null
+    },
+    {
+     "valor": 106895.69,
+     "percentual": null
+    },
+    {
+     "valor": 105012.24,
+     "percentual": null
+    },
+    {
+     "valor": 75800.12,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ADVOGADOS MENSALIDADES",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1809.7,
+     "percentual": 0.00094724
+    },
+    {
+     "valor": 2657.7,
+     "percentual": 0.00077426
+    },
+    {
+     "valor": 1928.28,
+     "percentual": 0.00070319
+    },
+    {
+     "valor": 1928.28,
+     "percentual": null
+    },
+    {
+     "valor": 2000.0,
+     "percentual": null
+    },
+    {
+     "valor": 2000.0,
+     "percentual": null
+    },
+    {
+     "valor": 2000.0,
+     "percentual": null
+    },
+    {
+     "valor": 2000.0,
+     "percentual": null
+    },
+    {
+     "valor": 2000.0,
+     "percentual": null
+    },
+    {
+     "valor": 2000.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ÁGUA E ESGOTO ADM",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 781.15,
+     "percentual": 0.00024324
+    },
+    {
+     "valor": 555.93,
+     "percentual": 0.00022322
+    },
+    {
+     "valor": 836.23,
+     "percentual": 0.00030495
+    },
+    {
+     "valor": 693.23,
+     "percentual": null
+    },
+    {
+     "valor": 885.79,
+     "percentual": null
+    },
+    {
+     "valor": 1961.73,
+     "percentual": null
+    },
+    {
+     "valor": 366.2,
+     "percentual": null
+    },
+    {
+     "valor": 628.79,
+     "percentual": null
+    },
+    {
+     "valor": 605.52,
+     "percentual": null
+    },
+    {
+     "valor": 587.99,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CONDOMINIOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1493.6,
+     "percentual": 0.00073371
+    },
+    {
+     "valor": 1500.64,
+     "percentual": 0.00060255
+    },
+    {
+     "valor": 1489.24,
+     "percentual": 0.00054308
+    },
+    {
+     "valor": 2721.23,
+     "percentual": null
+    },
+    {
+     "valor": 1514.47,
+     "percentual": null
+    },
+    {
+     "valor": 1502.33,
+     "percentual": null
+    },
+    {
+     "valor": 1512.1,
+     "percentual": null
+    },
+    {
+     "valor": 1509.68,
+     "percentual": null
+    },
+    {
+     "valor": 1541.73,
+     "percentual": null
+    },
+    {
+     "valor": 1501.85,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CONFRATERNIZAÇÕES / EVENTOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 19287.73,
+     "percentual": 0.00703369
+    },
+    {
+     "valor": 179.06,
+     "percentual": null
+    },
+    {
+     "valor": 317.24,
+     "percentual": null
+    },
+    {
+     "valor": 1574.47,
+     "percentual": null
+    },
+    {
+     "valor": 3480.68,
+     "percentual": null
+    },
+    {
+     "valor": 1712.99,
+     "percentual": null
+    },
+    {
+     "valor": 345.92,
+     "percentual": null
+    },
+    {
+     "valor": 122.35,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CONSULTORIA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 14243.39,
+     "percentual": 0.00674179
+    },
+    {
+     "valor": 898.0,
+     "percentual": 0.00600693
+    },
+    {
+     "valor": 16630.84,
+     "percentual": 0.00458347
+    },
+    {
+     "valor": 14457.01,
+     "percentual": null
+    },
+    {
+     "valor": 13497.53,
+     "percentual": null
+    },
+    {
+     "valor": 14350.38,
+     "percentual": null
+    },
+    {
+     "valor": 14298.0,
+     "percentual": null
+    },
+    {
+     "valor": 37569.82,
+     "percentual": null
+    },
+    {
+     "valor": 35621.04,
+     "percentual": null
+    },
+    {
+     "valor": 14436.81,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CONTABILIDADE",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 6895.0,
+     "percentual": 0.00338709
+    },
+    {
+     "valor": 6369.35,
+     "percentual": 0.00255749
+    },
+    {
+     "valor": 6350.0,
+     "percentual": 0.00230801
+    },
+    {
+     "valor": 11500.0,
+     "percentual": null
+    },
+    {
+     "valor": 7050.0,
+     "percentual": null
+    },
+    {
+     "valor": 7050.0,
+     "percentual": null
+    },
+    {
+     "valor": 6112.2,
+     "percentual": null
+    },
+    {
+     "valor": 6563.21,
+     "percentual": null
+    },
+    {
+     "valor": 6563.21,
+     "percentual": null
+    },
+    {
+     "valor": 6563.21,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "CSRF (RETENÇÕES DE PRESTADORES SERVIÇOS)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 0.0,
+     "percentual": 0.00105414
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.00118256
+    },
+    {
+     "valor": 3670.79,
+     "percentual": 0.00133863
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 2362.9,
+     "percentual": null
+    },
+    {
+     "valor": 1144.7,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "DOAÇÕES E CONTRIBUIÇÕES",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 2145.89,
+     "percentual": 0.0
+    },
+    {
+     "valor": 2945.14,
+     "percentual": 0.0
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 5186.42,
+     "percentual": null
+    },
+    {
+     "valor": 3303.91,
+     "percentual": null
+    },
+    {
+     "valor": 2268.86,
+     "percentual": null
+    },
+    {
+     "valor": 2277.61,
+     "percentual": null
+    },
+    {
+     "valor": 1974.95,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ENERGIA ELETRICA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 0.0,
+     "percentual": 0.00059856
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.00060641
+    },
+    {
+     "valor": 2284.17,
+     "percentual": 0.00083297
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 1620.53,
+     "percentual": null
+    },
+    {
+     "valor": 1723.33,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "INTERNET/HOSPEDAGEM/SITES",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1570.0,
+     "percentual": 0.00030097
+    },
+    {
+     "valor": 1510.25,
+     "percentual": 0.00024569
+    },
+    {
+     "valor": 615.7,
+     "percentual": 0.0002234
+    },
+    {
+     "valor": 2523.83,
+     "percentual": null
+    },
+    {
+     "valor": 2528.18,
+     "percentual": null
+    },
+    {
+     "valor": 2323.02,
+     "percentual": null
+    },
+    {
+     "valor": 2086.73,
+     "percentual": null
+    },
+    {
+     "valor": 2086.23,
+     "percentual": null
+    },
+    {
+     "valor": 627.74,
+     "percentual": null
+    },
+    {
+     "valor": 499.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "INSS (RETENÇÕES DE PRESTADORES SERVIÇOS)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 2884.97,
+     "percentual": 0.00141721
+    },
+    {
+     "valor": 113.61,
+     "percentual": 0.00225963
+    },
+    {
+     "valor": 6791.1,
+     "percentual": 0.00247652
+    },
+    {
+     "valor": 615.7,
+     "percentual": null
+    },
+    {
+     "valor": 612.68,
+     "percentual": null
+    },
+    {
+     "valor": 611.6,
+     "percentual": null
+    },
+    {
+     "valor": 614.99,
+     "percentual": null
+    },
+    {
+     "valor": 612.61,
+     "percentual": null
+    },
+    {
+     "valor": 2362.81,
+     "percentual": null
+    },
+    {
+     "valor": 1767.69,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "IPTU",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 25526.84,
+     "percentual": 0.01263188
+    },
+    {
+     "valor": 5627.54,
+     "percentual": 0.00508965
+    },
+    {
+     "valor": 11085.4,
+     "percentual": 0.00404253
+    },
+    {
+     "valor": 9431.93,
+     "percentual": null
+    },
+    {
+     "valor": 6794.29,
+     "percentual": null
+    },
+    {
+     "valor": 4149.95,
+     "percentual": null
+    },
+    {
+     "valor": 2660.95,
+     "percentual": null
+    },
+    {
+     "valor": 2113.82,
+     "percentual": null
+    },
+    {
+     "valor": 7569.81,
+     "percentual": null
+    },
+    {
+     "valor": 7631.03,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "IPVA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 12675.62,
+     "percentual": 0.0
+    },
+    {
+     "valor": 24012.86,
+     "percentual": 0.00875681
+    },
+    {
+     "valor": 1726.5,
+     "percentual": null
+    },
+    {
+     "valor": 1395.86,
+     "percentual": null
+    },
+    {
+     "valor": 7653.09,
+     "percentual": null
+    },
+    {
+     "valor": 7504.46,
+     "percentual": null
+    },
+    {
+     "valor": 7508.61,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "IRRF (RETENÇÕES DE PRESTADORES SERVIÇOS)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 496.3,
+     "percentual": 0.0002438
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.00026583
+    },
+    {
+     "valor": 909.25,
+     "percentual": 0.00033158
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 654.79,
+     "percentual": null
+    },
+    {
+     "valor": 308.31,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "ISS (RETENÇÕES DE PRESTADORES SERVIÇOS)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1358.55,
+     "percentual": 0.00066737
+    },
+    {
+     "valor": 662.04,
+     "percentual": 0.00107901
+    },
+    {
+     "valor": 3392.31,
+     "percentual": 0.00117747
+    },
+    {
+     "valor": 1137.99,
+     "percentual": null
+    },
+    {
+     "valor": 764.76,
+     "percentual": null
+    },
+    {
+     "valor": 540.16,
+     "percentual": null
+    },
+    {
+     "valor": 628.89,
+     "percentual": null
+    },
+    {
+     "valor": 556.81,
+     "percentual": null
+    },
+    {
+     "valor": 1145.13,
+     "percentual": null
+    },
+    {
+     "valor": 863.36,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MANUTENÇÃO DE SISTEMAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 2090.0,
+     "percentual": 0.00082528
+    },
+    {
+     "valor": 2687.23,
+     "percentual": 0.00064245
+    },
+    {
+     "valor": 1600.0,
+     "percentual": 0.00058347
+    },
+    {
+     "valor": 4572.59,
+     "percentual": null
+    },
+    {
+     "valor": 3275.43,
+     "percentual": null
+    },
+    {
+     "valor": 2091.19,
+     "percentual": null
+    },
+    {
+     "valor": 3769.04,
+     "percentual": null
+    },
+    {
+     "valor": 2351.43,
+     "percentual": null
+    },
+    {
+     "valor": 3511.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MANUTENÇÃO E CONSERVAÇÃO PREDIAL",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 1997.23,
+     "percentual": 0.00097412
+    },
+    {
+     "valor": 1600.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 6396.3,
+     "percentual": 0.00233255
+    },
+    {
+     "valor": 1600.0,
+     "percentual": null
+    },
+    {
+     "valor": 2220.0,
+     "percentual": null
+    },
+    {
+     "valor": 1450.0,
+     "percentual": null
+    },
+    {
+     "valor": 1450.0,
+     "percentual": null
+    },
+    {
+     "valor": 2050.0,
+     "percentual": null
+    },
+    {
+     "valor": 4593.6,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MATERIAL DE COPA, COZINHA E REFEITÓRIO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 2314.42,
+     "percentual": 0.0
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 849.4,
+     "percentual": null
+    },
+    {
+     "valor": 878.68,
+     "percentual": null
+    },
+    {
+     "valor": 1748.39,
+     "percentual": null
+    },
+    {
+     "valor": 2501.66,
+     "percentual": null
+    },
+    {
+     "valor": 2552.73,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MATERIAL DE ESCRITORIO",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 384.0,
+     "percentual": 0.00129139
+    },
+    {
+     "valor": 2416.5,
+     "percentual": 0.0009703
+    },
+    {
+     "valor": 1673.14,
+     "percentual": 0.00061015
+    },
+    {
+     "valor": 2867.88,
+     "percentual": null
+    },
+    {
+     "valor": 2258.4,
+     "percentual": null
+    },
+    {
+     "valor": 1846.27,
+     "percentual": null
+    },
+    {
+     "valor": 2176.66,
+     "percentual": null
+    },
+    {
+     "valor": 1726.35,
+     "percentual": null
+    },
+    {
+     "valor": 2893.7,
+     "percentual": null
+    },
+    {
+     "valor": 3286.15,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MATERIAL DE HIGIENE E LIMPEZA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 330.0,
+     "percentual": 0.00018864
+    },
+    {
+     "valor": 1015.0,
+     "percentual": 0.00040755
+    },
+    {
+     "valor": 581.73,
+     "percentual": 0.00021214
+    },
+    {
+     "valor": 1271.49,
+     "percentual": null
+    },
+    {
+     "valor": 1521.28,
+     "percentual": null
+    },
+    {
+     "valor": 127.92,
+     "percentual": null
+    },
+    {
+     "valor": 906.66,
+     "percentual": null
+    },
+    {
+     "valor": 1299.52,
+     "percentual": null
+    },
+    {
+     "valor": 1421.94,
+     "percentual": null
+    },
+    {
+     "valor": 835.4,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MATERIAL DE INFORMATICA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 5265.47,
+     "percentual": 0.0011673
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 480.7,
+     "percentual": 0.0001753
+    },
+    {
+     "valor": 923.92,
+     "percentual": null
+    },
+    {
+     "valor": 480.7,
+     "percentual": null
+    },
+    {
+     "valor": 480.7,
+     "percentual": null
+    },
+    {
+     "valor": 1075.69,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MENSALIDADE DE SISTEMAS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 358.1,
+     "percentual": 0.00305545
+    },
+    {
+     "valor": 4539.9,
+     "percentual": 0.00182291
+    },
+    {
+     "valor": 4790.4,
+     "percentual": 0.00174692
+    },
+    {
+     "valor": 4539.9,
+     "percentual": null
+    },
+    {
+     "valor": 4539.9,
+     "percentual": null
+    },
+    {
+     "valor": 4689.9,
+     "percentual": null
+    },
+    {
+     "valor": 4689.9,
+     "percentual": null
+    },
+    {
+     "valor": 4689.9,
+     "percentual": null
+    },
+    {
+     "valor": 4689.9,
+     "percentual": null
+    },
+    {
+     "valor": 4539.9,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MOTOBOY / CORREIOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 2805.0,
+     "percentual": 0.00017591
+    },
+    {
+     "valor": 285.0,
+     "percentual": 0.00011444
+    },
+    {
+     "valor": 502.6,
+     "percentual": 0.00018328
+    },
+    {
+     "valor": 555.0,
+     "percentual": null
+    },
+    {
+     "valor": 383.59,
+     "percentual": null
+    },
+    {
+     "valor": 941.98,
+     "percentual": null
+    },
+    {
+     "valor": 490.0,
+     "percentual": null
+    },
+    {
+     "valor": 219.6,
+     "percentual": null
+    },
+    {
+     "valor": 355.3,
+     "percentual": null
+    },
+    {
+     "valor": 355.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MOVEIS e UTENSÍLIOS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 609.79,
+     "percentual": 0.00144915
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 0.0,
+     "percentual": 0.0
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 444.44,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": 0.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "MULTAS e PENALIDADES ADM (Órgãos Reguladores)",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 23010.2,
+     "percentual": 0.00029955
+    },
+    {
+     "valor": 601.41,
+     "percentual": 0.00024148
+    },
+    {
+     "valor": 601.41,
+     "percentual": 0.00021932
+    },
+    {
+     "valor": 623.51,
+     "percentual": null
+    },
+    {
+     "valor": 627.99,
+     "percentual": null
+    },
+    {
+     "valor": 631.85,
+     "percentual": null
+    },
+    {
+     "valor": 623.51,
+     "percentual": null
+    },
+    {
+     "valor": 623.51,
+     "percentual": null
+    },
+    {
+     "valor": 644.88,
+     "percentual": null
+    },
+    {
+     "valor": 649.2,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "PROCESSOS JUDICIAIS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 13596.0,
+     "percentual": 0.00931506
+    },
+    {
+     "valor": 4851.36,
+     "percentual": 0.00194797
+    },
+    {
+     "valor": 23768.11,
+     "percentual": 0.00866755
+    },
+    {
+     "valor": 22364.67,
+     "percentual": null
+    },
+    {
+     "valor": 8663.23,
+     "percentual": null
+    },
+    {
+     "valor": 22950.49,
+     "percentual": null
+    },
+    {
+     "valor": 6030.05,
+     "percentual": null
+    },
+    {
+     "valor": 6931.43,
+     "percentual": null
+    },
+    {
+     "valor": 8901.92,
+     "percentual": null
+    },
+    {
+     "valor": 8950.87,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "SEGURANÇA E VIGILANCIA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 5436.93,
+     "percentual": 0.00667887
+    },
+    {
+     "valor": 12948.0,
+     "percentual": 0.00519902
+    },
+    {
+     "valor": 12672.0,
+     "percentual": 0.00462112
+    },
+    {
+     "valor": 13296.0,
+     "percentual": null
+    },
+    {
+     "valor": 12024.0,
+     "percentual": null
+    },
+    {
+     "valor": 12840.0,
+     "percentual": null
+    },
+    {
+     "valor": 12720.0,
+     "percentual": null
+    },
+    {
+     "valor": 13296.0,
+     "percentual": null
+    },
+    {
+     "valor": 13296.0,
+     "percentual": null
+    },
+    {
+     "valor": 12522.0,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "SEGUROS",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 207.22,
+     "percentual": 0.00267083
+    },
+    {
+     "valor": 5436.93,
+     "percentual": 0.00218309
+    },
+    {
+     "valor": 4908.72,
+     "percentual": 0.00181778
+    },
+    {
+     "valor": 4984.76,
+     "percentual": null
+    },
+    {
+     "valor": 4126.09,
+     "percentual": null
+    },
+    {
+     "valor": 4126.09,
+     "percentual": null
+    },
+    {
+     "valor": 4126.09,
+     "percentual": null
+    },
+    {
+     "valor": 4128.99,
+     "percentual": null
+    },
+    {
+     "valor": 78.89,
+     "percentual": null
+    },
+    {
+     "valor": 3912.09,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "TAXA VALESUL",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 2290.19,
+     "percentual": 0.00010179
+    },
+    {
+     "valor": 194.78,
+     "percentual": 7.821e-05
+    },
+    {
+     "valor": 175.52,
+     "percentual": 6.401e-05
+    },
+    {
+     "valor": 146.8,
+     "percentual": null
+    },
+    {
+     "valor": 192.93,
+     "percentual": null
+    },
+    {
+     "valor": 156.82,
+     "percentual": null
+    },
+    {
+     "valor": 174.75,
+     "percentual": null
+    },
+    {
+     "valor": 153.93,
+     "percentual": null
+    },
+    {
+     "valor": 182.73,
+     "percentual": null
+    },
+    {
+     "valor": 183.11,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  },
+  {
+   "nome": "TELEFONIA",
+   "tipo": "conta",
+   "valores": [
+    {
+     "valor": 0.0,
+     "percentual": 0.00118087
+    },
+    {
+     "valor": 1702.26,
+     "percentual": 0.00068351
+    },
+    {
+     "valor": 1569.82,
+     "percentual": 0.00057247
+    },
+    {
+     "valor": 1384.83,
+     "percentual": null
+    },
+    {
+     "valor": 1395.63,
+     "percentual": null
+    },
+    {
+     "valor": 1824.72,
+     "percentual": null
+    },
+    {
+     "valor": 1550.0,
+     "percentual": null
+    },
+    {
+     "valor": 2034.78,
+     "percentual": null
+    },
+    {
+     "valor": 1421.25,
+     "percentual": null
+    },
+    {
+     "valor": 1416.77,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    },
+    {
+     "valor": null,
+     "percentual": null
+    }
+   ]
+  }
+ ],
+ "rodape": [
+  {
+   "nome": "Total despesas VAR por Mês:",
+   "valores": [
+    218630.24,
+    273074.44,
+    214378.01,
+    235979.25,
+    283580.1,
+    433676.37,
+    237025.08,
+    253270.93,
+    413738.85,
+    336373.12,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "nome": "Total despesas PES por Mês:",
+   "valores": [
+    166481.9,
+    225143.34,
+    265757.5,
+    190248.67,
+    195112.4,
+    221118.58,
+    204039.17,
+    301384.43,
+    182398.61,
+    183713.34,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "nome": "Total despesas OP por Mês:",
+   "valores": [
+    119899.94,
+    73794.19,
+    159004.35,
+    112081.93,
+    83697.0,
+    101891.91,
+    85826.82,
+    106895.69,
+    105012.24,
+    75800.12,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "nome": "Total depesas por Mês:",
+   "valores": [
+    505012.08,
+    572011.97,
+    639139.86,
+    538309.85,
+    562389.5,
+    756686.86,
+    526891.07,
+    661551.05,
+    701149.7,
+    595886.58,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "nome": "Faturamento por Mês:",
+   "valores": [
+    2028798.32,
+    2388101.33,
+    2707731.99,
+    2239430.07,
+    1421851.54,
+    1474534.42,
+    1875395.86,
+    1938243.63,
+    2001383.84,
+    2541920.06,
+    null,
+    null
+   ]
+  },
+  {
+   "nome": "Despesas (%):",
+   "valores": [
+    0.24892178,
+    0.23952584,
+    0.23604251,
+    0.24037806,
+    0.39553321,
+    0.51317002,
+    0.28094926,
+    0.3413147,
+    0.35033245,
+    0.23442381,
+    null,
+    null
+   ]
+  }
+ ],
+ "mediaDespesas": 0.30805916
+}

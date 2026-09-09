@@ -1,0 +1,404 @@
+{
+ "maoDeObra": [
+  {
+   "funcao": "Líder de Central de Concreto",
+   "valores": {
+    "Mistura": 1.0,
+    "Pontes": 0.0,
+    "Robô": 0.0,
+    "Galeria/Gradil": 0.0,
+    "Siome": 0.0,
+    "Radial": 0.0,
+    "PH": 0.0,
+    "Tampa": 0.0,
+    "Anéis": 0.0,
+    "Galerias": 0.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
+   }
+  },
+  {
+   "funcao": "Soldadores Armadores",
+   "valores": {
+    "Mistura": 0.0,
+    "Pontes": 0.0,
+    "Robô": 2.0,
+    "Galeria/Gradil": 0.0,
+    "Siome": 0.0,
+    "Radial": 0.0,
+    "PH": 0.0,
+    "Tampa": 0.0,
+    "Anéis": 0.0,
+    "Galerias": 0.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
+   }
+  },
+  {
+   "funcao": "Ferreiros Armadores",
+   "valores": {
+    "Mistura": 0.0,
+    "Pontes": 0.0,
+    "Robô": 0.0,
+    "Galeria/Gradil": 6.0,
+    "Siome": 0.0,
+    "Radial": 0.0,
+    "PH": 0.0,
+    "Tampa": 0.0,
+    "Anéis": 0.0,
+    "Galerias": 0.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
+   }
+  },
+  {
+   "funcao": "Operador de Máquinas",
+   "valores": {
+    "Mistura": 0.0,
+    "Pontes": 1.0,
+    "Robô": 0.0,
+    "Galeria/Gradil": 0.0,
+    "Siome": 2.0,
+    "Radial": 1.0,
+    "PH": 1.0,
+    "Tampa": 0.0,
+    "Anéis": 1.0,
+    "Galerias": 1.0,
+    "Storrer": 1.0,
+    "Vibromatic": 1.0
+   }
+  },
+  {
+   "funcao": "Pedreiro",
+   "valores": {
+    "Mistura": 0.0,
+    "Pontes": 0.0,
+    "Robô": 0.0,
+    "Galeria/Gradil": 0.0,
+    "Siome": 1.0,
+    "Radial": 1.0,
+    "PH": 1.0,
+    "Tampa": 1.0,
+    "Anéis": 1.0,
+    "Galerias": 1.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
+   }
+  },
+  {
+   "funcao": "Auxiliar de Produção",
+   "valores": {
+    "Mistura": 0.0,
+    "Pontes": 0.0,
+    "Robô": 0.0,
+    "Galeria/Gradil": 0.0,
+    "Siome": 0.0,
+    "Radial": 1.0,
+    "PH": 1.0,
+    "Tampa": 1.0,
+    "Anéis": 1.0,
+    "Galerias": 2.0,
+    "Storrer": 1.0,
+    "Vibromatic": 1.0
+   }
+  },
+  {
+   "funcao": "Analista de Logística",
+   "valores": {
+    "Mistura": 0.0,
+    "Pontes": 0.0,
+    "Robô": 0.0,
+    "Galeria/Gradil": 0.0,
+    "Siome": 0.0,
+    "Radial": 0.0,
+    "PH": 0.0,
+    "Tampa": 0.0,
+    "Anéis": 0.0,
+    "Galerias": 0.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
+   }
+  },
+  {
+   "funcao": "Operador de Empilhadeira",
+   "valores": {
+    "Mistura": 0.0,
+    "Pontes": 0.0,
+    "Robô": 0.0,
+    "Galeria/Gradil": 0.0,
+    "Siome": 0.0,
+    "Radial": 0.0,
+    "PH": 0.0,
+    "Tampa": 0.0,
+    "Anéis": 0.0,
+    "Galerias": 0.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
+   }
+  },
+  {
+   "funcao": "Líder de Operação de Empilhadeira",
+   "valores": {
+    "Mistura": 0.0,
+    "Pontes": 0.0,
+    "Robô": 0.0,
+    "Galeria/Gradil": 0.0,
+    "Siome": 0.0,
+    "Radial": 0.0,
+    "PH": 0.0,
+    "Tampa": 0.0,
+    "Anéis": 0.0,
+    "Galerias": 0.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
+   }
+  },
+  {
+   "funcao": "Total:",
+   "valores": {
+    "Mistura": 1.0,
+    "Pontes": 1.0,
+    "Robô": 2.0,
+    "Galeria/Gradil": 6.0,
+    "Siome": 3.0,
+    "Radial": 3.0,
+    "PH": 3.0,
+    "Tampa": 2.0,
+    "Anéis": 3.0,
+    "Galerias": 4.0,
+    "Storrer": 2.0,
+    "Vibromatic": 2.0
+   }
+  }
+ ],
+ "manutencao": [
+  {
+   "setor": "Galerias",
+   "total": 80000.0,
+   "percentual": 0.4,
+   "manutencaoSetor": 32000.0
+  },
+  {
+   "setor": "Siome",
+   "total": 80000.0,
+   "percentual": 0.2,
+   "manutencaoSetor": 16000.0
+  },
+  {
+   "setor": "Radial",
+   "total": 80000.0,
+   "percentual": 0.1,
+   "manutencaoSetor": 8000.0
+  },
+  {
+   "setor": "PH",
+   "total": 80000.0,
+   "percentual": 0.1,
+   "manutencaoSetor": 8000.0
+  },
+  {
+   "setor": "Disco",
+   "total": 80000.0,
+   "percentual": 0.05,
+   "manutencaoSetor": 4000.0
+  },
+  {
+   "setor": "Chão",
+   "total": 80000.0,
+   "percentual": 0.05,
+   "manutencaoSetor": 4000.0
+  },
+  {
+   "setor": "Vibromatic",
+   "total": 80000.0,
+   "percentual": 0.05,
+   "manutencaoSetor": 4000.0
+  },
+  {
+   "setor": "Pontes",
+   "total": 80000.0,
+   "percentual": 0.05,
+   "manutencaoSetor": 4000.0
+  },
+  {
+   "setor": "Produtos com armação",
+   "total": null,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN001 - ANEL DN 600 X 750 X 70 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN001 - ANEL DN 600 X 750 X 70 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN003 - ANEL DN 600 X 500 X 70 JE EA2 COM FUNDO",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN003 - ANEL DN 600 X 500 X 70 JE EA2 COM FUNDO",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN005 - ANEL DN 600 X 500 X 70 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN005 - ANEL DN 600 X 500 X 70 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN007 - ANEL DN 600 X 200 X 70 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN013 - ANEL DN 600 X 1000 X 70 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN013 - ANEL DN 600 X 1000 X 70 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN015 - ANEL DN 1200 X 200 X 130 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN015 - ANEL DN 1200 X 200 X 130 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN017 - ANEL DN 1200 X 500 X 130 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN017 - ANEL DN 1200 X 500 X 130 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN019 - ANEL DN 1200 X 750 X 130 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN019 - ANEL DN 1200 X 750 X 130 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN021 - ANEL DN 1200 X 1000 X 130 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN021 - ANEL DN 1200 X 1000 X 130 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN023 - ANEL DN 1200 X 1100 X 130 JE EA2 COM FUNDO",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN025 - ANEL DN 1000 X 200 X 102 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN027 - ANEL DN 1000 X 500 X 102 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN029 - ANEL DN 1000 X 750 X 102 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN031 - ANEL DN 1000 X 750 X 102 JE EA2 COM FUNDO",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN033 - ANEL DN 1000 X 1000 X 102 PBJE EA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN035 - ANEL DN 1000 X 500 X 100 MF PA2 COM FUNDO",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN035 - ANEL DN 1000 X 500 X 100 MF PA2 COM FUNDO",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN037 - ANEL DN 1200 X 200 X 130 MF PA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN037 - ANEL DN 1200 X 200 X 130 MF PA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN048 - ANEL DN 400 X 100 X 50 MF PA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  },
+  {
+   "setor": "AN049 - ANEL DN 400 X 200 X 50 MF PA2",
+   "total": 0.06,
+   "percentual": null,
+   "manutencaoSetor": null
+  }
+ ]
+}

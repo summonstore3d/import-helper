@@ -1,0 +1,22 @@
+{
+ "categorias": [
+  {
+   "categoria": "MOD",
+   "salarioTotal": 344268.54,
+   "colaboradores": 67.0,
+   "salarioMedio": 5138.33641791
+  },
+  {
+   "categoria": "MOI",
+   "salarioTotal": 81009.69,
+   "colaboradores": 13.0,
+   "salarioMedio": 6231.51461538
+  }
+ ],
+ "observacoes": [
+  "Obs.: O salário da logística deve ser desconsiderado do salário total, assim como o número de colaboradores.",
+  "Portanto, (salário total = salário total - salário total logístca) e (colaboradores = colaboradores totais - colaboradores da logística).",
+  "Obs: O Valor MOD a ser inserido acima deve ser calculado da seguinte forma:",
+  "Categoria MOD = MOD Total - MOD Logística"
+ ]
+}
