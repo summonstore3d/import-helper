@@ -390,6 +390,45 @@ function Precificacao() {
             )}
           </Panel>
 
+          <Panel
+            titulo="Forma de cálculo das despesas"
+            subtitulo="Compare o critério da planilha com o critério ponderado"
+          >
+            <div className="space-y-2">
+              {precoPorMetodo.map((op) => (
+                <label
+                  key={op.metodo}
+                  className={`flex cursor-pointer flex-col gap-0.5 rounded-sm border px-3 py-2 text-sm ${
+                    metodoDespesas === op.metodo
+                      ? "border-green bg-green-soft"
+                      : "border-border bg-secondary/40"
+                  }`}
+                >
+                  <span className="flex items-center gap-2 font-medium">
+                    <input
+                      type="radio"
+                      name="metodo-despesas-preco"
+                      checked={metodoDespesas === op.metodo}
+                      onChange={() => {
+                        definirMetodoDespesas(op.metodo);
+                        setSalvo(null);
+                      }}
+                    />
+                    {op.metodo === "media" ? "Média simples (planilha)" : "Taxa ponderada"}
+                  </span>
+                  <span className="pl-6 text-xs text-muted-foreground">
+                    Despesas {pct(op.taxa, 4)} · preço {op.preco === null ? "—" : money(op.preco)}
+                  </span>
+                </label>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {diferencaMetodos === null
+                ? "Comparação indisponível para este produto."
+                : `Diferença no preço final entre os dois critérios: ${money(Math.abs(diferencaMetodos))}.`}
+            </p>
+          </Panel>
+
           <Panel titulo="Parâmetros" subtitulo="Ajuste e veja o preço recalcular">
             <div className="space-y-3">
               {[
