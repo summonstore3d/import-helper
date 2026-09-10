@@ -33,7 +33,13 @@ export const Route = createFileRoute("/despesas")({
 });
 
 function Despesas() {
-  const { demonstrativo, importarDemonstrativo } = usePrototype();
+  const {
+    demonstrativo,
+    importarDemonstrativo,
+    metodoDespesas,
+    definirMetodoDespesas,
+    despesasPercentual,
+  } = usePrototype();
   const inputRef = useRef<HTMLInputElement>(null);
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
 
@@ -138,20 +144,70 @@ function Despesas() {
         <KPI rotulo="Linhas de conta" valor={String(demonstrativo.linhas.length)} />
         <KPI
           rotulo="% de despesas aplicado no preço"
-          valor={pct(vigentes.ponderada, 4)}
-          detalhe={`Taxa ponderada: ${money(vigentes.somaDespesas)} de despesa sobre ${money(
-            vigentes.somaReceita,
-          )} de receita em ${vigentes.meses} meses`}
+          valor={pct(despesasPercentual, 4)}
+          detalhe={
+            metodoDespesas === "media"
+              ? "Média simples das razões mensais (método da planilha)"
+              : `Taxa ponderada: ${money(vigentes.somaDespesas)} de despesa sobre ${money(
+                  vigentes.somaReceita,
+                )} de receita em ${vigentes.meses} meses`
+          }
           destaque
         />
       </div>
 
-      <p className="mt-4 rounded-md border border-warn bg-demo px-3 py-2 text-sm text-demo-foreground">
-        <strong>Correção aplicada:</strong> a planilha usava a média simples das razões mensais (
-        {pct(vigentes.mediaSimples, 4)}), dando o mesmo peso a meses de faturamento alto e baixo. O
-        sistema usa a taxa ponderada (soma das despesas ÷ soma das receitas): {pct(vigentes.ponderada, 4)}{" "}
-        — diferença de {pct(vigentes.diferenca, 4)}.
-      </p>
+      <Panel
+        className="mt-4"
+        titulo="Parâmetro: forma de cálculo do percentual de despesas"
+        subtitulo="Escolha o método usado na precificação. Serve para comparar o resultado dos dois critérios."
+      >
+        <div className="grid gap-3 sm:grid-cols-2">
+          {(
+            [
+              {
+                id: "ponderado" as const,
+                titulo: "Taxa ponderada (recomendada)",
+                formula: "Σ despesas ÷ Σ receitas dos meses fechados",
+                valor: vigentes.ponderada,
+                nota: "Meses de faturamento maior pesam mais no resultado.",
+              },
+              {
+                id: "media" as const,
+                titulo: "Média simples (planilha original)",
+                formula: "média das razões despesa ÷ receita de cada mês",
+                valor: vigentes.mediaSimples,
+                nota: "Todos os meses pesam igual, mesmo os de faturamento baixo.",
+              },
+            ]
+          ).map((op) => (
+            <label
+              key={op.id}
+              className={`flex cursor-pointer flex-col gap-1 rounded-sm border px-3 py-2.5 text-sm ${
+                metodoDespesas === op.id
+                  ? "border-green bg-green-soft"
+                  : "border-border bg-secondary/40"
+              }`}
+            >
+              <span className="flex items-center gap-2 font-semibold">
+                <input
+                  type="radio"
+                  name="metodo-despesas"
+                  checked={metodoDespesas === op.id}
+                  onChange={() => definirMetodoDespesas(op.id)}
+                />
+                {op.titulo}
+              </span>
+              <span className="text-lg font-bold tabular-nums">{pct(op.valor, 4)}</span>
+              <span className="text-xs text-muted-foreground">{op.formula}</span>
+              <span className="text-xs text-muted-foreground">{op.nota}</span>
+            </label>
+          ))}
+        </div>
+        <p className="mt-3 rounded-md border border-warn bg-demo px-3 py-2 text-sm text-demo-foreground">
+          Diferença entre os dois métodos: <strong>{pct(vigentes.diferenca, 4)}</strong>. O método
+          escolhido aqui passa a alimentar a tela de Precificação.
+        </p>
+      </Panel>
 
       <Panel
         className="mt-4"

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Download, Save } from "lucide-react";
 import { parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
@@ -41,7 +41,15 @@ const CENARIOS: Cenario[] = [
 function Precificacao() {
   const { produto } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
-  const { itensBom, registrarVersao, registrarAuditoria } = usePrototype();
+  const {
+    itensBom,
+    registrarVersao,
+    registrarAuditoria,
+    metodoDespesas,
+    definirMetodoDespesas,
+    despesasPercentual,
+    comparativoDespesas,
+  } = usePrototype();
   const padrao = parametrosPadrao();
 
   const selecionado =
@@ -51,7 +59,13 @@ function Precificacao() {
   const [margem, setMargem] = useState(padrao.margem * 100);
   const [comissao, setComissao] = useState(padrao.comissao * 100);
   const [inadimplencia, setInadimplencia] = useState(padrao.inadimplencia * 100);
-  const [despesasPct, setDespesasPct] = useState(padrao.despesas * 100);
+  const [despesasPct, setDespesasPct] = useState((despesasPercentual ?? padrao.despesas) * 100);
+
+  // Trocar o método de apuração das despesas repõe o percentual vigente no simulador.
+  useEffect(() => {
+    if (despesasPercentual !== null) setDespesasPct(despesasPercentual * 100);
+  }, [despesasPercentual]);
+
   const [frota, setFrota] = useState(false);
   const [km, setKm] = useState(padrao.km);
   const [pecas, setPecas] = useState(padrao.pecasPorEntrega);
@@ -72,6 +86,37 @@ function Precificacao() {
   });
 
   const preco = r.preco;
+
+  /** Mesmo produto e parâmetros, trocando apenas a forma de apurar as despesas. */
+  const precoPorMetodo = (
+    ["ponderado", "media"] as const
+  ).map((m) => {
+    const taxa =
+      m === "media" ? comparativoDespesas.mediaSimples : comparativoDespesas.ponderada;
+    return {
+      metodo: m,
+      taxa,
+      preco:
+        taxa === null
+          ? null
+          : calcularPreco({
+              produto: selecionado,
+              cenario,
+              itensMP: itens,
+              margem: margem / 100,
+              comissao: comissao / 100,
+              inadimplencia: inadimplencia / 100,
+              despesas: taxa,
+              frota,
+              km,
+              pecasPorEntrega: pecas,
+            }).preco,
+    };
+  });
+  const diferencaMetodos =
+    precoPorMetodo[0]?.preco !== null && precoPorMetodo[1]?.preco != null
+      ? (precoPorMetodo[0]?.preco ?? 0) - (precoPorMetodo[1]?.preco ?? 0)
+      : null;
   const linhasMemoria: { rotulo: string; base: string; valor: string; tipo?: "total" | "grupo" }[] = [
     {
       rotulo: "1. Matéria-prima (BOM)",
@@ -343,6 +388,45 @@ function Precificacao() {
                 <RealTag>Alíquota da planilha</RealTag>
               </p>
             )}
+          </Panel>
+
+          <Panel
+            titulo="Forma de cálculo das despesas"
+            subtitulo="Compare o critério da planilha com o critério ponderado"
+          >
+            <div className="space-y-2">
+              {precoPorMetodo.map((op) => (
+                <label
+                  key={op.metodo}
+                  className={`flex cursor-pointer flex-col gap-0.5 rounded-sm border px-3 py-2 text-sm ${
+                    metodoDespesas === op.metodo
+                      ? "border-green bg-green-soft"
+                      : "border-border bg-secondary/40"
+                  }`}
+                >
+                  <span className="flex items-center gap-2 font-medium">
+                    <input
+                      type="radio"
+                      name="metodo-despesas-preco"
+                      checked={metodoDespesas === op.metodo}
+                      onChange={() => {
+                        definirMetodoDespesas(op.metodo);
+                        setSalvo(null);
+                      }}
+                    />
+                    {op.metodo === "media" ? "Média simples (planilha)" : "Taxa ponderada"}
+                  </span>
+                  <span className="pl-6 text-xs text-muted-foreground">
+                    Despesas {pct(op.taxa, 4)} · preço {op.preco === null ? "—" : money(op.preco)}
+                  </span>
+                </label>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {diferencaMetodos === null
+                ? "Comparação indisponível para este produto."
+                : `Diferença no preço final entre os dois critérios: ${money(Math.abs(diferencaMetodos))}.`}
+            </p>
           </Panel>
 
           <Panel titulo="Parâmetros" subtitulo="Ajuste e veja o preço recalcular">

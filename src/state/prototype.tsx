@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { bomDoProduto, cenarioSugerido, precoRapido, type Cenario, type ItemMP } from "@/lib/pricing";
-import { custearItem } from "@/lib/correcoes";
+import { custearItem, despesasPonderadas } from "@/lib/correcoes";
 import { despesas as despesasBase, insumos as insumosBase, parametros, produtos, type Despesas, type Insumo } from "@/data";
 
 /** Componente incluído durante a demonstração, antes do custeio. */
@@ -44,9 +44,17 @@ export type InsumoEntrada = {
   custoUnitario: number | null;
 };
 
+/** Método de apuração do percentual de despesas usado na precificação. */
+export type MetodoDespesas = "ponderado" | "media";
+
 type Ctx = {
   demonstrativo: Despesas;
   importarDemonstrativo: (novo: Despesas, arquivo: string) => void;
+  metodoDespesas: MetodoDespesas;
+  definirMetodoDespesas: (m: MetodoDespesas) => void;
+  /** Percentual de despesas vigente conforme o método escolhido. */
+  despesasPercentual: number | null;
+  comparativoDespesas: ReturnType<typeof despesasPonderadas>;
   listaInsumos: Insumo[];
   salvarInsumo: (entrada: InsumoEntrada, fullOriginal?: string) => void;
   importarInsumos: (
@@ -213,6 +221,35 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     [registrarAuditoria],
   );
 
+  const [metodoDespesas, setMetodoDespesas] = useState<MetodoDespesas>("ponderado");
+
+  const comparativoDespesas = useMemo(() => despesasPonderadas(demonstrativo), [demonstrativo]);
+
+  const despesasPercentual =
+    metodoDespesas === "media"
+      ? comparativoDespesas.mediaSimples
+      : (comparativoDespesas.ponderada ?? comparativoDespesas.mediaSimples);
+
+  const definirMetodoDespesas = useCallback(
+    (m: MetodoDespesas) => {
+      setMetodoDespesas((anterior) => {
+        if (anterior === m) return anterior;
+        registrarAuditoria({
+          usuario: USUARIO,
+          modulo: "Despesas",
+          registro: "Parâmetros de cálculo",
+          campo: "Método de apuração do % de despesas",
+          valorAnterior: anterior === "media" ? "Média simples" : "Taxa ponderada",
+          valorNovo: m === "media" ? "Média simples" : "Taxa ponderada",
+          motivo: "Comparação entre métodos durante a demonstração",
+          origem: "Sessão de demonstração",
+        });
+        return m;
+      });
+    },
+    [registrarAuditoria],
+  );
+
   const [listaInsumos, setListaInsumos] = useState<Insumo[]>(() => insumosBase);
 
   const salvarInsumo = useCallback(
@@ -371,6 +408,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     () => ({
       demonstrativo,
       importarDemonstrativo,
+      metodoDespesas,
+      definirMetodoDespesas,
+      despesasPercentual,
+      comparativoDespesas,
       listaInsumos,
       salvarInsumo,
       importarInsumos,
@@ -386,6 +427,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     [
       demonstrativo,
       importarDemonstrativo,
+      metodoDespesas,
+      definirMetodoDespesas,
+      despesasPercentual,
+      comparativoDespesas,
       listaInsumos,
       salvarInsumo,
       importarInsumos,
