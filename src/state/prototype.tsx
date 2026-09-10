@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { bomDoProduto, cenarioSugerido, precoRapido, type Cenario, type ItemMP } from "@/lib/pricing";
-import { custearItem } from "@/lib/correcoes";
+import { custearItem, despesasPonderadas } from "@/lib/correcoes";
 import { despesas as despesasBase, insumos as insumosBase, parametros, produtos, type Despesas, type Insumo } from "@/data";
 
 /** Componente incluído durante a demonstração, antes do custeio. */
@@ -44,9 +44,17 @@ export type InsumoEntrada = {
   custoUnitario: number | null;
 };
 
+/** Método de apuração do percentual de despesas usado na precificação. */
+export type MetodoDespesas = "ponderado" | "media";
+
 type Ctx = {
   demonstrativo: Despesas;
   importarDemonstrativo: (novo: Despesas, arquivo: string) => void;
+  metodoDespesas: MetodoDespesas;
+  definirMetodoDespesas: (m: MetodoDespesas) => void;
+  /** Percentual de despesas vigente conforme o método escolhido. */
+  despesasPercentual: number | null;
+  comparativoDespesas: ReturnType<typeof despesasPonderadas>;
   listaInsumos: Insumo[];
   salvarInsumo: (entrada: InsumoEntrada, fullOriginal?: string) => void;
   importarInsumos: (
