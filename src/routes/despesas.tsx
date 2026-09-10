@@ -33,7 +33,13 @@ export const Route = createFileRoute("/despesas")({
 });
 
 function Despesas() {
-  const { demonstrativo, importarDemonstrativo } = usePrototype();
+  const {
+    demonstrativo,
+    importarDemonstrativo,
+    metodoDespesas,
+    definirMetodoDespesas,
+    despesasPercentual,
+  } = usePrototype();
   const inputRef = useRef<HTMLInputElement>(null);
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
 
