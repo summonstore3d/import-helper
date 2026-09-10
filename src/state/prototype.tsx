@@ -221,6 +221,35 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     [registrarAuditoria],
   );
 
+  const [metodoDespesas, setMetodoDespesas] = useState<MetodoDespesas>("ponderado");
+
+  const comparativoDespesas = useMemo(() => despesasPonderadas(demonstrativo), [demonstrativo]);
+
+  const despesasPercentual =
+    metodoDespesas === "media"
+      ? comparativoDespesas.mediaSimples
+      : (comparativoDespesas.ponderada ?? comparativoDespesas.mediaSimples);
+
+  const definirMetodoDespesas = useCallback(
+    (m: MetodoDespesas) => {
+      setMetodoDespesas((anterior) => {
+        if (anterior === m) return anterior;
+        registrarAuditoria({
+          usuario: USUARIO,
+          modulo: "Despesas",
+          registro: "Parâmetros de cálculo",
+          campo: "Método de apuração do % de despesas",
+          valorAnterior: anterior === "media" ? "Média simples" : "Taxa ponderada",
+          valorNovo: m === "media" ? "Média simples" : "Taxa ponderada",
+          motivo: "Comparação entre métodos durante a demonstração",
+          origem: "Sessão de demonstração",
+        });
+        return m;
+      });
+    },
+    [registrarAuditoria],
+  );
+
   const [listaInsumos, setListaInsumos] = useState<Insumo[]>(() => insumosBase);
 
   const salvarInsumo = useCallback(
