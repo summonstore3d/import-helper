@@ -41,7 +41,15 @@ const CENARIOS: Cenario[] = [
 function Precificacao() {
   const { produto } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
-  const { itensBom, registrarVersao, registrarAuditoria } = usePrototype();
+  const {
+    itensBom,
+    registrarVersao,
+    registrarAuditoria,
+    metodoDespesas,
+    definirMetodoDespesas,
+    despesasPercentual,
+    comparativoDespesas,
+  } = usePrototype();
   const padrao = parametrosPadrao();
 
   const selecionado =
