@@ -86,6 +86,37 @@ function Precificacao() {
   });
 
   const preco = r.preco;
+
+  /** Mesmo produto e parâmetros, trocando apenas a forma de apurar as despesas. */
+  const precoPorMetodo = (
+    ["ponderado", "media"] as const
+  ).map((m) => {
+    const taxa =
+      m === "media" ? comparativoDespesas.mediaSimples : comparativoDespesas.ponderada;
+    return {
+      metodo: m,
+      taxa,
+      preco:
+        taxa === null
+          ? null
+          : calcularPreco({
+              produto: selecionado,
+              cenario,
+              itensMP: itens,
+              margem: margem / 100,
+              comissao: comissao / 100,
+              inadimplencia: inadimplencia / 100,
+              despesas: taxa,
+              frota,
+              km,
+              pecasPorEntrega: pecas,
+            }).preco,
+    };
+  });
+  const diferencaMetodos =
+    precoPorMetodo[0]?.preco !== null && precoPorMetodo[1]?.preco != null
+      ? (precoPorMetodo[0]?.preco ?? 0) - (precoPorMetodo[1]?.preco ?? 0)
+      : null;
   const linhasMemoria: { rotulo: string; base: string; valor: string; tipo?: "total" | "grupo" }[] = [
     {
       rotulo: "1. Matéria-prima (BOM)",
