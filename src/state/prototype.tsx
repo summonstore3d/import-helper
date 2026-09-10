@@ -408,6 +408,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     () => ({
       demonstrativo,
       importarDemonstrativo,
+      metodoDespesas,
+      definirMetodoDespesas,
+      despesasPercentual,
+      comparativoDespesas,
       listaInsumos,
       salvarInsumo,
       importarInsumos,
@@ -423,6 +427,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     [
       demonstrativo,
       importarDemonstrativo,
+      metodoDespesas,
+      definirMetodoDespesas,
+      despesasPercentual,
+      comparativoDespesas,
       listaInsumos,
       salvarInsumo,
       importarInsumos,
