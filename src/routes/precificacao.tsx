@@ -59,7 +59,13 @@ function Precificacao() {
   const [margem, setMargem] = useState(padrao.margem * 100);
   const [comissao, setComissao] = useState(padrao.comissao * 100);
   const [inadimplencia, setInadimplencia] = useState(padrao.inadimplencia * 100);
-  const [despesasPct, setDespesasPct] = useState(padrao.despesas * 100);
+  const [despesasPct, setDespesasPct] = useState((despesasPercentual ?? padrao.despesas) * 100);
+
+  // Trocar o método de apuração das despesas repõe o percentual vigente no simulador.
+  useEffect(() => {
+    if (despesasPercentual !== null) setDespesasPct(despesasPercentual * 100);
+  }, [despesasPercentual]);
+
   const [frota, setFrota] = useState(false);
   const [km, setKm] = useState(padrao.km);
   const [pecas, setPecas] = useState(padrao.pecasPorEntrega);
