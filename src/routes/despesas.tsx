@@ -12,6 +12,52 @@ import {
 } from "@/lib/planilha-despesas";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { usePrototype } from "@/state/prototype";
+import { EditLockBanner } from "@/components/EditLockBanner";
+
+const MESES = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+
+function NovoMesForm({
+  existentes,
+  onAdicionar,
+  onCancelar,
+}: {
+  existentes: string[];
+  onAdicionar: (competencia: string) => void;
+  onCancelar: () => void;
+}) {
+  const hoje = new Date();
+  const [mes, setMes] = useState(MESES[hoje.getMonth()]);
+  const [ano, setAno] = useState(String(hoje.getFullYear()));
+  const competencia = `${mes}/${ano}`;
+  const anoValido = /^\d{4}$/.test(ano);
+  const duplicado = existentes.some((m) => m.trim().toUpperCase() === competencia);
+  return (
+    <form
+      className="mt-4 flex flex-wrap items-end gap-3 rounded-md border border-border bg-card px-4 py-3 shadow-panel"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (anoValido && !duplicado) onAdicionar(competencia);
+      }}
+    >
+      <label className="space-y-1 text-xs font-semibold">
+        <span className="block">Mês</span>
+        <select value={mes} onChange={(e) => setMes(e.target.value)} className="h-8 rounded-sm border border-input bg-background px-2 text-sm">
+          {MESES.map((m) => <option key={m} value={m}>{m}</option>)}
+        </select>
+      </label>
+      <label className="space-y-1 text-xs font-semibold">
+        <span className="block">Ano</span>
+        <input value={ano} onChange={(e) => setAno(e.target.value.replace(/\D/g, "").slice(0, 4))} inputMode="numeric" className="h-8 w-20 rounded-sm border border-input bg-background px-2 text-sm" />
+      </label>
+      <button type="submit" disabled={!anoValido || duplicado} className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-40">
+        <Plus className="size-4" /> Adicionar {competencia}
+      </button>
+      <button type="button" onClick={onCancelar} className="h-8 rounded-sm px-3 text-sm font-semibold text-muted-foreground">Cancelar</button>
+      {duplicado ? <p className="w-full text-xs font-semibold text-destructive">A competência {competencia} já existe no demonstrativo.</p> : null}
+      {!anoValido ? <p className="w-full text-xs font-semibold text-destructive">Informe o ano com 4 dígitos.</p> : null}
+    </form>
+  );
+}
 
 export const Route = createFileRoute("/despesas")({
   head: () => ({
@@ -98,11 +144,8 @@ function Despesas() {
             <button
               type="button"
               disabled={!autenticado}
-              title={autenticado ? "Adicionar mês" : "Entre para editar"}
-              onClick={() => {
-                const valor = novoMes || window.prompt("Competência do novo mês (ex.: OUTUBRO/2026)") || "";
-                if (valor) { adicionarMesDespesas(valor); setNovoMes(""); }
-              }}
+              title={autenticado ? "Adicionar mês" : "Entre na sua conta para editar"}
+              onClick={() => setNovoMes(novoMes ? "" : "aberto")}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold disabled:opacity-40"
             >
               <Plus className="size-4" /> Novo mês
@@ -142,6 +185,19 @@ function Despesas() {
           </div>
         }
       />
+      <EditLockBanner />
+
+      {autenticado && novoMes ? (
+        <NovoMesForm
+          existentes={demonstrativo.meses}
+          onCancelar={() => setNovoMes("")}
+          onAdicionar={(competencia) => {
+            adicionarMesDespesas(competencia);
+            setNovoMes("");
+            setAviso({ tipo: "ok", texto: `Mês ${competencia} adicionado ao final do demonstrativo, com valores vazios para preenchimento.` });
+          }}
+        />
+      ) : null}
 
       {aviso && (
         <p

@@ -5,6 +5,7 @@ import { bom } from "@/data";
 import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { usePrototype } from "@/state/prototype";
+import { EditLockBanner } from "@/components/EditLockBanner";
 import { exportarInsumosExcel, importarInsumosExcel } from "@/lib/planilha-insumos";
 
 export const Route = createFileRoute("/insumos")({
@@ -191,6 +192,7 @@ function Insumos() {
           </div>
         }
       />
+      <EditLockBanner />
 
       {aviso ? (
         <p

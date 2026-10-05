@@ -6,6 +6,7 @@ import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { custoMPOriginal, totalMP } from "@/lib/pricing";
 import { descricaoProblema } from "@/lib/correcoes";
 import { usePrototype } from "@/state/prototype";
+import { EditLockBanner } from "@/components/EditLockBanner";
 import { DemoTag, EmptyNote, KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 
 type Search = { produto?: string | undefined };
@@ -89,6 +90,7 @@ function Bom() {
           </select>
         }
       />
+      <EditLockBanner />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KPI rotulo="Componentes" valor={qtd(itens.length)} detalhe="Linhas de estrutura" />
