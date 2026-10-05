@@ -4,6 +4,7 @@ import { isNum, money, pct, qtd, REF_INCONSISTENTE } from "@/lib/format";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { producaoCorrigida, resumoCentroCustos, TAXA_ARMACAO_PADRAO } from "@/lib/correcoes";
 import { usePrototype } from "@/state/prototype";
+import { EditLockBanner } from "@/components/EditLockBanner";
 
 export const Route = createFileRoute("/centro-de-custos")({
   head: () => ({
@@ -42,6 +43,7 @@ function CentroDeCustos() {
         aba="Centro de Custos + Guia - CDC"
         descricao="O rateio industrial que transforma folha de pagamento e manutenção em custo por hora de setor, e este em custo de produção por produto."
       />
+      <EditLockBanner />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KPI rotulo="Setores produtivos" valor={qtd(centroCustos.setores.length)} />
