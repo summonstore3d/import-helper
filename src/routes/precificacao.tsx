@@ -317,6 +317,22 @@ function Precificacao() {
     });
   }
 
+  function copiarCotacao() {
+    if (preco === null) return;
+    const texto = [
+      `Cotação D'AGOSTINI — ${selecionado}`,
+      `Tipo de venda: ${cenario}`,
+      `Entrega: ${frota ? `CIF (${qtd(km)} km)` : "FOB (retirada no pátio)"}`,
+      `Preço unitário: ${money(preco)}`,
+      `Quantidade: ${qtd(quantidade)}`,
+      `Total: ${money(preco * quantidade)}`,
+    ].join("\n");
+    void navigator.clipboard.writeText(texto).then(() => {
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2000);
+    });
+  }
+
   function salvar() {
     if (preco === null) return;
     registrarVersao({
