@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parametros } from "@/data";
-import { DESPESAS_PERCENTUAL, fretePorPeca, logisticaCorrigida, simplesEfetivo } from "./correcoes";
+import { DESPESAS_PERCENTUAL, despesasPonderadas, fretePorPeca, logisticaCorrigida, simplesEfetivo } from "./correcoes";
 
  describe("regras oficiais de precificação", () => {
   it("usa 22,894826% de despesas ajustadas sem duplicar custos do frete", () => {
