@@ -15,13 +15,13 @@ export const Route = createFileRoute("/bom")({
     typeof search["produto"] === "string" ? { produto: search["produto"] } : {},
   head: () => ({
     meta: [
-      { title: "Estruturas / BOM — Protótipo de Precificação" },
+      { title: "Estruturas / BOM — Sistema de Precificação" },
       {
         name: "description",
         content:
           "Estrutura de materiais (BOM) de cada produto de concreto, com quantidade, unidade e custo unitário reais dos insumos.",
       },
-      { property: "og:title", content: "Estruturas / BOM — Protótipo de Precificação" },
+      { property: "og:title", content: "Estruturas / BOM — Sistema de Precificação" },
       {
         property: "og:description",
         content: "Composição de matéria-prima por produto, editável no protótipo.",

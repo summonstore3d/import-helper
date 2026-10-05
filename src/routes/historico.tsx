@@ -7,13 +7,13 @@ import { KPI, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 export const Route = createFileRoute("/historico")({
   head: () => ({
     meta: [
-      { title: "Histórico de Preços — Protótipo de Precificação" },
+      { title: "Histórico de Preços — Sistema de Precificação" },
       {
         name: "description",
         content:
           "Versionamento de preços por produto: preço vigente, versões substituídas e simulações, com custo e margem de cada momento.",
       },
-      { property: "og:title", content: "Histórico de Preços — Protótipo de Precificação" },
+      { property: "og:title", content: "Histórico de Preços — Sistema de Precificação" },
       {
         property: "og:description",
         content: "O que a planilha não guarda: a evolução do preço e do custo ao longo do tempo.",

@@ -351,7 +351,7 @@ export const despesasVigentes = despesasPonderadas();
 
 /** Percentual de despesas que o motor de preço passa a usar. */
 export const DESPESAS_PERCENTUAL =
-  despesasVigentes.ponderada ?? despesas.mediaDespesas;
+  parametros.despesasPercentual;
 
 /* ------------------------------------------------------------------ *
  * 5. Logística e frota

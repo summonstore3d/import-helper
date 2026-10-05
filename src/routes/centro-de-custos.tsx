@@ -8,13 +8,13 @@ import { usePrototype } from "@/state/prototype";
 export const Route = createFileRoute("/centro-de-custos")({
   head: () => ({
     meta: [
-      { title: "Centro de Custos — Protótipo de Precificação" },
+      { title: "Centro de Custos — Sistema de Precificação" },
       {
         name: "description",
         content:
           "Setores produtivos, rateio de mão de obra e manutenção, horas disponíveis e custo por hora real de cada centro de custo.",
       },
-      { property: "og:title", content: "Centro de Custos — Protótipo de Precificação" },
+      { property: "og:title", content: "Centro de Custos — Sistema de Precificação" },
       {
         property: "og:description",
         content: "Custo por hora de cada setor produtivo e roteiro de produção por produto.",

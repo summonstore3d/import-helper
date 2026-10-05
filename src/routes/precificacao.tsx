@@ -294,14 +294,12 @@ function Precificacao() {
       status: "Simulação",
     });
     registrarAuditoria({
-      usuario: "diretoria.demo",
       modulo: "Precificação",
       registro: selecionado,
       campo: `Preço simulado — ${cenario}`,
       valorAnterior: "—",
       valorNovo: money(preco),
-      motivo: "Simulação salva durante a demonstração",
-      origem: "Sessão de demonstração",
+      motivo: "Simulação salva no sistema",
     });
     setSalvo(`Simulação registrada no histórico às ${new Date().toLocaleTimeString("pt-BR")}`);
   }

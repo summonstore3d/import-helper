@@ -10,13 +10,13 @@ import { exportarInsumosExcel, importarInsumosExcel } from "@/lib/planilha-insum
 export const Route = createFileRoute("/insumos")({
   head: () => ({
     meta: [
-      { title: "Insumos — Protótipo de Precificação" },
+      { title: "Insumos — Sistema de Precificação" },
       {
         name: "description",
         content:
           "Cadastro de insumos reais (cimento, areia, ferro, aditivos) com custo unitário e uso nas estruturas de produto.",
       },
-      { property: "og:title", content: "Insumos — Protótipo de Precificação" },
+      { property: "og:title", content: "Insumos — Sistema de Precificação" },
       {
         property: "og:description",
         content: "Custo unitário de cada insumo e em quantos produtos ele é consumido.",
