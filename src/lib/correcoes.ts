@@ -4,7 +4,15 @@
  * Cada bloco abaixo documenta a fórmula original da planilha, o problema apontado
  * pela auditoria e a regra que passa a valer no sistema.
  */
-import { bom, centroCustos, despesas, impostos, insumos, logistica, mpTotais, parametros } from "@/data";
+import { bom, centroCustos, despesas, guiaCdc, impostos, insumos, logistica, mpTotais, parametros, type Insumo, type RoteiroLinha, type Setor } from "@/data";
+import {
+  custoCentral,
+  HORAS_PINTURA,
+  setoresCalculados,
+  taxaDoSetor,
+  taxaHora,
+  type BaseIndustrial,
+} from "./custos-industriais";
 import { isNum } from "./format";
 
 /* ------------------------------------------------------------------ *
@@ -85,13 +93,33 @@ export type ProducaoCorrigida = {
   alertas: string[];
 };
 
-export function roteiroDe(produto: string) {
-  return centroCustos.roteiro.find((r) => r.produto === produto) ?? null;
+export function roteiroDe(produto: string, roteiro: RoteiroLinha[] = centroCustos.roteiro) {
+  return roteiro.find((r) => r.produto === produto) ?? null;
 }
 
-export function producaoCorrigida(produto: string): ProducaoCorrigida {
-  const r = roteiroDe(produto);
-  const base: ProducaoCorrigida = {
+const baseEstatica: BaseIndustrial = { setores: centroCustos.setores, roteiro: centroCustos.roteiro, guia: guiaCdc };
+let setoresEstaticos: Setor[] | null = null;
+const cacheSetores = new WeakMap<BaseIndustrial, Setor[]>();
+
+/** Setores com $/hora recalculado a partir do rateio de mão de obra e manutenção. */
+export function setoresVigentes(base?: BaseIndustrial): Setor[] {
+  if (!base) return (setoresEstaticos ??= setoresCalculados(baseEstatica));
+  let s = cacheSetores.get(base);
+  if (!s) {
+    s = setoresCalculados(base);
+    cacheSetores.set(base, s);
+  }
+  return s;
+}
+
+/**
+ * Custo de produção recalculado a partir da base editável:
+ *   Setor × horas + Central (kg) + Armação (horas × $/h Robô) + Pintura (0,16 h × $/h Pintura)
+ */
+export function producaoCorrigida(produto: string, base?: BaseIndustrial): ProducaoCorrigida {
+  const r = roteiroDe(produto, base?.roteiro);
+  const setores = setoresVigentes(base);
+  const out: ProducaoCorrigida = {
     produto,
     valor: null,
     original: null,
@@ -105,40 +133,42 @@ export function producaoCorrigida(produto: string): ProducaoCorrigida {
     alertas: [],
   };
   if (!r) {
-    base.alertas.push("Produto sem roteiro de produção no Centro de Custos.");
-    return base;
+    out.alertas.push("Produto sem roteiro de produção no Centro de Custos.");
+    return out;
   }
-
   const original = isNum(r.custoProducao) ? r.custoProducao : null;
-  base.original = original;
+  out.original = original;
 
   const horaProduto = isNum(r.horaProduto) ? r.horaProduto : null;
-  const horaSetor = isNum(r.horaSetor) ? r.horaSetor : null;
-  const central = isNum(r.central) ? r.central : 0;
-  const pintura = isNum(r.pintura) ? r.pintura : 0;
+  const horaSetor = taxaDoSetor(setores, r.setor);
   const horas = isNum(r.horaArmacao) ? r.horaArmacao : 0;
-  base.horasArmacao = horas;
+  out.horasArmacao = horas;
 
   if (horaProduto === null || horaSetor === null) {
-    base.referenciaQuebrada = true;
-    base.alertas.push(
+    out.referenciaQuebrada = true;
+    out.alertas.push(
       "Referência quebrada no Centro de Custos (setor ou hora do produto inválidos). O preço fica bloqueado até a correção.",
     );
-    return base;
+    return out;
   }
+
+  const central = custoCentral(r.kgPorProduto, setores) ?? (isNum(r.central) ? r.central : 0);
+  const taxaPintura = taxaHora(setores, "Pintura") ?? 0;
+  const pintura = isNum(r.pintura) && r.pintura > 0 ? HORAS_PINTURA * taxaPintura : 0;
+  const taxaArmacao = taxaHora(setores, "Robô") ?? TAXA_ARMACAO_PADRAO;
 
   let armacao = 0;
   if (horas > 0) {
+    armacao = horas * taxaArmacao;
+    out.taxaArmacao = taxaArmacao;
     if (isNum(r.custoArmacao) && r.custoArmacao > 0) {
-      // A planilha já grava aqui Horas × Taxa; o erro estava em multiplicar de novo por Horas.
-      armacao = r.custoArmacao;
-      base.taxaArmacao = r.custoArmacao / horas;
-      base.duplaMultiplicacaoCorrigida = true;
+      out.duplaMultiplicacaoCorrigida = true;
+      out.alertas.push(
+        "Custo de armação recalculado como Horas × Taxa (a planilha multiplicava pelas horas duas vezes).",
+      );
     } else {
-      armacao = horas * TAXA_ARMACAO_PADRAO;
-      base.taxaArmacao = TAXA_ARMACAO_PADRAO;
-      base.armacaoEstimada = true;
-      base.alertas.push(
+      out.armacaoEstimada = true;
+      out.alertas.push(
         "Horas de armação lançadas sem custo correspondente na planilha. Aplicada a taxa do setor de armação (R$/hora do Robô).",
       );
     }
@@ -146,20 +176,15 @@ export function producaoCorrigida(produto: string): ProducaoCorrigida {
 
   const setor = horaProduto * horaSetor;
   const valor = setor + central + armacao + pintura;
-  base.componentes = { setor, central, armacao, pintura };
-  base.valor = valor;
-  base.diferenca = original === null ? null : valor - original;
-  if (base.duplaMultiplicacaoCorrigida) {
-    base.alertas.push(
-      "Custo de armação recalculado como Horas × Taxa (a planilha multiplicava pelas horas duas vezes).",
-    );
-  }
-  return base;
+  out.componentes = { setor, central, armacao, pintura };
+  out.valor = valor;
+  out.diferenca = original === null ? null : valor - original;
+  return out;
 }
 
 /** Quantos produtos são afetados por cada correção do Centro de Custos. */
-export function resumoCentroCustos() {
-  const linhas = centroCustos.roteiro.map((r) => producaoCorrigida(r.produto));
+export function resumoCentroCustos(base?: BaseIndustrial) {
+  const linhas = (base?.roteiro ?? centroCustos.roteiro).map((r) => producaoCorrigida(r.produto, base));
   return {
     total: linhas.length,
     duplaMultiplicacao: linhas.filter((l) => l.duplaMultiplicacaoCorrigida).length,
@@ -231,10 +256,23 @@ export type ItemCusteado = {
 };
 
 /** Custo unitário oficial: cadastro de insumos ou, para semiacabados, o custo de MP do produto. */
-export function custoUnitarioOficial(item: string, tipo?: string): number | null {
-  const cadastro = insumoPorFull.get(item);
+export type FontesCusto = {
+  /** Cadastro de insumos vigente (editado pelo usuário). */
+  insumos?: Map<string, Insumo>;
+  /** Custo de MP de um semiacabado calculado pela estrutura vigente. */
+  semiacabado?: (item: string) => number | null;
+};
+
+export function mapaInsumos(lista: Insumo[]): Map<string, Insumo> {
+  return new Map(lista.map((i) => [i.full, i]));
+}
+
+export function custoUnitarioOficial(item: string, tipo?: string, fontes?: FontesCusto): number | null {
+  const cadastro = (fontes?.insumos ?? insumoPorFull).get(item);
   if (cadastro && isNum(cadastro.custoUnitario)) return cadastro.custoUnitario;
   if (cadastro) return null;
+  const vivo = fontes?.semiacabado?.(item);
+  if (isNum(vivo)) return vivo;
   const semiacabado = mpTotais[item];
   if (isNum(semiacabado)) return semiacabado;
   if (tipo === "Produto Acabado") return null;
@@ -249,9 +287,9 @@ export function custearItem(l: {
   custoUnitario: number | null;
   custoTotal: number | null;
   demonstrativo?: boolean;
-}): ItemCusteado {
+}, fontes?: FontesCusto): ItemCusteado {
   const problemas: ProblemaItem[] = [];
-  const oficial = custoUnitarioOficial(l.item, l.tipo);
+  const oficial = custoUnitarioOficial(l.item, l.tipo, fontes);
   const unitario = oficial ?? (isNum(l.custoUnitario) ? l.custoUnitario : null);
 
   if (unitario === null) problemas.push("sem-cadastro");
