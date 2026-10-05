@@ -99,7 +99,11 @@ type Ctx = {
   sincronizando: boolean;
 };
 
-const PrototypeContext = createContext<Ctx | null>(null);
+// Mantém a mesma instância do contexto entre recargas a quente (HMR),
+// evitando que provider e consumidores apontem para contextos diferentes.
+const g = globalThis as typeof globalThis & { __prototypeCtx?: React.Context<Ctx | null> };
+const PrototypeContext: React.Context<Ctx | null> =
+  g.__prototypeCtx ?? (g.__prototypeCtx = createContext<Ctx | null>(null));
 
 function normalizeItem(item: ItemMP): ItemAdicionado {
   return {
