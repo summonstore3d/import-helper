@@ -30,7 +30,7 @@ function NovoMesForm({
   const [ano, setAno] = useState(String(hoje.getFullYear()));
   const competencia = `${mes}/${ano}`;
   const anoValido = /^\d{4}$/.test(ano);
-  const duplicado = existentes.some((m) => m.toUpperCase() === competencia || m.toUpperCase() === mes && !m.includes("/") && false);
+  const duplicado = existentes.some((m) => m.trim().toUpperCase() === competencia);
   return (
     <form
       className="mt-4 flex flex-wrap items-end gap-3 rounded-md border border-border bg-card px-4 py-3 shadow-panel"
