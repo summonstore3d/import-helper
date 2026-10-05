@@ -1,13 +1,26 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, Download, Search, Save, SlidersHorizontal } from "lucide-react";
+import {
+  BadgeDollarSign,
+  Boxes,
+  BriefcaseBusiness,
+  ChevronDown,
+  Download,
+  Factory,
+  Percent,
+  Search,
+  ShieldAlert,
+  Truck,
+  WalletCards,
+  Save,
+} from "lucide-react";
 import { parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
 import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planilha-precificacao";
 import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
-import { DemoTag, EmptyNote, KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
+import { DemoTag, EmptyNote, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 import { Button } from "@/components/ui/button";
 
 type Search = { produto?: string | undefined };
@@ -21,12 +34,12 @@ export const Route = createFileRoute("/precificacao")({
       {
         name: "description",
         content:
-          "Simulador de preço de venda com memória de cálculo completa: matéria-prima, produção, despesas, impostos por cenário, comissão, inadimplência e frete.",
+          "Painel comercial para calcular o preço final por produto, cenário de venda, custos, despesas, impostos e margem.",
       },
       { property: "og:title", content: "Precificação — Simulador com Memória de Cálculo" },
       {
         property: "og:description",
-        content: "Formação de preço passo a passo, auditável, com os parâmetros reais da empresa.",
+        content: "Formação de preço comercial por produto, com parâmetros claros e detalhes técnicos auditáveis.",
       },
     ],
   }),
@@ -312,7 +325,7 @@ function Precificacao() {
       <PageHeader
         titulo="Precificação"
         aba="Precificação"
-        descricao="O coração da ferramenta. No sistema, o preço é calculado por um motor de regras auditável, com memória de cálculo linha a linha e cenário tributário explícito."
+        descricao="Selecione o produto, ajuste as condições comerciais e consulte o preço final."
         acoes={
           <>
             <Button
@@ -345,7 +358,7 @@ function Precificacao() {
         </p>
       ) : null}
 
-      <div className="grid gap-4 xl:grid-cols-[19rem_1fr]">
+      <div className="grid gap-5 xl:grid-cols-[18rem_minmax(0,1fr)]">
         <aside className="space-y-4 xl:sticky xl:top-20 xl:self-start">
           <Panel titulo="Produtos" subtitulo={`${produtosFiltrados.length} encontrados`} bodyClassName="p-0">
             <div className="relative border-b border-border p-3">
@@ -355,57 +368,100 @@ function Precificacao() {
             <div className="max-h-[56vh] overflow-auto p-1.5">
               {produtosFiltrados.map((p) => {
                 const [codigo, ...descricao] = p.full.split(" - ");
-                return <button key={p.full} type="button" onClick={() => { navigate({ search: { produto: p.full } }); setCenario(cenarioSugerido(p.full)); setSalvo(null); }} className={`mb-1 w-full rounded-sm border-l-2 px-3 py-2 text-left transition-colors ${selecionado === p.full ? "border-green bg-green-soft" : "border-transparent hover:bg-secondary"}`}>
+                return <Button key={p.full} variant="ghost" type="button" onClick={() => { navigate({ search: { produto: p.full } }); setCenario(cenarioSugerido(p.full)); setSalvo(null); }} className={`mb-1 h-auto w-full justify-start whitespace-normal rounded-sm border-l-2 px-3 py-2 text-left shadow-none ${selecionado === p.full ? "border-green bg-green-soft hover:bg-green-soft" : "border-transparent hover:bg-secondary"}`}>
+                  <span className="min-w-0">
                   <span className="block text-xs font-black text-foreground">{codigo}</span>
                   <span className="mt-0.5 block line-clamp-2 text-[11px] text-muted-foreground">{descricao.join(" - ")}</span>
-                </button>;
+                  </span>
+                </Button>;
               })}
             </div>
           </Panel>
         </aside>
 
-        <div className="min-w-0 space-y-4">
-          <section className="border-y border-border bg-card py-4">
-            <p className="text-xs font-bold tracking-widest text-green uppercase">Produto selecionado</p>
-            <h2 className="mt-1 text-xl font-black tracking-normal text-foreground">{selecionado}</h2>
-            <div className="mt-4 flex flex-wrap gap-2">
-            <div className="space-y-2">
-                {CENARIOS.map((c) => <button key={c} type="button" onClick={() => { setCenario(c); setSalvo(null); }} className={`rounded-sm border px-3 py-2 text-xs font-semibold ${cenario === c ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background text-muted-foreground"}`}>{c}</button>)}
+        <div className="min-w-0 space-y-5">
+          <section className="rounded-md border border-border bg-card p-5 shadow-panel">
+            <p className="text-xs font-bold text-green uppercase">Produto selecionado</p>
+            <h2 className="mt-1 text-xl font-black text-foreground">{selecionado}</h2>
+            <div className="mt-4">
+              <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Tipo de venda</p>
+              <div className="flex flex-wrap gap-2">
+                {CENARIOS.map((c) => (
+                  <Button
+                    key={c}
+                    type="button"
+                    size="sm"
+                    variant={cenario === c ? "default" : "outline"}
+                    onClick={() => { setCenario(c); setSalvo(null); }}
+                  >
+                    {c}
+                  </Button>
+                ))}
               </div>
             </div>
           </section>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <KPI rotulo="Custo absoluto" valor={money(r.custoAbsoluto)} detalhe="MP + produção" />
-            <KPI rotulo="Carga sobre o preço" valor={pct(r.somaPercentuais, 2)} detalhe="Percentuais aplicados" />
-            <KPI rotulo="Preço de venda sugerido" valor={preco === null ? "Indisponível" : money(preco)} detalhe={cenario} destaque />
-          </div>
+          <section aria-label="Composição do preço" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { label: "Matéria-prima", value: money(r.custoMP), detail: `${qtd(itens.length)} componentes`, Icon: Boxes },
+              { label: "Custo de produção", value: r.custoProducao === null ? "Bloqueado" : money(r.custoProducao), detail: "Roteiro e centros de custos", Icon: Factory },
+              { label: "Despesas", value: pct(r.despesas, 2), detail: metodoDespesas === "media" ? "Média ajustada" : "Taxa ponderada ajustada", Icon: WalletCards },
+              { label: "Impostos", value: pct(r.impostos, 2), detail: cenario, Icon: BriefcaseBusiness },
+            ].map(({ label, value, detail, Icon }) => (
+              <article key={label} className="overflow-hidden rounded-md border border-border bg-card shadow-panel">
+                <div className="flex min-h-11 items-center gap-2 bg-navy px-3 py-2 text-navy-foreground">
+                  <Icon className="size-4" />
+                  <h3 className="text-xs font-bold uppercase">{label}</h3>
+                </div>
+                <div className="px-4 py-4">
+                  <p className="text-2xl font-black text-foreground">{value}</p>
+                  <p className="mt-1 min-h-8 text-xs text-muted-foreground">{detail}</p>
+                </div>
+              </article>
+            ))}
 
-          <details className="group border-y border-border bg-card" open={false}>
-            <summary className="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-bold"><span className="flex items-center gap-2"><SlidersHorizontal className="size-4" /> Parâmetros avançados</span><ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
-            <div className="grid gap-5 border-t border-border py-4 lg:grid-cols-2">
-            <div className="space-y-3">
-              {[
-                { l: "Margem de lucro (%)", v: margem, set: setMargem },
-                { l: "Despesas operacionais (%)", v: despesasPct, set: setDespesasPct },
-                { l: "Comissão (%)", v: comissao, set: setComissao },
-                { l: "Inadimplência (%)", v: inadimplencia, set: setInadimplencia },
-              ].map((f) => (
-                <label key={f.l} className="block text-sm">
-                  <span className="font-semibold">{f.l}</span>
+            {[
+              { label: "Margem de lucro", value: margem, setValue: setMargem, Icon: BadgeDollarSign },
+              { label: "Comissão", value: comissao, setValue: setComissao, Icon: Percent },
+              { label: "Inadimplência", value: inadimplencia, setValue: setInadimplencia, Icon: ShieldAlert },
+            ].map(({ label, value, setValue, Icon }) => (
+              <label key={label} className="overflow-hidden rounded-md border border-border bg-card shadow-panel">
+                <span className="flex min-h-11 items-center gap-2 bg-navy px-3 py-2 text-navy-foreground">
+                  <Icon className="size-4" />
+                  <span className="text-xs font-bold uppercase">{label}</span>
+                </span>
+                <span className="relative block px-4 py-4">
                   <input
                     type="number"
+                    min="0"
                     step="0.01"
-                    value={Number(f.v.toFixed(4))}
-                    onChange={(e) => {
-                      f.set(Number(e.target.value));
-                      setSalvo(null);
-                    }}
-                    className="mt-1 h-9 w-full rounded-sm border border-input bg-background px-2 text-sm tabular-nums outline-none focus:border-ring"
+                    value={Number(value.toFixed(4))}
+                    onChange={(e) => { setValue(Number(e.target.value)); setSalvo(null); }}
+                    className="h-11 w-full rounded-sm border border-green bg-green-soft px-3 pr-9 text-right text-xl font-black text-accent-foreground outline-none focus:ring-2 focus:ring-ring"
                   />
-                </label>
-              ))}
-              <label className="flex items-center gap-2 rounded-sm border border-border bg-secondary/40 px-3 py-2 text-sm">
+                  <span className="pointer-events-none absolute top-7 right-7 text-sm font-bold text-accent-foreground">%</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">Parâmetro comercial</span>
+                </span>
+              </label>
+            ))}
+
+            <article className="overflow-hidden rounded-md border-2 border-green bg-card shadow-panel">
+              <div className="flex min-h-11 items-center gap-2 bg-green px-3 py-2 text-green-foreground">
+                <BadgeDollarSign className="size-4" />
+                <h3 className="text-xs font-bold uppercase">Preço final</h3>
+              </div>
+              <div className="bg-green-soft px-4 py-4">
+                <p className="text-2xl font-black text-accent-foreground">{preco === null ? "Indisponível" : money(preco)}</p>
+                <p className="mt-1 min-h-8 text-xs font-medium text-accent-foreground">{cenario}</p>
+              </div>
+            </article>
+          </section>
+
+          <section className="rounded-md border border-border bg-card p-4 shadow-panel">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="flex items-center gap-2 text-sm font-bold"><Truck className="size-4 text-primary" /> Entrega</p>
+                <label className="mt-3 flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
                   checked={frota}
@@ -416,8 +472,9 @@ function Precificacao() {
                 />
                 <span className="font-medium">Entrega com frota própria</span>
               </label>
+              </div>
               {frota ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3 sm:w-96">
                   <label className="block text-sm">
                     <span className="font-semibold">Distância (km)</span>
                     <input
@@ -439,13 +496,7 @@ function Precificacao() {
                 </div>
               ) : null}
             </div>
-              <div className="space-y-2">
-                <p className="text-sm font-bold">Critério das despesas</p>
-                {precoPorMetodo.map((op) => <label key={op.metodo} className={`flex cursor-pointer flex-col rounded-sm border px-3 py-2 text-sm ${metodoDespesas === op.metodo ? "border-green bg-green-soft" : "border-border"}`}><span className="font-semibold"><input type="radio" name="metodo-despesas-preco" checked={metodoDespesas === op.metodo} onChange={() => { definirMetodoDespesas(op.metodo); setSalvo(null); }} className="mr-2" />{op.metodo === "media" ? "Média simples" : "Taxa ponderada"}</span><span className="pl-6 text-xs text-muted-foreground">Despesas {pct(op.taxa, 4)} · preço {money(op.preco)}</span></label>)}
-                <p className="text-xs text-muted-foreground">Diferença no preço: {diferencaMetodos === null ? "—" : money(Math.abs(diferencaMetodos))}</p>
-              </div>
-            </div>
-          </details>
+          </section>
 
           {r.bloqueios.length ? (
             <EmptyNote>
@@ -485,8 +536,27 @@ function Precificacao() {
             </p>
           ) : null}
 
-          <details className="group border-y border-border bg-card" open>
-            <summary className="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-bold"><span>Memória de cálculo · {linhasMemoria.length} etapas</span><ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
+          <details className="group rounded-md border border-border bg-card px-4 shadow-panel">
+            <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-sm font-bold"><span>Detalhes técnicos e memória de cálculo · {linhasMemoria.length} etapas</span><ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
+            <div className="grid gap-4 border-t border-border py-4 lg:grid-cols-2">
+              <div className="space-y-2">
+                <p className="text-sm font-bold">Critério das despesas</p>
+                {precoPorMetodo.map((op) => <label key={op.metodo} className={`flex cursor-pointer flex-col rounded-sm border px-3 py-2 text-sm ${metodoDespesas === op.metodo ? "border-green bg-green-soft" : "border-border"}`}><span className="font-semibold"><input type="radio" name="metodo-despesas-preco" checked={metodoDespesas === op.metodo} onChange={() => { definirMetodoDespesas(op.metodo); setSalvo(null); }} className="mr-2" />{op.metodo === "media" ? "Média simples" : "Taxa ponderada"}</span><span className="pl-6 text-xs text-muted-foreground">Despesas {pct(op.taxa, 4)} · preço {money(op.preco)}</span></label>)}
+                <p className="text-xs text-muted-foreground">Diferença no preço: {diferencaMetodos === null ? "—" : money(Math.abs(diferencaMetodos))}</p>
+              </div>
+              <label className="block text-sm">
+                <span className="font-bold">Despesas operacionais (%)</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={Number(despesasPct.toFixed(4))}
+                  onChange={(e) => { setDespesasPct(Number(e.target.value)); setSalvo(null); }}
+                  className="mt-2 h-10 w-full rounded-sm border border-input bg-background px-3 text-sm tabular-nums outline-none focus:border-ring"
+                />
+                <span className="mt-1 block text-xs text-muted-foreground">Ajuste técnico excepcional para esta simulação.</span>
+              </label>
+            </div>
           <Panel
             titulo="Memória de cálculo"
             subtitulo="Cada passo rastreável até a origem do dado"
@@ -522,8 +592,8 @@ function Precificacao() {
           </Panel>
           </details>
 
-          <details className="group border-y border-border bg-card">
-            <summary className="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-bold"><span>Composição da matéria-prima · {qtd(itens.length)} componentes</span><ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
+          <details className="group rounded-md border border-border bg-card px-4 shadow-panel">
+            <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-sm font-bold"><span>Composição da matéria-prima · {qtd(itens.length)} componentes</span><ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
           <Panel
             titulo="Composição da matéria-prima"
             subtitulo={`${selecionado} — ${qtd(itens.length)} componentes`}
