@@ -14,6 +14,10 @@ import { DESPESAS_PERCENTUAL, fretePorPeca, logisticaCorrigida, simplesEfetivo }
     expect(fretePorPeca(50, 4, 1.5)).toBeCloseTo(logisticaCorrigida().custoTotalPorKm * 18.75, 8);
   });
   it("calcula a alíquota efetiva do Simples pelo RBT12", () => {
-    expect(simplesEfetivo(3_000_000, 0.14, 397_800)).toBeCloseTo((3_000_000 * 0.14 - 397_800) / 3_000_000, 12);
+    const resultado = simplesEfetivo(3_000_000);
+    expect(resultado.aliquotaEfetiva).toBeCloseTo(
+      (3_000_000 * (resultado.aliquotaNominal ?? 0) - (resultado.valorDeduzir ?? 0)) / 3_000_000,
+      12,
+    );
   });
 });
