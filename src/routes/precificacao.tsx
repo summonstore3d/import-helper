@@ -70,6 +70,7 @@ function Precificacao() {
     despesasPercentual,
     comparativoDespesas,
     autenticado,
+    baseIndustrial,
   } = usePrototype();
   const padrao = parametrosPadrao();
 
@@ -118,6 +119,7 @@ function Precificacao() {
     frota,
     km,
     pecasPorEntrega: pecas,
+    base: baseIndustrial,
   });
 
   const preco = r.preco;
@@ -145,6 +147,7 @@ function Precificacao() {
               frota,
               km,
               pecasPorEntrega: pecas,
+              base: baseIndustrial,
             }).preco,
     };
   });

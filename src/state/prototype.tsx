@@ -10,7 +10,8 @@ import {
   type Context,
 } from "react";
 import { bomDoProduto, type Cenario, type ItemMP } from "@/lib/pricing";
-import { custearItem, despesasPonderadas } from "@/lib/correcoes";
+import { custearItem, despesasPonderadas, mapaInsumos, setoresVigentes, type FontesCusto } from "@/lib/correcoes";
+import type { BaseIndustrial } from "@/lib/custos-industriais";
 import {
   centroCustos as centroCustosBase,
   despesas as despesasBase,
@@ -86,6 +87,10 @@ type Ctx = {
   removerItemBom: (produto: string, indice: number) => void;
   removerItemAdicionado: (produto: string, item: string) => void;
   centroCustos: CentroCustosEditavel;
+  /** Base industrial vigente usada pelo motor de preço. */
+  baseIndustrial: BaseIndustrial;
+  /** Setores com mão de obra, manutenção e $/hora recalculados. */
+  setoresCalculados: Setor[];
   guiaCdc: GuiaCdc;
   atualizarSetor: (indice: number, setor: Setor) => void;
   atualizarRoteiro: (indice: number, roteiro: RoteiroLinha) => void;
@@ -323,10 +328,33 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     return { atualizados, novos };
   }, [listaInsumos, persistir, registrarAuditoria]);
 
+  const fontes = useMemo<FontesCusto>(() => {
+    const insumos = mapaInsumos(listaInsumos);
+    const cache = new Map<string, number | null>();
+    const emCalculo = new Set<string>();
+    const f: FontesCusto = { insumos };
+    // Semiacabado = soma da MP da sua própria estrutura vigente (evita ciclos).
+    f.semiacabado = (item) => {
+      if (cache.has(item)) return cache.get(item) ?? null;
+      const linhas = bomEditado[item] ?? bomDoProduto(item).map(normalizeItem);
+      if (!linhas.length || emCalculo.has(item)) return null;
+      emCalculo.add(item);
+      const itens = linhas.map((l) => custearItem(l, f));
+      emCalculo.delete(item);
+      const total = itens.some((i) => i.custoTotal === null) ? null : itens.reduce((s, i) => s + (i.custoTotal ?? 0), 0);
+      cache.set(item, total);
+      return total;
+    };
+    return f;
+  }, [listaInsumos, bomEditado]);
+
   const itensBom = useCallback((produto: string) => {
     const editado = bomEditado[produto];
-    return (editado ?? bomDoProduto(produto).map(normalizeItem)).map((i) => custearItem(i));
-  }, [bomEditado]);
+    return (editado ?? bomDoProduto(produto).map(normalizeItem)).map((i) => custearItem(i, fontes));
+  }, [bomEditado, fontes]);
+
+  const baseIndustrial = useMemo<BaseIndustrial>(() => ({ setores: centroCustos.setores, roteiro: centroCustos.roteiro, guia: guiaCdc }), [centroCustos, guiaCdc]);
+  const setoresCalculadosVigentes = useMemo(() => setoresVigentes(baseIndustrial), [baseIndustrial]);
 
   const salvarBom = useCallback((produto: string, itens: ItemAdicionado[], campo: string) => {
     const state = { ...bomEditado, [produto]: itens };
@@ -370,11 +398,15 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const atualizarMaoDeObra = useCallback((linha: number, setor: string, valor: number) => {
     const novo = structuredClone(guiaCdc);
     const alvo = novo.maoDeObra[linha]; if (!alvo) return;
+    const antes = alvo.valores[setor];
     alvo.valores[setor] = valor; setGuiaCdc(novo); persistirCustos(centroCustos, novo);
-  }, [guiaCdc, centroCustos, persistirCustos]);
+    registrarAuditoria({ modulo: "Centro de Custos", registro: `${alvo.funcao} — ${setor}`, campo: "Rateio de mão de obra", valorAnterior: String(antes ?? "—"), valorNovo: String(valor), motivo: "Manutenção industrial" });
+  }, [guiaCdc, centroCustos, persistirCustos, registrarAuditoria]);
   const atualizarManutencao = useCallback((indice: number, campo: "total" | "percentual" | "manutencaoSetor", valor: number | null) => {
     const novo = structuredClone(guiaCdc); const alvo = novo.manutencao[indice]; if (!alvo) return;
-    alvo[campo] = valor; setGuiaCdc(novo); persistirCustos(centroCustos, novo);
+    alvo[campo] = valor;
+    if (campo !== "manutencaoSetor") alvo.manutencaoSetor = typeof alvo.total === "number" && typeof alvo.percentual === "number" ? alvo.total * alvo.percentual : null;
+    setGuiaCdc(novo); persistirCustos(centroCustos, novo);
   }, [guiaCdc, centroCustos, persistirCustos]);
 
   const registrarVersao = useCallback((v: Omit<VersaoPreco, "id" | "data" | "origem">) => {
@@ -389,10 +421,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas,
     listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom,
     salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc,
-    atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao,
+    baseIndustrial, setoresCalculados: setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao,
     auditoria, registrarAuditoria, historico, registrarVersao, usuario,
     autenticado: userId !== null, sincronizando, gravacao,
-  }), [demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
+  }), [demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
 
   return <PrototypeContext.Provider value={value}>{children}</PrototypeContext.Provider>;
 }
