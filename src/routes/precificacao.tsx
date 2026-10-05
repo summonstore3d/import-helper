@@ -41,6 +41,8 @@ export const Route = createFileRoute("/precificacao")({
         property: "og:description",
         content: "Formação de preço comercial por produto, com parâmetros claros e detalhes técnicos auditáveis.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Precificacao,
@@ -365,7 +367,7 @@ function Precificacao() {
               <Search className="pointer-events-none absolute top-5 left-5 size-4 text-muted-foreground" />
               <input value={buscaProduto} onChange={(e) => setBuscaProduto(e.target.value)} placeholder="Código ou descrição" className="h-9 w-full rounded-sm border border-input bg-background pr-2 pl-8 text-sm outline-none focus:border-ring" />
             </div>
-            <div className="max-h-[56vh] overflow-auto p-1.5">
+            <div className="max-h-72 overflow-auto p-1.5 xl:max-h-[56vh]">
               {produtosFiltrados.map((p) => {
                 const [codigo, ...descricao] = p.full.split(" - ");
                 return <Button key={p.full} variant="ghost" type="button" onClick={() => { navigate({ search: { produto: p.full } }); setCenario(cenarioSugerido(p.full)); setSalvo(null); }} className={`mb-1 h-auto w-full justify-start whitespace-normal rounded-sm border-l-2 px-3 py-2 text-left shadow-none ${selecionado === p.full ? "border-green bg-green-soft hover:bg-green-soft" : "border-transparent hover:bg-secondary"}`}>
