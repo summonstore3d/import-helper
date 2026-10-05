@@ -118,6 +118,7 @@ function Precificacao() {
     frota,
     km,
     pecasPorEntrega: pecas,
+    base: baseIndustrial,
   });
 
   const preco = r.preco;
@@ -145,6 +146,7 @@ function Precificacao() {
               frota,
               km,
               pecasPorEntrega: pecas,
+              base: baseIndustrial,
             }).preco,
     };
   });

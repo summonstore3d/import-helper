@@ -398,8 +398,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const atualizarMaoDeObra = useCallback((linha: number, setor: string, valor: number) => {
     const novo = structuredClone(guiaCdc);
     const alvo = novo.maoDeObra[linha]; if (!alvo) return;
+    const antes = alvo.valores[setor];
     alvo.valores[setor] = valor; setGuiaCdc(novo); persistirCustos(centroCustos, novo);
-  }, [guiaCdc, centroCustos, persistirCustos]);
+    registrarAuditoria({ modulo: "Centro de Custos", registro: `${alvo.funcao} — ${setor}`, campo: "Rateio de mão de obra", valorAnterior: String(antes ?? "—"), valorNovo: String(valor), motivo: "Manutenção industrial" });
+  }, [guiaCdc, centroCustos, persistirCustos, registrarAuditoria]);
   const atualizarManutencao = useCallback((indice: number, campo: "total" | "percentual" | "manutencaoSetor", valor: number | null) => {
     const novo = structuredClone(guiaCdc); const alvo = novo.manutencao[indice]; if (!alvo) return;
     alvo[campo] = valor;
