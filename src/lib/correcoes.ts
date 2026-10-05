@@ -325,25 +325,49 @@ function rodapePor(nome: string, fonte: typeof despesas = despesas): (number | n
 export function despesasPonderadas(fonte: typeof despesas = despesas) {
   const totais = rodapePor("total depesas por mês", fonte);
   const receita = rodapePor("faturamento por mês", fonte);
+  const contasDoFrete = new Set([
+    "COMBUSTIVEIS VEICULOS FABRICA",
+    "DESPESAS COM CAMINHOES",
+    "PEDAGIOS",
+    "IPVA",
+    "SEGUROS",
+  ]);
+  const normalizar = (valor: string) =>
+    valor
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toUpperCase();
+  const linhasDoFrete = fonte.linhas.filter((linha) => contasDoFrete.has(normalizar(linha.nome)));
   let somaDespesas = 0;
   let somaReceita = 0;
   let meses = 0;
+  const taxasMensais: number[] = [];
   receita.forEach((rec, i) => {
     const desp = totais[i];
     if (isNum(rec) && rec > 0 && isNum(desp) && desp > 0) {
+      const despesasJaNoFrete = linhasDoFrete.reduce(
+        (total, linha) => total + (isNum(linha.valores[i]?.valor) ? linha.valores[i].valor : 0),
+        0,
+      );
+      const despesaAjustada = desp - despesasJaNoFrete;
       somaReceita += rec;
-      somaDespesas += desp;
+      somaDespesas += despesaAjustada;
+      taxasMensais.push(despesaAjustada / rec);
       meses += 1;
     }
   });
   const ponderada = somaReceita > 0 ? somaDespesas / somaReceita : null;
+  const mediaSimples = taxasMensais.length
+    ? taxasMensais.reduce((total, taxa) => total + taxa, 0) / taxasMensais.length
+    : fonte.mediaDespesas;
   return {
     somaDespesas,
     somaReceita,
     meses,
     ponderada,
-    mediaSimples: fonte.mediaDespesas,
-    diferenca: ponderada === null ? null : ponderada - fonte.mediaDespesas,
+    mediaSimples,
+    diferenca: ponderada === null ? null : ponderada - mediaSimples,
   };
 }
 

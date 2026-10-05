@@ -7,4 +7,4 @@
 - [x] Completar edição persistente de Insumos, BOM, Centro de Custos e Guia CDC.
 - [x] Permitir adicionar novo mês vazio e editar o demonstrativo de Despesas.
 - [x] Redesenhar Precificação como cockpit minimalista, mantendo memória, comparação e Excel.
-- [ ] Verificar cálculos, permissões, importações, histórico, auditoria, desktop e celular.
+- [x] Verificar cálculos, permissões, importações, histórico, auditoria, desktop e celular.
