@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Download, Save } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronDown, Download, Search, Save, SlidersHorizontal } from "lucide-react";
 import { parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
@@ -8,6 +8,7 @@ import { usePrototype } from "@/state/prototype";
 import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planilha-precificacao";
 import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
+import { Button } from "@/components/ui/button";
 
 type Search = { produto?: string | undefined };
 
@@ -49,6 +50,7 @@ function Precificacao() {
     definirMetodoDespesas,
     despesasPercentual,
     comparativoDespesas,
+    autenticado,
   } = usePrototype();
   const padrao = parametrosPadrao();
 
@@ -70,6 +72,8 @@ function Precificacao() {
   const [km, setKm] = useState(padrao.km);
   const [pecas, setPecas] = useState(padrao.pecasPorEntrega);
   const [salvo, setSalvo] = useState<string | null>(null);
+  const [buscaProduto, setBuscaProduto] = useState("");
+  const produtosFiltrados = useMemo(() => produtos.filter((p) => p.full.toLowerCase().includes(buscaProduto.toLowerCase())), [buscaProduto]);
 
   const itens = itensBom(selecionado);
   const r = calcularPreco({
@@ -310,36 +314,22 @@ function Precificacao() {
         descricao="O coração da ferramenta. No sistema, o preço é calculado por um motor de regras auditável, com memória de cálculo linha a linha e cenário tributário explícito."
         acoes={
           <>
-            <select
-              value={selecionado}
-              onChange={(e) => {
-                navigate({ search: { produto: e.target.value } });
-                setCenario(cenarioSugerido(e.target.value));
-                setSalvo(null);
-              }}
-              className="h-9 max-w-[24rem] rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring"
-            >
-              {produtos.map((p) => (
-                <option key={p.full} value={p.full}>
-                  {p.full}
-                </option>
-              ))}
-            </select>
-            <button
+            <Button
+              variant="outline"
               type="button"
               onClick={exportarExcel}
-              className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-2 text-sm font-semibold"
             >
               <Download className="size-4" /> Exportar Excel
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={salvar}
-              disabled={preco === null}
-              className="inline-flex items-center gap-1.5 rounded-sm bg-green px-3 py-2 text-sm font-semibold text-green-foreground disabled:opacity-40"
+              disabled={preco === null || !autenticado}
+              title={autenticado ? "Salvar simulação" : "Entre para salvar"}
+              className="bg-green text-green-foreground hover:bg-green/90"
             >
               <Save className="size-4" /> Salvar simulação
-            </button>
+            </Button>
           </>
         }
       />
@@ -354,82 +344,45 @@ function Precificacao() {
         </p>
       ) : null}
 
-      <div className="grid gap-4 xl:grid-cols-[20rem_1fr]">
-        <div className="space-y-4">
-          <Panel titulo="Cenário de venda" subtitulo="Regras tributárias reais da planilha">
-            <div className="space-y-2">
-              {CENARIOS.map((c) => (
-                <label
-                  key={c}
-                  className="flex cursor-pointer items-center gap-2 rounded-sm border border-border bg-secondary/40 px-3 py-2 text-sm"
-                >
-                  <input
-                    type="radio"
-                    name="cenario"
-                    checked={cenario === c}
-                    onChange={() => {
-                      setCenario(c);
-                      setSalvo(null);
-                    }}
-                  />
-                  <span className="font-medium">{c}</span>
-                </label>
-              ))}
+      <div className="grid gap-4 xl:grid-cols-[19rem_1fr]">
+        <aside className="space-y-4 xl:sticky xl:top-20 xl:self-start">
+          <Panel titulo="Produtos" subtitulo={`${produtosFiltrados.length} encontrados`} bodyClassName="p-0">
+            <div className="relative border-b border-border p-3">
+              <Search className="pointer-events-none absolute top-5 left-5 size-4 text-muted-foreground" />
+              <input value={buscaProduto} onChange={(e) => setBuscaProduto(e.target.value)} placeholder="Código ou descrição" className="h-9 w-full rounded-sm border border-input bg-background pr-2 pl-8 text-sm outline-none focus:border-ring" />
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Família do produto: <strong className="text-foreground">{r.regra.categoria}</strong>
-            </p>
-            {r.impostosDemonstrativos ? (
-              <p className="mt-2 rounded-sm border border-warn bg-demo px-2 py-1.5 text-xs text-demo-foreground">
-                <DemoTag>Regra a validar</DemoTag> {r.observacaoImpostos}
-              </p>
-            ) : (
-              <p className="mt-2">
-                <RealTag>Alíquota da planilha</RealTag>
-              </p>
-            )}
-          </Panel>
-
-          <Panel
-            titulo="Forma de cálculo das despesas"
-            subtitulo="Compare o critério da planilha com o critério ponderado"
-          >
-            <div className="space-y-2">
-              {precoPorMetodo.map((op) => (
-                <label
-                  key={op.metodo}
-                  className={`flex cursor-pointer flex-col gap-0.5 rounded-sm border px-3 py-2 text-sm ${
-                    metodoDespesas === op.metodo
-                      ? "border-green bg-green-soft"
-                      : "border-border bg-secondary/40"
-                  }`}
-                >
-                  <span className="flex items-center gap-2 font-medium">
-                    <input
-                      type="radio"
-                      name="metodo-despesas-preco"
-                      checked={metodoDespesas === op.metodo}
-                      onChange={() => {
-                        definirMetodoDespesas(op.metodo);
-                        setSalvo(null);
-                      }}
-                    />
-                    {op.metodo === "media" ? "Média simples (planilha)" : "Taxa ponderada"}
-                  </span>
-                  <span className="pl-6 text-xs text-muted-foreground">
-                    Despesas {pct(op.taxa, 4)} · preço {op.preco === null ? "—" : money(op.preco)}
-                  </span>
-                </label>
-              ))}
+            <div className="max-h-[56vh] overflow-auto p-1.5">
+              {produtosFiltrados.map((p) => {
+                const [codigo, ...descricao] = p.full.split(" - ");
+                return <button key={p.full} type="button" onClick={() => { navigate({ search: { produto: p.full } }); setCenario(cenarioSugerido(p.full)); setSalvo(null); }} className={`mb-1 w-full rounded-sm border-l-2 px-3 py-2 text-left transition-colors ${selecionado === p.full ? "border-green bg-green-soft" : "border-transparent hover:bg-secondary"}`}>
+                  <span className="block text-xs font-black text-foreground">{codigo}</span>
+                  <span className="mt-0.5 block line-clamp-2 text-[11px] text-muted-foreground">{descricao.join(" - ")}</span>
+                </button>;
+              })}
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {diferencaMetodos === null
-                ? "Comparação indisponível para este produto."
-                : `Diferença no preço final entre os dois critérios: ${money(Math.abs(diferencaMetodos))}.`}
-            </p>
           </Panel>
+        </aside>
 
-          <Panel titulo="Parâmetros" subtitulo="Ajuste e veja o preço recalcular">
+        <div className="min-w-0 space-y-4">
+          <section className="border-y border-border bg-card py-4">
+            <p className="text-xs font-bold tracking-widest text-green uppercase">Produto selecionado</p>
+            <h2 className="mt-1 text-xl font-black tracking-normal text-foreground">{selecionado}</h2>
+            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="space-y-2">
+                {CENARIOS.map((c) => <button key={c} type="button" onClick={() => { setCenario(c); setSalvo(null); }} className={`rounded-sm border px-3 py-2 text-xs font-semibold ${cenario === c ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background text-muted-foreground"}`}>{c}</button>)}
+              </div>
+            </div>
+          </section>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <KPI rotulo="Custo absoluto" valor={money(r.custoAbsoluto)} detalhe="MP + produção" />
+            <KPI rotulo="Carga sobre o preço" valor={pct(r.somaPercentuais, 2)} detalhe="Percentuais aplicados" />
+            <KPI rotulo="Preço de venda sugerido" valor={preco === null ? "Indisponível" : money(preco)} detalhe={cenario} destaque />
+          </div>
+
+          <details className="group border-y border-border bg-card" open={false}>
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-bold"><span className="flex items-center gap-2"><SlidersHorizontal className="size-4" /> Parâmetros avançados</span><ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
+            <div className="grid gap-5 border-t border-border py-4 lg:grid-cols-2">
             <div className="space-y-3">
               {[
                 { l: "Margem de lucro (%)", v: margem, set: setMargem },
@@ -485,23 +438,13 @@ function Precificacao() {
                 </div>
               ) : null}
             </div>
-          </Panel>
-        </div>
-
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <KPI rotulo="Custo absoluto" valor={money(r.custoAbsoluto)} detalhe="MP + produção" />
-            <KPI
-              rotulo="Carga sobre o preço"
-              valor={pct(r.somaPercentuais, 2)}
-              detalhe="Despesas + impostos + comissão + inadimplência + margem"
-            />
-            <KPI
-              rotulo="Preço de venda sugerido"
-              valor={preco === null ? "Indisponível" : money(preco)}
-              detalhe={cenario}
-              destaque
-            />
+              <div className="space-y-2">
+                <p className="text-sm font-bold">Critério das despesas</p>
+                {precoPorMetodo.map((op) => <label key={op.metodo} className={`flex cursor-pointer flex-col rounded-sm border px-3 py-2 text-sm ${metodoDespesas === op.metodo ? "border-green bg-green-soft" : "border-border"}`}><span className="font-semibold"><input type="radio" name="metodo-despesas-preco" checked={metodoDespesas === op.metodo} onChange={() => { definirMetodoDespesas(op.metodo); setSalvo(null); }} className="mr-2" />{op.metodo === "media" ? "Média simples" : "Taxa ponderada"}</span><span className="pl-6 text-xs text-muted-foreground">Despesas {pct(op.taxa, 4)} · preço {money(op.preco)}</span></label>)}
+                <p className="text-xs text-muted-foreground">Diferença no preço: {diferencaMetodos === null ? "—" : money(Math.abs(diferencaMetodos))}</p>
+              </div>
+            </div>
+          </details>
           </div>
 
           {r.bloqueios.length ? (
@@ -542,6 +485,8 @@ function Precificacao() {
             </p>
           ) : null}
 
+          <details className="group border-y border-border bg-card" open>
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-bold"><span>Memória de cálculo · {linhasMemoria.length} etapas</span><ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
           <Panel
             titulo="Memória de cálculo"
             subtitulo="Cada passo rastreável até a origem do dado"
@@ -575,7 +520,10 @@ function Precificacao() {
               </tbody>
             </table>
           </Panel>
+          </details>
 
+          <details className="group border-y border-border bg-card">
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-bold"><span>Composição da matéria-prima · {qtd(itens.length)} componentes</span><ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
           <Panel
             titulo="Composição da matéria-prima"
             subtitulo={`${selecionado} — ${qtd(itens.length)} componentes`}
@@ -619,6 +567,7 @@ function Precificacao() {
               </table>
             </div>
           </Panel>
+          </details>
         </div>
       </div>
     </>
