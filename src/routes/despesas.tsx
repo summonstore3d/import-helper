@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { Download, Upload } from "lucide-react";
+import { Download, Plus, Upload } from "lucide-react";
 import { isNum, money, pct } from "@/lib/format";
 import { despesasPonderadas } from "@/lib/correcoes";
 import {
@@ -39,9 +39,13 @@ function Despesas() {
     metodoDespesas,
     definirMetodoDespesas,
     despesasPercentual,
+    adicionarMesDespesas,
+    atualizarDespesa,
+    autenticado,
   } = usePrototype();
   const inputRef = useRef<HTMLInputElement>(null);
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
+  const [novoMes, setNovoMes] = useState("");
 
   const vigentes = useMemo(() => despesasPonderadas(demonstrativo), [demonstrativo]);
   const mesesComDado = demonstrativo.linhas[0]?.valores.filter((v) => isNum(v.valor)).length ?? 0;
@@ -91,6 +95,18 @@ function Despesas() {
         descricao="O demonstrativo mensal alimenta o percentual de despesas usado na precificação. No sistema, este número deixa de ser digitado e passa a ser calculado a partir do resultado contábil."
         acoes={
           <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={!autenticado}
+              title={autenticado ? "Adicionar mês" : "Entre para editar"}
+              onClick={() => {
+                const valor = novoMes || window.prompt("Competência do novo mês (ex.: OUTUBRO/2026)") || "";
+                if (valor) { adicionarMesDespesas(valor); setNovoMes(""); }
+              }}
+              className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold disabled:opacity-40"
+            >
+              <Plus className="size-4" /> Novo mês
+            </button>
             <button
               type="button"
               onClick={exportarExcel}
@@ -237,7 +253,16 @@ function Despesas() {
                   <Td className="max-w-[16rem] truncate">{l.nome}</Td>
                   {l.valores.map((v, j) => (
                     <Td key={j} align="right" className="whitespace-nowrap">
-                      {isNum(v.valor) ? money(v.valor) : "–"}
+                      {autenticado ? (
+                        <input
+                          aria-label={`${l.nome} — ${demonstrativo.meses[j] ?? "mês"}`}
+                          type="number"
+                          step="0.01"
+                          value={v.valor ?? ""}
+                          onChange={(e) => atualizarDespesa(i, j, e.target.value === "" ? null : Number(e.target.value))}
+                          className="h-7 w-28 rounded-sm border border-transparent bg-transparent px-1 text-right tabular-nums hover:border-input focus:border-ring focus:bg-background focus:outline-none"
+                        />
+                      ) : isNum(v.valor) ? money(v.valor) : "–"}
                     </Td>
                   ))}
                 </tr>

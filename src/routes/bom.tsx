@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
-import { insumos, parametros, produtos } from "@/data";
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import { parametros, produtos } from "@/data";
 import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { custoMPOriginal, totalMP } from "@/lib/pricing";
 import { descricaoProblema } from "@/lib/correcoes";
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/bom")({
 function Bom() {
   const { produto } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
-  const { itensBom, adicionarItemBom, removerItemAdicionado } = usePrototype();
+  const { itensBom, adicionarItemBom, salvarItemBom, removerItemBom, listaInsumos, autenticado } = usePrototype();
 
   const selecionado = produto && produtos.some((p) => p.full === produto) ? produto : parametros.produtoExemplo;
   const itens = itensBom(selecionado);
@@ -43,25 +43,29 @@ function Bom() {
   const original = custoMPOriginal(selecionado);
 
   const [modal, setModal] = useState(false);
-  const [insumoSel, setInsumoSel] = useState(insumos[0]?.full ?? "");
+  const [insumoSel, setInsumoSel] = useState(listaInsumos[0]?.full ?? "");
   const [quantidade, setQuantidade] = useState("1");
   const [unidade, setUnidade] = useState("KG");
+  const [indiceEditando, setIndiceEditando] = useState<number | null>(null);
 
-  const insumoAtual = useMemo(() => insumos.find((i) => i.full === insumoSel) ?? null, [insumoSel]);
+  const insumoAtual = useMemo(() => listaInsumos.find((i) => i.full === insumoSel) ?? null, [insumoSel, listaInsumos]);
 
   function confirmar() {
     if (!insumoAtual) return;
     const q = Number(quantidade.replace(",", "."));
     const cu = isNum(insumoAtual.custoUnitario) ? insumoAtual.custoUnitario : null;
-    adicionarItemBom(selecionado, {
+    const item = {
       item: insumoAtual.full,
       tipo: "Insumo",
       quantidade: Number.isFinite(q) ? q : null,
       unidade,
       custoUnitario: cu,
       custoTotal: cu !== null && Number.isFinite(q) ? cu * q : null,
-    });
+    };
+    if (indiceEditando === null) adicionarItemBom(selecionado, item);
+    else salvarItemBom(selecionado, indiceEditando, item);
     setModal(false);
+    setIndiceEditando(null);
     setQuantidade("1");
   }
 
@@ -110,7 +114,9 @@ function Bom() {
             <RealTag />
             <button
               type="button"
-              onClick={() => setModal(true)}
+              disabled={!autenticado}
+              title={autenticado ? "Adicionar componente" : "Entre para editar"}
+              onClick={() => { setIndiceEditando(null); setModal(true); }}
               className="inline-flex items-center gap-1.5 rounded-sm bg-green px-3 py-1.5 text-xs font-semibold text-green-foreground hover:opacity-90"
             >
               <Plus className="size-3.5" /> Adicionar componente
@@ -137,7 +143,7 @@ function Bom() {
                   <Th>Unidade</Th>
                   <Th align="right">Custo unitário</Th>
                   <Th align="right">Custo total</Th>
-                  <Th align="center">Origem</Th>
+                   <Th align="center">Ações</Th>
                 </tr>
               </thead>
               <tbody>
@@ -160,23 +166,12 @@ function Bom() {
                       ) : null}
                     </Td>
                     <Td align="center">
-                      {l.demonstrativo ? (
-                        <span className="inline-flex items-center gap-2">
-                          <DemoTag>Sessão</DemoTag>
-                          <button
-                            type="button"
-                            aria-label="Remover componente"
-                            onClick={() => removerItemAdicionado(selecionado, l.item)}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="size-3.5" />
-                          </button>
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
-                          Planilha
-                        </span>
-                      )}
+                       <span className="inline-flex items-center gap-1">
+                         <button type="button" disabled={!autenticado} aria-label="Editar componente" title="Editar componente" onClick={() => {
+                           setIndiceEditando(i); setInsumoSel(l.item); setQuantidade(String(l.quantidade ?? "")); setUnidade(l.unidade ?? "KG"); setModal(true);
+                         }} className="rounded-sm p-1 text-primary disabled:opacity-30"><Pencil className="size-3.5" /></button>
+                         <button type="button" disabled={!autenticado} aria-label="Remover componente" title="Remover componente" onClick={() => removerItemBom(selecionado, i)} className="rounded-sm p-1 text-destructive disabled:opacity-30"><Trash2 className="size-3.5" /></button>
+                       </span>
                     </Td>
                   </tr>
                 ))}
@@ -199,11 +194,10 @@ function Bom() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-deep/60 p-4">
           <div className="w-full max-w-lg rounded-md border border-border bg-card p-5 shadow-panel">
             <h3 className="text-base font-bold tracking-tight text-foreground uppercase">
-              Adicionar componente
+              {indiceEditando === null ? "Adicionar componente" : "Editar componente"}
             </h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              Insumos reais cadastrados na planilha. A inclusão vale apenas para esta sessão de
-              demonstração.
+               Selecione o insumo e informe o consumo por peça. A alteração fica compartilhada.
             </p>
             <div className="mt-4 space-y-3">
               <label className="block text-sm">
@@ -213,7 +207,7 @@ function Bom() {
                   onChange={(e) => setInsumoSel(e.target.value)}
                   className="mt-1 h-9 w-full rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring"
                 >
-                  {insumos.map((i) => (
+                   {listaInsumos.map((i) => (
                     <option key={i.full} value={i.full}>
                       {i.full}
                     </option>
@@ -253,7 +247,7 @@ function Bom() {
             <div className="mt-5 flex justify-end gap-2">
               <button
                 type="button"
-                onClick={() => setModal(false)}
+                 onClick={() => { setModal(false); setIndiceEditando(null); }}
                 className="rounded-sm border border-input px-3 py-2 text-sm font-semibold"
               >
                 Cancelar
@@ -263,7 +257,7 @@ function Bom() {
                 onClick={confirmar}
                 className="rounded-sm bg-green px-3 py-2 text-sm font-semibold text-green-foreground"
               >
-                Adicionar
+                 {indiceEditando === null ? "Adicionar" : "Salvar"}
               </button>
             </div>
           </div>

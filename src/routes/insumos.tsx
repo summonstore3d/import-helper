@@ -56,7 +56,7 @@ type Formulario = {
 };
 
 function Insumos() {
-  const { listaInsumos, salvarInsumo, importarInsumos } = usePrototype();
+  const { listaInsumos, salvarInsumo, importarInsumos, autenticado } = usePrototype();
   const inputRef = useRef<HTMLInputElement>(null);
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   const [busca, setBusca] = useState("");
@@ -155,6 +155,7 @@ function Insumos() {
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
+              disabled={!autenticado}
               onClick={exportarExcel}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
             >
@@ -162,6 +163,7 @@ function Insumos() {
             </button>
             <button
               type="button"
+              disabled={!autenticado}
               onClick={() => inputRef.current?.click()}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
             >
@@ -179,6 +181,7 @@ function Insumos() {
               }}
             />
             <button
+                       disabled={!autenticado}
               type="button"
               onClick={() => setForm({ codigo: "", descricao: "", custoUnitario: "" })}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"
