@@ -11,7 +11,12 @@ const traduzir = (msg: string) => {
   if (m.includes("invalid login")) return "E-mail ou senha incorretos.";
   if (m.includes("email not confirmed")) return "Confirme seu e-mail pelo link enviado antes de entrar.";
   if (m.includes("already registered")) return "Este e-mail já tem conta. Use a opção Entrar.";
-  if (m.includes("password")) return "A senha precisa ter pelo menos 6 caracteres.";
+  if (m.includes("pwned") || m.includes("leaked") || m.includes("weak") || m.includes("known"))
+    return "Esta senha aparece em vazamentos de dados públicos e não é aceita por segurança. Escolha outra senha, de preferência com letras, números e símbolos.";
+  if (m.includes("at least") || m.includes("too short") || m.includes("should be"))
+    return `A senha não atende aos requisitos: ${msg}`;
+  if (m.includes("rate limit") || m.includes("security purposes"))
+    return "Muitas tentativas seguidas. Aguarde um minuto e tente novamente.";
   return msg;
 };
 
