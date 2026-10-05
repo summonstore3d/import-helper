@@ -118,8 +118,8 @@ function CentroDeCustos() {
                   <tr key={`${s.nome}-${i}`} className="odd:bg-secondary/30">
                     <Td className="font-semibold">{s.nome}</Td>
                     <Td className="text-xs">{s.grupo ?? "—"}</Td>
-                    <Td align="right" title="Calculado: colaboradores do rateio × salário médio">{valor(calc.maoDeObra, "money")}</Td>
-                    <Td align="right" title="Calculado: rateio de manutenção (Total × %)">{valor(calc.manutencao, "money")}</Td>
+                    <Td align="right">{valor(calc.maoDeObra, "money")}</Td>
+                    <Td align="right">{valor(calc.manutencao, "money")}</Td>
                     <Td align="right">{valor(calc.mesTotal, "money")}</Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.eficienciaPerdida} onChange={(v) => atualizarSetor(i, { ...s, eficienciaPerdida: v })} /></Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.transporteInterno} onChange={(v) => atualizarSetor(i, { ...s, transporteInterno: v })} /></Td>
@@ -169,9 +169,9 @@ function CentroDeCustos() {
                     <Td className="text-xs">{r.setor ?? "—"}</Td>
                     <Td align="right">{valor(taxaDoSetor(setoresCalculados, r.setor), "money")}</Td>
                      <Td align="right"><EditableNumber disabled={!autenticado} value={r.horaProduto} onChange={(v) => atualizarRoteiro(i, { ...r, horaProduto: v })} /></Td>
-                     <Td align="right" title="Calculado pelos kg que passam na central">{valor(c.componentes?.central ?? null, "money")}</Td>
+                     <Td align="right">{valor(c.componentes?.central ?? null, "money")}</Td>
                      <Td align="right"><EditableNumber disabled={!autenticado} value={r.horaArmacao} onChange={(v) => atualizarRoteiro(i, { ...r, horaArmacao: v })} /></Td>
-                     <Td align="right" title="0,16 h × $/hora da Pintura"><label className="inline-flex items-center gap-1"><input type="checkbox" disabled={!autenticado} checked={typeof r.pintura === "number" && r.pintura > 0} onChange={(e) => atualizarRoteiro(i, { ...r, pintura: e.target.checked ? 1 : null })} />{valor(c.componentes?.pintura || null, "money")}</label></Td>
+                     <Td align="right"><label className="inline-flex items-center gap-1"><input type="checkbox" disabled={!autenticado} checked={typeof r.pintura === "number" && r.pintura > 0} onChange={(e) => atualizarRoteiro(i, { ...r, pintura: e.target.checked ? 1 : null })} />{valor(c.componentes?.pintura || null, "money")}</label></Td>
                      <Td align="right"><EditableNumber disabled={!autenticado} value={r.kgPorProduto} onChange={(v) => atualizarRoteiro(i, { ...r, kgPorProduto: v })} /></Td>
                     <Td align="right" className="text-muted-foreground">
                       {valor(r.custoProducao, "money")}

@@ -59,7 +59,7 @@ export function setoresCalculados(base: BaseIndustrial, salario = SALARIO_MEDIO_
   return base.setores.map((s) => {
     const coluna = s.nome in COLUNA_MAO_DE_OBRA ? COLUNA_MAO_DE_OBRA[s.nome] : s.nome;
     const maoDeObra =
-      coluna && coluna in pessoas ? pessoas[coluna] * salario : s.maoDeObra;
+      coluna && pessoas[coluna] !== undefined ? pessoas[coluna] * salario : s.maoDeObra;
     const regra = MANUTENCAO_POR_SETOR[s.nome];
     const manutencao =
       regra === "zero" ? 0 : regra ? manutencaoDaLinha(base.guia, regra.linha) / regra.divisor : s.manutencao;

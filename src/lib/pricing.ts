@@ -247,7 +247,7 @@ export function precoRapido(
   return calcularPreco({
     produto,
     cenario,
-    base: vigente?.base,
+    ...(vigente?.base ? { base: vigente.base } : {}),
     itensMP: vigente?.itensMP ?? bomDoProduto(produto),
     margem: p.margem,
     comissao: p.comissao,

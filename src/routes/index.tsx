@@ -15,6 +15,7 @@ import {
 import { checks } from "@/lib/checks";
 import { money, pct, qtd } from "@/lib/format";
 import { cenarioSugerido, precoRapido } from "@/lib/pricing";
+import { usePrototype } from "@/state/prototype";
 import { DemoTag, KPI, Panel, PageHeader, RealTag, SeverityTag, Td, Th } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/")({
@@ -38,6 +39,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
+  const { itensBom, baseIndustrial, despesasPercentual } = usePrototype();
   const problemas = checks();
   const criticos = problemas.filter((p) => p.severidade === "CRÍTICO");
   const categorias = new Map<string, number>();

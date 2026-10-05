@@ -152,7 +152,7 @@ export function producaoCorrigida(produto: string, base?: BaseIndustrial): Produ
     return out;
   }
 
-  const central = custoCentral(r.kgPorProduto, setores) ?? (isNum(r.central) ? r.central : 0);
+  const central = custoCentral(isNum(r.kgPorProduto) ? r.kgPorProduto : null, setores) ?? (isNum(r.central) ? r.central : 0);
   const taxaPintura = taxaHora(setores, "Pintura") ?? 0;
   const pintura = isNum(r.pintura) && r.pintura > 0 ? HORAS_PINTURA * taxaPintura : 0;
   const taxaArmacao = taxaHora(setores, "Robô") ?? TAXA_ARMACAO_PADRAO;
