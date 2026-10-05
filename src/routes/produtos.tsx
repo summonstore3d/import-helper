@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { categoriaDoProduto, produtos } from "@/data";
 import { money, qtd } from "@/lib/format";
-import { bomDoProduto, cenarioSugerido, custoProducao, precoRapido, totalMP } from "@/lib/pricing";
+import { usePrototype } from "@/state/prototype";
+import { cenarioSugerido, custoProducao, precoRapido, totalMP } from "@/lib/pricing";
 import { PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/produtos")({
@@ -32,21 +33,22 @@ function Produtos() {
   const [categoria, setCategoria] = useState("TODAS");
   const [pagina, setPagina] = useState(0);
 
+  const { itensBom, baseIndustrial, despesasPercentual } = usePrototype();
   const linhas = useMemo(
     () =>
       produtos.map((p) => {
-        const itens = bomDoProduto(p.full);
+        const itens = itensBom(p.full);
         return {
           ...p,
           categoria: categoriaDoProduto(p.full),
           componentes: itens.length,
           custoMP: itens.length ? totalMP(itens) : null,
-          producao: custoProducao(p.full),
+          producao: custoProducao(p.full, baseIndustrial),
           cenario: cenarioSugerido(p.full),
-          preco: precoRapido(p.full),
+          preco: precoRapido(p.full, "Venda Normal", { itensMP: itens, base: baseIndustrial, despesas: despesasPercentual }),
         };
       }),
-    [],
+    [itensBom, baseIndustrial, despesasPercentual],
   );
 
   const categorias = useMemo(

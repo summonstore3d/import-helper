@@ -70,6 +70,7 @@ function Precificacao() {
     despesasPercentual,
     comparativoDespesas,
     autenticado,
+    baseIndustrial,
   } = usePrototype();
   const padrao = parametrosPadrao();
 

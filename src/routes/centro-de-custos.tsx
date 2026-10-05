@@ -3,6 +3,7 @@ import { useState } from "react";
 import { isNum, money, pct, qtd, REF_INCONSISTENTE } from "@/lib/format";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { producaoCorrigida, resumoCentroCustos, TAXA_ARMACAO_PADRAO } from "@/lib/correcoes";
+import { taxaDoSetor, taxaHora } from "@/lib/custos-industriais";
 import { usePrototype } from "@/state/prototype";
 import { EditLockBanner } from "@/components/EditLockBanner";
 
@@ -31,10 +32,10 @@ function valor(v: number | string | null, tipo: "money" | "pct" | "num") {
 }
 
 function CentroDeCustos() {
-  const { centroCustos, guiaCdc, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, autenticado } = usePrototype();
+  const { centroCustos, guiaCdc, baseIndustrial, setoresCalculados, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, autenticado } = usePrototype();
   const [aba, setAba] = useState<"setores" | "roteiro" | "guia">("setores");
   const quebrados = centroCustos.setores.filter((s) => !isNum(s.horaReal)).length;
-  const resumo = resumoCentroCustos();
+  const resumo = resumoCentroCustos(baseIndustrial);
 
   return (
     <>
@@ -59,7 +60,7 @@ function CentroDeCustos() {
 
       <div className="mt-4 rounded-md border border-warn bg-demo px-3 py-2 text-sm text-demo-foreground">
         <strong>Correções aplicadas no custo de produção:</strong> a armação passa a ser contada uma
-        única vez (horas × {money(TAXA_ARMACAO_PADRAO)} por hora) — a planilha multiplicava pelas
+        única vez (horas × {money(taxaHora(setoresCalculados, "Robô") ?? TAXA_ARMACAO_PADRAO)} por hora) — a planilha multiplicava pelas
         horas duas vezes em {qtd(resumo.duplaMultiplicacao)} produtos. Outros{" "}
         {qtd(resumo.armacaoEstimada)} produtos tinham horas de armação sem custo e agora recebem a
         taxa do setor. {qtd(resumo.referenciaQuebrada)} produto(s) com referência quebrada ficam
@@ -113,22 +114,22 @@ function CentroDeCustos() {
                 </tr>
               </thead>
               <tbody>
-                {centroCustos.setores.map((s, i) => (
+                {centroCustos.setores.map((s, i) => { const calc = setoresCalculados[i] ?? s; return (
                   <tr key={`${s.nome}-${i}`} className="odd:bg-secondary/30">
                     <Td className="font-semibold">{s.nome}</Td>
                     <Td className="text-xs">{s.grupo ?? "—"}</Td>
-                    <Td align="right"><EditableNumber disabled={!autenticado} value={s.maoDeObra} onChange={(v) => atualizarSetor(i, { ...s, maoDeObra: v })} /></Td>
-                    <Td align="right"><EditableNumber disabled={!autenticado} value={s.manutencao} onChange={(v) => atualizarSetor(i, { ...s, manutencao: v })} /></Td>
-                    <Td align="right">{valor(s.mesTotal, "money")}</Td>
+                    <Td align="right" title="Calculado: colaboradores do rateio × salário médio">{valor(calc.maoDeObra, "money")}</Td>
+                    <Td align="right" title="Calculado: rateio de manutenção (Total × %)">{valor(calc.manutencao, "money")}</Td>
+                    <Td align="right">{valor(calc.mesTotal, "money")}</Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.eficienciaPerdida} onChange={(v) => atualizarSetor(i, { ...s, eficienciaPerdida: v })} /></Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.transporteInterno} onChange={(v) => atualizarSetor(i, { ...s, transporteInterno: v })} /></Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.horasDisponiveis} onChange={(v) => atualizarSetor(i, { ...s, horasDisponiveis: v })} /></Td>
-                    <Td align="right">{valor(s.horaIdeal, "money")}</Td>
+                    <Td align="right">{valor(calc.horaIdeal, "money")}</Td>
                     <Td align="right" className="font-semibold">
-                      {valor(s.horaReal, "money")}
+                      {valor(calc.horaReal, "money")}
                     </Td>
                   </tr>
-                ))}
+                ); })}
               </tbody>
             </table>
           </div>
@@ -161,16 +162,16 @@ function CentroDeCustos() {
               </thead>
               <tbody>
                 {centroCustos.roteiro.slice(0, 300).map((r, i) => {
-                  const c = producaoCorrigida(r.produto);
+                  const c = producaoCorrigida(r.produto, baseIndustrial);
                   return (
                   <tr key={`${r.produto}-${i}`} className="odd:bg-secondary/30">
                     <Td className="max-w-[20rem] truncate">{r.produto}</Td>
                     <Td className="text-xs">{r.setor ?? "—"}</Td>
-                    <Td align="right">{valor(r.horaSetor, "money")}</Td>
+                    <Td align="right">{valor(taxaDoSetor(setoresCalculados, r.setor), "money")}</Td>
                      <Td align="right"><EditableNumber disabled={!autenticado} value={r.horaProduto} onChange={(v) => atualizarRoteiro(i, { ...r, horaProduto: v })} /></Td>
-                     <Td align="right"><EditableNumber disabled={!autenticado} value={r.central} onChange={(v) => atualizarRoteiro(i, { ...r, central: v })} /></Td>
+                     <Td align="right" title="Calculado pelos kg que passam na central">{valor(c.componentes?.central ?? null, "money")}</Td>
                      <Td align="right"><EditableNumber disabled={!autenticado} value={r.horaArmacao} onChange={(v) => atualizarRoteiro(i, { ...r, horaArmacao: v })} /></Td>
-                     <Td align="right"><EditableNumber disabled={!autenticado} value={r.pintura} onChange={(v) => atualizarRoteiro(i, { ...r, pintura: v })} /></Td>
+                     <Td align="right" title="0,16 h × $/hora da Pintura"><label className="inline-flex items-center gap-1"><input type="checkbox" disabled={!autenticado} checked={typeof r.pintura === "number" && r.pintura > 0} onChange={(e) => atualizarRoteiro(i, { ...r, pintura: e.target.checked ? 1 : null })} />{valor(c.componentes?.pintura || null, "money")}</label></Td>
                      <Td align="right"><EditableNumber disabled={!autenticado} value={r.kgPorProduto} onChange={(v) => atualizarRoteiro(i, { ...r, kgPorProduto: v })} /></Td>
                     <Td align="right" className="text-muted-foreground">
                       {valor(r.custoProducao, "money")}
@@ -249,7 +250,7 @@ function CentroDeCustos() {
                        <Td align="right"><EditableNumber disabled={!autenticado} value={m.total} onChange={(v) => atualizarManutencao(i, "total", v)} /></Td>
                        <Td align="right"><EditableNumber disabled={!autenticado} value={m.percentual} onChange={(v) => atualizarManutencao(i, "percentual", v)} /></Td>
                       <Td align="right" className="font-semibold">
-                        {money(m.manutencaoSetor)}
+                        {money(typeof m.total === "number" && typeof m.percentual === "number" ? m.total * m.percentual : m.manutencaoSetor)}
                       </Td>
                     </tr>
                   ))}

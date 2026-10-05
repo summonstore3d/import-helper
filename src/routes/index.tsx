@@ -50,7 +50,7 @@ function Dashboard() {
 
   const destaques = produtos
     .slice(0, 200)
-    .map((p) => ({ produto: p.full, cenario: cenarioSugerido(p.full), preco: precoRapido(p.full) }))
+    .map((p) => ({ produto: p.full, cenario: cenarioSugerido(p.full), preco: precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual }) }))
     .filter((p) => p.preco !== null)
     .slice(0, 6);
 
