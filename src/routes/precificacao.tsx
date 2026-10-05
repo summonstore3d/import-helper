@@ -4,17 +4,21 @@ import {
   BadgeDollarSign,
   Boxes,
   BriefcaseBusiness,
+  Check,
   ChevronDown,
+  Copy,
   Download,
   Factory,
+  Minus,
   Percent,
+  Plus,
   Search,
   ShieldAlert,
   Truck,
   WalletCards,
   Save,
 } from "lucide-react";
-import { parametros, produtos } from "@/data";
+import { categoriaDoProduto, parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
@@ -88,7 +92,19 @@ function Precificacao() {
   const [pecas, setPecas] = useState(padrao.pecasPorEntrega);
   const [salvo, setSalvo] = useState<string | null>(null);
   const [buscaProduto, setBuscaProduto] = useState("");
-  const produtosFiltrados = useMemo(() => produtos.filter((p) => p.full.toLowerCase().includes(buscaProduto.toLowerCase())), [buscaProduto]);
+  const [categoria, setCategoria] = useState("TODOS");
+  const [quantidade, setQuantidade] = useState(1);
+  const [copiado, setCopiado] = useState(false);
+  const categorias = useMemo(() => Array.from(new Set(produtos.map((p) => categoriaDoProduto(p.full)))).sort(), []);
+  const produtosFiltrados = useMemo(
+    () =>
+      produtos.filter(
+        (p) =>
+          p.full.toLowerCase().includes(buscaProduto.toLowerCase()) &&
+          (categoria === "TODOS" || categoriaDoProduto(p.full) === categoria),
+      ),
+    [buscaProduto, categoria],
+  );
 
   const itens = itensBom(selecionado);
   const r = calcularPreco({
@@ -301,6 +317,22 @@ function Precificacao() {
     });
   }
 
+  function copiarCotacao() {
+    if (preco === null) return;
+    const texto = [
+      `Cotação D'AGOSTINI — ${selecionado}`,
+      `Tipo de venda: ${cenario}`,
+      `Entrega: ${frota ? `CIF (${qtd(km)} km)` : "FOB (retirada no pátio)"}`,
+      `Preço unitário: ${money(preco)}`,
+      `Quantidade: ${qtd(quantidade)}`,
+      `Total: ${money(preco * quantidade)}`,
+    ].join("\n");
+    void navigator.clipboard.writeText(texto).then(() => {
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2000);
+    });
+  }
+
   function salvar() {
     if (preco === null) return;
     registrarVersao({
@@ -366,6 +398,11 @@ function Precificacao() {
             <div className="relative border-b border-border p-3">
               <Search className="pointer-events-none absolute top-5 left-5 size-4 text-muted-foreground" />
               <input value={buscaProduto} onChange={(e) => setBuscaProduto(e.target.value)} placeholder="Código ou descrição" className="h-9 w-full rounded-sm border border-input bg-background pr-2 pl-8 text-sm outline-none focus:border-ring" />
+              <div className="mt-2 flex flex-wrap gap-1">
+                {["TODOS", ...categorias].map((c) => (
+                  <button key={c} type="button" onClick={() => setCategoria(c)} className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase ${categoria === c ? "border-green bg-green-soft text-accent-foreground" : "border-border text-muted-foreground hover:bg-secondary"}`}>{c}</button>
+                ))}
+              </div>
             </div>
             <div className="max-h-72 overflow-auto p-1.5 xl:max-h-[56vh]">
               {produtosFiltrados.map((p) => {
@@ -382,121 +419,99 @@ function Precificacao() {
         </aside>
 
         <div className="min-w-0 space-y-5">
-          <section className="rounded-md border border-border bg-card p-5 shadow-panel">
-            <p className="text-xs font-bold text-green uppercase">Produto selecionado</p>
-            <h2 className="mt-1 text-xl font-black text-foreground">{selecionado}</h2>
-            <div className="mt-4">
-              <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Tipo de venda</p>
+          <section className="grid gap-4 rounded-md border border-border bg-card p-5 shadow-panel lg:grid-cols-[minmax(0,1fr)_20rem]">
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-green uppercase">Produto selecionado</p>
+              <h2 className="mt-1 text-xl font-black text-foreground">{selecionado}</h2>
+              <p className="mb-2 mt-4 text-xs font-bold text-muted-foreground uppercase">Tipo de venda</p>
               <div className="flex flex-wrap gap-2">
                 {CENARIOS.map((c) => (
-                  <Button
-                    key={c}
-                    type="button"
-                    size="sm"
-                    variant={cenario === c ? "default" : "outline"}
-                    onClick={() => { setCenario(c); setSalvo(null); }}
-                  >
+                  <Button key={c} type="button" size="sm" variant={cenario === c ? "default" : "outline"} onClick={() => { setCenario(c); setSalvo(null); }}>
                     {c}
                   </Button>
                 ))}
               </div>
+              <p className="mb-2 mt-4 text-xs font-bold text-muted-foreground uppercase">Entrega</p>
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="inline-flex rounded-md border border-border p-0.5" role="group" aria-label="Modalidade de entrega">
+                  {([[false, "FOB · Retira"], [true, "CIF · Entregue"]] as const).map(([v, l]) => (
+                    <Button key={l} type="button" size="sm" variant={frota === v ? "default" : "ghost"} onClick={() => { setFrota(v); setSalvo(null); }}>
+                      {v ? <Truck className="size-4" /> : null}{l}
+                    </Button>
+                  ))}
+                </div>
+                {frota ? (
+                  <>
+                    <label className="text-xs font-semibold">Distância (km)
+                      <input type="number" min="0" value={km} onChange={(e) => setKm(Number(e.target.value))} className="mt-1 block h-9 w-24 rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring" />
+                    </label>
+                    <label className="text-xs font-semibold">Peças/entrega
+                      <input type="number" min="1" value={pecas} onChange={(e) => setPecas(Number(e.target.value))} className="mt-1 block h-9 w-24 rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring" />
+                    </label>
+                  </>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-between rounded-md border-2 border-green bg-green-soft p-4 text-accent-foreground">
+              <div>
+                <p className="flex items-center gap-2 text-xs font-bold uppercase"><BadgeDollarSign className="size-4" /> Preço final unitário</p>
+                <p className="mt-1 text-4xl font-black tabular-nums">{preco === null ? "Indisponível" : money(preco)}</p>
+                <p className="text-xs font-medium">{cenario} · {frota ? `CIF, frete ${money(r.logistica)}/peça` : "FOB, sem frete"}</p>
+              </div>
+              <div className="mt-4 flex items-end gap-2">
+                <label className="text-xs font-semibold">Quantidade
+                  <input type="number" min="1" value={quantidade} onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value) || 1))} className="mt-1 block h-9 w-20 rounded-sm border border-green bg-background px-2 text-sm outline-none focus:border-ring" />
+                </label>
+                <div className="min-w-0 flex-1 text-right">
+                  <p className="text-[11px] font-semibold uppercase">Total do pedido</p>
+                  <p className="text-lg font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
+                </div>
+              </div>
+              <Button type="button" variant="outline" className="mt-3" disabled={preco === null} onClick={copiarCotacao}>
+                {copiado ? <Check className="size-4" /> : <Copy className="size-4" />} {copiado ? "Cotação copiada" : "Copiar cotação"}
+              </Button>
             </div>
           </section>
 
-          <section aria-label="Composição do preço" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { label: "Matéria-prima", value: money(r.custoMP), detail: `${qtd(itens.length)} componentes`, Icon: Boxes },
-              { label: "Custo de produção", value: r.custoProducao === null ? "Bloqueado" : money(r.custoProducao), detail: "Roteiro e centros de custos", Icon: Factory },
-              { label: "Despesas", value: pct(r.despesas, 2), detail: metodoDespesas === "media" ? "Média ajustada" : "Taxa ponderada ajustada", Icon: WalletCards },
-              { label: "Impostos", value: pct(r.impostos, 2), detail: cenario, Icon: BriefcaseBusiness },
-            ].map(({ label, value, detail, Icon }) => (
-              <article key={label} className="overflow-hidden rounded-md border border-border bg-card shadow-panel">
-                <div className="flex min-h-11 items-center gap-2 bg-navy px-3 py-2 text-navy-foreground">
-                  <Icon className="size-4" />
-                  <h3 className="text-xs font-bold uppercase">{label}</h3>
-                </div>
-                <div className="px-4 py-4">
-                  <p className="text-2xl font-black text-foreground">{value}</p>
-                  <p className="mt-1 min-h-8 text-xs text-muted-foreground">{detail}</p>
-                </div>
-              </article>
-            ))}
-
-            {[
-              { label: "Margem de lucro", value: margem, setValue: setMargem, Icon: BadgeDollarSign },
-              { label: "Comissão", value: comissao, setValue: setComissao, Icon: Percent },
-              { label: "Inadimplência", value: inadimplencia, setValue: setInadimplencia, Icon: ShieldAlert },
-            ].map(({ label, value, setValue, Icon }) => (
-              <label key={label} className="overflow-hidden rounded-md border border-border bg-card shadow-panel">
-                <span className="flex min-h-11 items-center gap-2 bg-navy px-3 py-2 text-navy-foreground">
-                  <Icon className="size-4" />
-                  <span className="text-xs font-bold uppercase">{label}</span>
-                </span>
-                <span className="relative block px-4 py-4">
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={Number(value.toFixed(4))}
-                    onChange={(e) => { setValue(Number(e.target.value)); setSalvo(null); }}
-                    className="h-11 w-full rounded-sm border border-green bg-green-soft px-3 pr-9 text-right text-xl font-black text-accent-foreground outline-none focus:ring-2 focus:ring-ring"
-                  />
-                  <span className="pointer-events-none absolute top-7 right-7 text-sm font-bold text-accent-foreground">%</span>
-                  <span className="mt-1 block text-xs text-muted-foreground">Parâmetro comercial</span>
-                </span>
-              </label>
-            ))}
-
-            <article className="overflow-hidden rounded-md border-2 border-green bg-card shadow-panel">
-              <div className="flex min-h-11 items-center gap-2 bg-green px-3 py-2 text-green-foreground">
-                <BadgeDollarSign className="size-4" />
-                <h3 className="text-xs font-bold uppercase">Preço final</h3>
-              </div>
-              <div className="bg-green-soft px-4 py-4">
-                <p className="text-2xl font-black text-accent-foreground">{preco === null ? "Indisponível" : money(preco)}</p>
-                <p className="mt-1 min-h-8 text-xs font-medium text-accent-foreground">{cenario}</p>
-              </div>
-            </article>
+          <section aria-label="Custos calculados">
+            <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Custos e encargos · calculados pelo sistema</p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { label: "Matéria-prima", value: money(r.custoMP), detail: `${qtd(itens.length)} componentes`, Icon: Boxes },
+                { label: "Custo de produção", value: r.custoProducao === null ? "Bloqueado" : money(r.custoProducao), detail: "Roteiro e centros de custos", Icon: Factory },
+                { label: "Despesas", value: pct(r.despesas, 2), detail: metodoDespesas === "media" ? "Média ajustada" : "Taxa ponderada ajustada", Icon: WalletCards },
+                { label: "Impostos", value: pct(r.impostos, 2), detail: cenario, Icon: BriefcaseBusiness },
+              ].map(({ label, value, detail, Icon }) => (
+                <article key={label} className="rounded-md border border-border bg-secondary/40 px-4 py-3">
+                  <p className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase"><Icon className="size-4" />{label}</p>
+                  <p className="mt-1 text-xl font-black text-foreground tabular-nums">{value}</p>
+                  <p className="text-xs text-muted-foreground">{detail}</p>
+                </article>
+              ))}
+            </div>
           </section>
 
-          <section className="rounded-md border border-border bg-card p-4 shadow-panel">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <p className="flex items-center gap-2 text-sm font-bold"><Truck className="size-4 text-primary" /> Entrega</p>
-                <label className="mt-3 flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={frota}
-                  onChange={(e) => {
-                    setFrota(e.target.checked);
-                    setSalvo(null);
-                  }}
-                />
-                <span className="font-medium">Entrega com frota própria</span>
-              </label>
-              </div>
-              {frota ? (
-                <div className="grid grid-cols-2 gap-3 sm:w-96">
-                  <label className="block text-sm">
-                    <span className="font-semibold">Distância (km)</span>
-                    <input
-                      type="number"
-                      value={km}
-                      onChange={(e) => setKm(Number(e.target.value))}
-                      className="mt-1 h-9 w-full rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring"
-                    />
-                  </label>
-                  <label className="block text-sm">
-                    <span className="font-semibold">Peças/entrega</span>
-                    <input
-                      type="number"
-                      value={pecas}
-                      onChange={(e) => setPecas(Number(e.target.value))}
-                      className="mt-1 h-9 w-full rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring"
-                    />
-                  </label>
-                </div>
-              ) : null}
+          <section aria-label="Condições comerciais">
+            <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Condições comerciais · editáveis</p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                { label: "Margem de lucro", value: margem, setValue: setMargem, Icon: BadgeDollarSign },
+                { label: "Comissão", value: comissao, setValue: setComissao, Icon: Percent },
+                { label: "Inadimplência", value: inadimplencia, setValue: setInadimplencia, Icon: ShieldAlert },
+              ].map(({ label, value, setValue, Icon }) => (
+                <label key={label} className="rounded-md border border-green bg-card px-4 py-3 shadow-panel">
+                  <span className="flex items-center gap-2 text-xs font-bold text-accent-foreground uppercase"><Icon className="size-4" />{label}</span>
+                  <span className="mt-2 flex items-center gap-2">
+                    <Button type="button" size="icon" variant="outline" aria-label={`Diminuir ${label}`} onClick={(e) => { e.preventDefault(); setValue(Math.max(0, Math.round((value - 0.5) * 100) / 100)); setSalvo(null); }}><Minus className="size-4" /></Button>
+                    <span className="relative flex-1">
+                      <input type="number" min="0" step="0.01" value={Number(value.toFixed(4))} onChange={(e) => { setValue(Number(e.target.value)); setSalvo(null); }} className="h-10 w-full rounded-sm border border-input bg-green-soft px-3 pr-8 text-right text-lg font-black text-accent-foreground outline-none focus:ring-2 focus:ring-ring" />
+                      <span className="pointer-events-none absolute top-2.5 right-3 text-sm font-bold text-accent-foreground">%</span>
+                    </span>
+                    <Button type="button" size="icon" variant="outline" aria-label={`Aumentar ${label}`} onClick={(e) => { e.preventDefault(); setValue(Math.round((value + 0.5) * 100) / 100); setSalvo(null); }}><Plus className="size-4" /></Button>
+                  </span>
+                </label>
+              ))}
             </div>
           </section>
 
