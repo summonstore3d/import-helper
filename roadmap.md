@@ -8,3 +8,5 @@
 - [x] Permitir adicionar novo mês vazio e editar o demonstrativo de Despesas.
 - [x] Redesenhar Precificação como cockpit minimalista, mantendo memória, comparação e Excel.
 - [x] Verificar cálculos, permissões, importações, histórico, auditoria, desktop e celular.
+
+- [x] Reorganizar a Precificação para o fluxo comercial da referência, preservando detalhes técnicos por perfil futuro.

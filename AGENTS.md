@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep shared pricing master data in `system_state` domains and append audit/history rows separately, because this preserves the current calculation APIs while adding durable multi-user storage.
+- Keep the pricing screen seller-first and isolate calculation memory in a technical section, because future seller roles must hide it while managers and administrators retain access.
