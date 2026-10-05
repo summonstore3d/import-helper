@@ -445,7 +445,6 @@ function Precificacao() {
               </div>
             </div>
           </details>
-          </div>
 
           {r.bloqueios.length ? (
             <EmptyNote>
