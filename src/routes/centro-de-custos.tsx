@@ -217,16 +217,38 @@ function CentroDeCustos() {
                   </tr>
                 </thead>
                 <tbody>
-                  {guiaCdc.maoDeObra.map((f) => (
-                    <tr key={f.funcao} className="odd:bg-secondary/30">
-                      <Td className="max-w-[16rem] truncate font-medium">{f.funcao}</Td>
-                      {Object.entries(f.valores).map(([k, v]) => (
-                        <Td key={k} align="right" className={isNum(v) && v > 0 ? "font-semibold" : "text-muted-foreground"}>
-                           {autenticado ? <EditableNumber value={v} onChange={(n) => atualizarMaoDeObra(guiaCdc.maoDeObra.indexOf(f), k, n ?? 0)} /> : isNum(v) ? (v === 0 ? "–" : qtd(v)) : "—"}
-                        </Td>
-                      ))}
-                    </tr>
-                  ))}
+                  {(() => {
+                    const ehTotal = (f: { funcao: string }) => f.funcao.trim().toLowerCase().startsWith("total");
+                    const funcoes = guiaCdc.maoDeObra.filter((f) => !ehTotal(f));
+                    const colunas = Object.keys(guiaCdc.maoDeObra[0]?.valores ?? {});
+                    return (
+                      <>
+                        {funcoes.map((f) => (
+                          <tr key={f.funcao} className="odd:bg-secondary/20">
+                            <Td className="max-w-[16rem] truncate font-medium">{f.funcao}</Td>
+                            {Object.entries(f.valores).map(([k, v]) => (
+                              <Td key={k} align="right" className={isNum(v) && v > 0 ? "font-semibold" : "text-muted-foreground"}>
+                                {autenticado ? (
+                                  <EditableNumber inteiros value={v} onChange={(n) => atualizarMaoDeObra(guiaCdc.maoDeObra.indexOf(f), k, n ?? 0)} />
+                                ) : isNum(v) ? (v === 0 ? "–" : qtd(v)) : "—"}
+                              </Td>
+                            ))}
+                          </tr>
+                        ))}
+                        <tr className="border-t-2 border-border bg-secondary/40 font-semibold">
+                          <Td>Total (soma)</Td>
+                          {colunas.map((k) => {
+                            const soma = funcoes.reduce((acc, f) => acc + (isNum(f.valores[k]) ? (f.valores[k] as number) : 0), 0);
+                            return (
+                              <Td key={k} align="right">
+                                {soma === 0 ? "–" : qtd(Math.round(soma))}
+                              </Td>
+                            );
+                          })}
+                        </tr>
+                      </>
+                    );
+                  })()}
                 </tbody>
               </table>
             </div>
@@ -264,7 +286,8 @@ function CentroDeCustos() {
   );
 }
 
-function EditableNumber({ value, onChange, disabled = false }: { value: number | string | null; onChange: (value: number | null) => void; disabled?: boolean }) {
+function EditableNumber({ value, onChange, disabled = false, inteiros = false }: { value: number | string | null; onChange: (value: number | null) => void; disabled?: boolean; inteiros?: boolean }) {
   if (disabled) return <>{isNum(value) ? qtd(value) : "—"}</>;
-  return <input type="number" step="0.01" value={isNum(value) ? value : ""} onChange={(e) => onChange(e.target.value === "" ? null : Number(e.target.value))} className="h-7 w-24 rounded-sm border border-transparent bg-transparent px-1 text-right tabular-nums hover:border-input focus:border-ring focus:bg-background focus:outline-none" />;
+  const arredondar = (n: number | null) => (n === null ? null : inteiros ? Math.round(n) : n);
+  return <input type="number" step={inteiros ? "1" : "0.01"} value={isNum(value) ? (inteiros ? Math.round(value) : value) : ""} onChange={(e) => onChange(arredondar(e.target.value === "" ? null : Number(e.target.value)))} className="h-7 w-24 rounded-sm border border-transparent bg-transparent px-1 text-right tabular-nums hover:border-input focus:border-ring focus:bg-background focus:outline-none" />;
 }
