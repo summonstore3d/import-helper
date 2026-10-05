@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { AuthPanel } from "@/components/AuthPanel";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -131,21 +132,11 @@ export function AppShell({ children }: { children: ReactNode }) {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="rounded-sm bg-warn px-2.5 py-1 text-[11px] font-bold tracking-widest text-warn-foreground uppercase">
-              Protótipo / Demonstração
-            </span>
-            <div className="hidden text-right sm:block">
-              <p className="text-xs font-semibold text-foreground">diretoria.demo</p>
-              <p className="text-[11px] text-muted-foreground">Sessão de apresentação</p>
-            </div>
-          </div>
+          <AuthPanel compact />
         </header>
         <main className="min-w-0 flex-1 px-4 py-6 lg:px-6">{children}</main>
         <footer className="border-t border-border px-4 py-3 text-[11px] text-muted-foreground lg:px-6">
-          Protótipo navegável construído a partir dos dados reais da planilha
-          &quot;Ferramenta de Precificação Atualizada 28.08.2026&quot;. Não é o sistema definitivo:
-          sem banco de produção, sem integração com ERP e sem cálculo fiscal oficial.
+          Sistema de precificação industrial com dados compartilhados, memória de cálculo e auditoria.
         </footer>
       </div>
     </div>

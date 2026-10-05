@@ -20,13 +20,13 @@ import { DemoTag, KPI, Panel, PageHeader, RealTag, SeverityTag, Td, Th } from "@
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Painel de Precificação — Protótipo D'AGOSTINI" },
+      { title: "Painel de Precificação — D'AGOSTINI" },
       {
         name: "description",
         content:
-          "Painel executivo do protótipo de precificação: 246 produtos, 32 insumos, estruturas de custo e formação de preço em um sistema web.",
+          "Painel executivo de precificação: produtos, insumos, estruturas de custo e formação de preço em um sistema compartilhado.",
       },
-      { property: "og:title", content: "Painel de Precificação — Protótipo D'AGOSTINI" },
+      { property: "og:title", content: "Painel de Precificação — D'AGOSTINI" },
       {
         property: "og:description",
         content:
@@ -59,7 +59,7 @@ function Dashboard() {
       <PageHeader
         titulo="Painel de Precificação"
         aba="Menu"
-        descricao="Visão executiva do protótipo. Todos os números abaixo vêm da planilha “Ferramenta de Precificação Atualizada 28.08.2026”; nenhum dado foi inventado."
+        descricao="Visão executiva do sistema. A base oficial vem da planilha ajustada e as alterações autorizadas ficam compartilhadas e auditadas."
         acoes={
           <Link
             to="/precificacao"

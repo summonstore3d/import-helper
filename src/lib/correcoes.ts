@@ -4,7 +4,7 @@
  * Cada bloco abaixo documenta a fórmula original da planilha, o problema apontado
  * pela auditoria e a regra que passa a valer no sistema.
  */
-import { bom, centroCustos, despesas, impostos, insumos, logistica, mpTotais } from "@/data";
+import { bom, centroCustos, despesas, impostos, insumos, logistica, mpTotais, parametros } from "@/data";
 import { isNum } from "./format";
 
 /* ------------------------------------------------------------------ *
@@ -351,7 +351,7 @@ export const despesasVigentes = despesasPonderadas();
 
 /** Percentual de despesas que o motor de preço passa a usar. */
 export const DESPESAS_PERCENTUAL =
-  despesasVigentes.ponderada ?? despesas.mediaDespesas;
+  parametros.despesasPercentual;
 
 /* ------------------------------------------------------------------ *
  * 5. Logística e frota

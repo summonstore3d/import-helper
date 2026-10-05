@@ -10,13 +10,13 @@ import { exportarInsumosExcel, importarInsumosExcel } from "@/lib/planilha-insum
 export const Route = createFileRoute("/insumos")({
   head: () => ({
     meta: [
-      { title: "Insumos — Protótipo de Precificação" },
+      { title: "Insumos — Sistema de Precificação" },
       {
         name: "description",
         content:
           "Cadastro de insumos reais (cimento, areia, ferro, aditivos) com custo unitário e uso nas estruturas de produto.",
       },
-      { property: "og:title", content: "Insumos — Protótipo de Precificação" },
+      { property: "og:title", content: "Insumos — Sistema de Precificação" },
       {
         property: "og:description",
         content: "Custo unitário de cada insumo e em quantos produtos ele é consumido.",
@@ -56,7 +56,7 @@ type Formulario = {
 };
 
 function Insumos() {
-  const { listaInsumos, salvarInsumo, importarInsumos } = usePrototype();
+  const { listaInsumos, salvarInsumo, importarInsumos, autenticado } = usePrototype();
   const inputRef = useRef<HTMLInputElement>(null);
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   const [busca, setBusca] = useState("");
@@ -155,6 +155,7 @@ function Insumos() {
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
+              disabled={!autenticado}
               onClick={exportarExcel}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
             >
@@ -162,6 +163,7 @@ function Insumos() {
             </button>
             <button
               type="button"
+              disabled={!autenticado}
               onClick={() => inputRef.current?.click()}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
             >
@@ -179,6 +181,7 @@ function Insumos() {
               }}
             />
             <button
+                       disabled={!autenticado}
               type="button"
               onClick={() => setForm({ codigo: "", descricao: "", custoUnitario: "" })}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"

@@ -40,7 +40,7 @@
     "Mistura": 0.0,
     "Pontes": 0.0,
     "Robô": 0.0,
-    "Galeria/Gradil": 6.0,
+    "Galeria/Gradil": 8.0,
     "Siome": 0.0,
     "Radial": 0.0,
     "PH": 0.0,
@@ -55,17 +55,17 @@
    "funcao": "Operador de Máquinas",
    "valores": {
     "Mistura": 0.0,
-    "Pontes": 1.0,
+    "Pontes": 0.0,
     "Robô": 0.0,
     "Galeria/Gradil": 0.0,
     "Siome": 2.0,
     "Radial": 1.0,
     "PH": 1.0,
     "Tampa": 0.0,
-    "Anéis": 1.0,
-    "Galerias": 1.0,
-    "Storrer": 1.0,
-    "Vibromatic": 1.0
+    "Anéis": 0.0,
+    "Galerias": 3.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
    }
   },
   {
@@ -79,8 +79,8 @@
     "Radial": 1.0,
     "PH": 1.0,
     "Tampa": 1.0,
-    "Anéis": 1.0,
-    "Galerias": 1.0,
+    "Anéis": 0.0,
+    "Galerias": 2.0,
     "Storrer": 0.0,
     "Vibromatic": 0.0
    }
@@ -96,10 +96,10 @@
     "Radial": 1.0,
     "PH": 1.0,
     "Tampa": 1.0,
-    "Anéis": 1.0,
-    "Galerias": 2.0,
-    "Storrer": 1.0,
-    "Vibromatic": 1.0
+    "Anéis": 0.0,
+    "Galerias": 3.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
    }
   },
   {
@@ -157,68 +157,68 @@
    "funcao": "Total:",
    "valores": {
     "Mistura": 1.0,
-    "Pontes": 1.0,
+    "Pontes": 0.0,
     "Robô": 2.0,
-    "Galeria/Gradil": 6.0,
+    "Galeria/Gradil": 8.0,
     "Siome": 3.0,
     "Radial": 3.0,
     "PH": 3.0,
     "Tampa": 2.0,
-    "Anéis": 3.0,
-    "Galerias": 4.0,
-    "Storrer": 2.0,
-    "Vibromatic": 2.0
+    "Anéis": 0.0,
+    "Galerias": 8.0,
+    "Storrer": 0.0,
+    "Vibromatic": 0.0
    }
   }
  ],
  "manutencao": [
   {
    "setor": "Galerias",
-   "total": 80000.0,
+   "total": 0.0,
    "percentual": 0.4,
-   "manutencaoSetor": 32000.0
+   "manutencaoSetor": 0.0
   },
   {
    "setor": "Siome",
-   "total": 80000.0,
+   "total": 0.0,
    "percentual": 0.2,
-   "manutencaoSetor": 16000.0
+   "manutencaoSetor": 0.0
   },
   {
    "setor": "Radial",
-   "total": 80000.0,
+   "total": 0.0,
    "percentual": 0.1,
-   "manutencaoSetor": 8000.0
+   "manutencaoSetor": 0.0
   },
   {
    "setor": "PH",
-   "total": 80000.0,
+   "total": 0.0,
    "percentual": 0.1,
-   "manutencaoSetor": 8000.0
+   "manutencaoSetor": 0.0
   },
   {
    "setor": "Disco",
-   "total": 80000.0,
+   "total": 0.0,
    "percentual": 0.05,
-   "manutencaoSetor": 4000.0
+   "manutencaoSetor": 0.0
   },
   {
    "setor": "Chão",
-   "total": 80000.0,
+   "total": 0.0,
    "percentual": 0.05,
-   "manutencaoSetor": 4000.0
+   "manutencaoSetor": 0.0
   },
   {
    "setor": "Vibromatic",
-   "total": 80000.0,
+   "total": 0.0,
    "percentual": 0.05,
-   "manutencaoSetor": 4000.0
+   "manutencaoSetor": 0.0
   },
   {
    "setor": "Pontes",
-   "total": 80000.0,
+   "total": 0.0,
    "percentual": 0.05,
-   "manutencaoSetor": 4000.0
+   "manutencaoSetor": 0.0
   },
   {
    "setor": "Produtos com armação",

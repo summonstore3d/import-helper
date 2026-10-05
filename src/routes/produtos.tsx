@@ -9,13 +9,13 @@ import { PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 export const Route = createFileRoute("/produtos")({
   head: () => ({
     meta: [
-      { title: "Produtos — Protótipo de Precificação" },
+      { title: "Produtos — Sistema de Precificação" },
       {
         name: "description",
         content:
           "Catálogo com os 246 produtos reais da ferramenta de precificação, com custo de matéria-prima, custo de produção e preço calculado.",
       },
-      { property: "og:title", content: "Produtos — Protótipo de Precificação" },
+      { property: "og:title", content: "Produtos — Sistema de Precificação" },
       {
         property: "og:description",
         content: "Catálogo de produtos reais com custo e preço calculados pelo sistema.",

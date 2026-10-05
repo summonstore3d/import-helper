@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { dataHoraBR } from "@/lib/format";
 import { usePrototype } from "@/state/prototype";
-import { DemoTag, KPI, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
+import { KPI, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/auditoria")({
   head: () => ({
@@ -28,7 +28,7 @@ function Auditoria() {
   const [modulo, setModulo] = useState("TODOS");
   const modulos = Array.from(new Set(auditoria.map((a) => a.modulo)));
   const linhas = auditoria.filter((a) => modulo === "TODOS" || a.modulo === modulo);
-  const daSessao = auditoria.filter((a) => a.origem === "Sessão de demonstração").length;
+  const usuarios = new Set(auditoria.map((a) => a.usuario)).size;
 
   return (
     <>
@@ -55,9 +55,9 @@ function Auditoria() {
         <KPI rotulo="Eventos registrados" valor={String(auditoria.length)} />
         <KPI rotulo="Módulos monitorados" valor={String(modulos.length)} />
         <KPI
-          rotulo="Alterações desta sessão"
-          valor={String(daSessao)}
-          detalhe="Geradas ao navegar no protótipo"
+          rotulo="Usuários com alterações"
+          valor={String(usuarios)}
+          detalhe="Registros persistidos no sistema"
           destaque
         />
       </div>
@@ -88,8 +88,7 @@ function Auditoria() {
                   <Td className="text-xs text-muted-foreground">{a.valorAnterior}</Td>
                   <Td className="text-xs font-semibold">{a.valorNovo}</Td>
                   <Td className="max-w-[14rem] truncate text-xs">
-                    {a.motivo}{" "}
-                    {a.origem === "Demonstração" ? <DemoTag>Demonstrativo</DemoTag> : null}
+                    {a.motivo}
                   </Td>
                 </tr>
               ))}
