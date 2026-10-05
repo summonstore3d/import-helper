@@ -6,8 +6,8 @@ const destinoSeguro = (v: unknown) =>
   typeof v === "string" && v.startsWith("/") && !v.startsWith("//") && v !== "/acesso" ? v : undefined;
 
 export const Route = createFileRoute("/acesso")({
-  validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
-    redirect: destinoSeguro(search.redirect),
+  validateSearch: (search: Record<string, unknown>): { redirect?: string | undefined } => ({
+    redirect: destinoSeguro(search["redirect"]),
   }),
   head: () => ({ meta: [
     { title: "Acesso — Sistema de Precificação D'AGOSTINI" },
