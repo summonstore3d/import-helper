@@ -9,4 +9,4 @@
 - [x] Redesenhar Precificação como cockpit minimalista, mantendo memória, comparação e Excel.
 - [x] Verificar cálculos, permissões, importações, histórico, auditoria, desktop e celular.
 
-- [ ] Reorganizar a Precificação para o fluxo comercial da referência, preservando detalhes técnicos por perfil futuro.
+- [x] Reorganizar a Precificação para o fluxo comercial da referência, preservando detalhes técnicos por perfil futuro.
