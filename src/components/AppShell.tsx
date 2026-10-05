@@ -21,6 +21,7 @@ import {
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { AuthPanel } from "@/components/AuthPanel";
+import { SaveStatus } from "@/components/SaveStatus";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -132,7 +133,10 @@ export function AppShell({ children }: { children: ReactNode }) {
               </p>
             </div>
           </div>
-          <AuthPanel compact />
+          <div className="flex items-center gap-3">
+            <SaveStatus />
+            <AuthPanel compact />
+          </div>
         </header>
         <main className="min-w-0 flex-1 px-4 py-6 lg:px-6">{children}</main>
         <footer className="border-t border-border px-4 py-3 text-[11px] text-muted-foreground lg:px-6">
