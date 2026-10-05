@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep shared pricing master data in `system_state` domains and append audit/history rows separately, because this preserves the current calculation APIs while adding durable multi-user storage.

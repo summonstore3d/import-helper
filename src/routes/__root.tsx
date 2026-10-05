@@ -80,11 +80,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ferramenta de Precificação — Protótipo Web" },
+      { title: "Sistema de Precificação D'AGOSTINI" },
       {
         name: "description",
         content:
-          "Protótipo navegável de alta fidelidade da ferramenta de precificação industrial, construído com os produtos, insumos e estruturas reais da planilha.",
+          "Sistema compartilhado de custos e formação de preços industriais com memória de cálculo e auditoria.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -105,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
