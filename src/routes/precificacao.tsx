@@ -155,7 +155,10 @@ function Precificacao() {
     },
     {
       rotulo: "3. Despesas operacionais",
-      base: `Taxa ponderada: soma das despesas ÷ soma das receitas de ${despesasVigentes.meses} meses`,
+      base:
+        metodoDespesas === "media"
+          ? `Média das despesas ajustadas de ${despesasVigentes.meses} meses`
+          : `Taxa ponderada ajustada: soma das despesas sem frete ÷ soma das receitas de ${despesasVigentes.meses} meses`,
       valor: pct(r.despesas, 4),
     },
     {
