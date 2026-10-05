@@ -7,6 +7,7 @@ import {
   type BomLinha,
 } from "@/data";
 import { isNum } from "./format";
+import type { BaseIndustrial } from "./custos-industriais";
 import {
   custearItem,
   DESPESAS_PERCENTUAL,
@@ -42,8 +43,8 @@ export function roteiroDoProduto(produto: string) {
 }
 
 /** Custo de produção corrigido (armação contada uma única vez). */
-export function custoProducao(produto: string): number | null {
-  return producaoCorrigida(produto).valor;
+export function custoProducao(produto: string, base?: BaseIndustrial): number | null {
+  return producaoCorrigida(produto, base).valor;
 }
 
 export type Cenario = "Venda Normal" | "Venda com Base Reduzida" | "Venda com Material Via Tonial";
@@ -121,6 +122,8 @@ export type EntradaCalculo = {
   frota: boolean;
   km: number;
   pecasPorEntrega: number;
+  /** Centro de custos e rateios vigentes (editados). Sem ele, usa a base da planilha. */
+  base?: BaseIndustrial;
 };
 
 export type ResultadoCalculo = {
@@ -169,7 +172,7 @@ export function parametrosPadrao() {
  */
 export function calcularPreco(e: EntradaCalculo): ResultadoCalculo {
   const custoMP = totalMP(e.itensMP);
-  const producao = producaoCorrigida(e.produto);
+  const producao = producaoCorrigida(e.produto, e.base);
   const regra = regraTributaria(e.produto, e.cenario);
   const frete = e.frota ? fretePorPeca(e.km, e.pecasPorEntrega, parametros.fatorFrete) : 0;
   const custoAbsoluto = custoMP + (isNum(producao.valor) ? producao.valor : 0);
@@ -235,16 +238,21 @@ export function calcularPreco(e: EntradaCalculo): ResultadoCalculo {
   return resultado;
 }
 
-export function precoRapido(produto: string, cenario: Cenario = "Venda Normal"): number | null {
+export function precoRapido(
+  produto: string,
+  cenario: Cenario = "Venda Normal",
+  vigente?: { itensMP: ItemMP[]; base?: BaseIndustrial; despesas?: number | null },
+): number | null {
   const p = parametrosPadrao();
   return calcularPreco({
     produto,
     cenario,
-    itensMP: bomDoProduto(produto),
+    base: vigente?.base,
+    itensMP: vigente?.itensMP ?? bomDoProduto(produto),
     margem: p.margem,
     comissao: p.comissao,
     inadimplencia: p.inadimplencia,
-    despesas: p.despesas,
+    despesas: vigente?.despesas ?? p.despesas,
     frota: false,
     km: p.km,
     pecasPorEntrega: p.pecasPorEntrega,
