@@ -98,7 +98,14 @@ type Ctx = {
   usuario: string;
   autenticado: boolean;
   sincronizando: boolean;
+  gravacao: EstadoGravacao;
 };
+
+export type EstadoGravacao =
+  | { estado: "ocioso" }
+  | { estado: "salvando" }
+  | { estado: "salvo"; em: string }
+  | { estado: "erro"; mensagem: string };
 
 // Mantém a mesma instância do contexto entre recargas a quente (HMR),
 // evitando que provider e consumidores apontem para contextos diferentes.
@@ -129,6 +136,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const [guiaCdc, setGuiaCdc] = useState<GuiaCdc>(guiaCdcBase);
   const [auditoria, setAuditoria] = useState<AuditoriaEntrada[]>([]);
   const [historico, setHistorico] = useState<VersaoPreco[]>([]);
+  const [gravacao, setGravacao] = useState<EstadoGravacao>({ estado: "ocioso" });
   const loaded = useRef(false);
 
   const carregar = useCallback(async () => {
@@ -201,9 +209,23 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, [carregar]);
 
+  // Agrupa gravações rápidas (digitação) por domínio e informa o resultado.
+  const pendentes = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const persistir = useCallback(async (domain: string, payload: unknown) => {
     if (!loaded.current || !userId) return;
-    await supabase.from("system_state").upsert({ domain, payload: payload as Json, updated_by: userId });
+    setGravacao({ estado: "salvando" });
+    const anterior = pendentes.current.get(domain);
+    if (anterior) clearTimeout(anterior);
+    pendentes.current.set(domain, setTimeout(() => {
+      pendentes.current.delete(domain);
+      void supabase
+        .from("system_state")
+        .upsert({ domain, payload: payload as Json, updated_by: userId })
+        .then(({ error }) => {
+          if (error) setGravacao({ estado: "erro", mensagem: "Não foi possível salvar a alteração. Verifique sua conexão e tente novamente." });
+          else if (pendentes.current.size === 0) setGravacao({ estado: "salvo", em: new Date().toISOString() });
+        });
+    }, 600));
   }, [userId]);
 
   const registrarAuditoria = useCallback((e: AuditInput) => {
@@ -369,8 +391,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc,
     atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao,
     auditoria, registrarAuditoria, historico, registrarVersao, usuario,
-    autenticado: userId !== null, sincronizando,
-  }), [demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando]);
+    autenticado: userId !== null, sincronizando, gravacao,
+  }), [demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
 
   return <PrototypeContext.Provider value={value}>{children}</PrototypeContext.Provider>;
 }
