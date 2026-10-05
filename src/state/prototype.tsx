@@ -22,6 +22,7 @@ import {
   type Setor,
 } from "@/data";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 export type ItemAdicionado = {
   item: string;
@@ -197,7 +198,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
 
   const persistir = useCallback(async (domain: string, payload: unknown) => {
     if (!loaded.current || !userId) return;
-    await supabase.from("system_state").upsert({ domain, payload, updated_by: userId });
+    await supabase.from("system_state").upsert({ domain, payload: payload as Json, updated_by: userId });
   }, [userId]);
 
   const registrarAuditoria = useCallback((e: AuditInput) => {

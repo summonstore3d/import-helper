@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { money, pct, dataBR } from "@/lib/format";
 import { usePrototype } from "@/state/prototype";
-import { DemoTag, KPI, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
+import { KPI, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/historico")({
   head: () => ({
@@ -63,7 +63,7 @@ function Historico() {
         <KPI rotulo="Versões registradas" valor={String(historico.length)} />
         <KPI rotulo="Preços vigentes" valor={String(vigentes.length)} />
         <KPI
-          rotulo="Simulações desta sessão"
+          rotulo="Simulações registradas"
           valor={String(simulacoes.length)}
           detalhe="Salvas na tela de Precificação"
           destaque
@@ -115,7 +115,7 @@ function Historico() {
                     </span>
                   </Td>
                   <Td align="center" className="text-xs text-muted-foreground">
-                    {h.origem === "Demonstrativo" ? <DemoTag>Demonstrativo</DemoTag> : "Sessão"}
+                    Sistema
                   </Td>
                 </tr>
               ))}
@@ -125,9 +125,7 @@ function Historico() {
       </Panel>
 
       <p className="mt-4 rounded-md border border-border bg-muted/60 p-3 text-xs text-muted-foreground">
-        <DemoTag>Protótipo</DemoTag> As versões anteriores exibidas são séries demonstrativas
-        construídas a partir dos custos reais de cada produto, apenas para ilustrar o comportamento do
-        versionamento. Os preços vigentes são calculados com os dados reais da planilha.
+        Cada simulação salva preserva o custo, a margem, o cenário e o preço daquele momento.
       </p>
     </>
   );
