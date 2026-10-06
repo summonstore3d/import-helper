@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcessoRouteImport } from './routes/acesso'
-import { Route as ArquiteturaRouteImport } from './routes/arquitetura'
 import { Route as AuditoriaRouteImport } from './routes/auditoria'
 import { Route as BomRouteImport } from './routes/bom'
 import { Route as CentroDeCustosRouteImport } from './routes/centro-de-custos'
@@ -22,7 +21,6 @@ import { Route as InsumosRouteImport } from './routes/insumos'
 import { Route as LogisticaRouteImport } from './routes/logistica'
 import { Route as PrecificacaoRouteImport } from './routes/precificacao'
 import { Route as ProdutosRouteImport } from './routes/produtos'
-import { Route as RelatorioRouteImport } from './routes/relatorio'
 import { Route as SalariosRouteImport } from './routes/salarios'
 import { Route as ValidacoesRouteImport } from './routes/validacoes'
 
@@ -34,11 +32,6 @@ const IndexRoute = IndexRouteImport.update({
 const AcessoRoute = AcessoRouteImport.update({
   id: '/acesso',
   path: '/acesso',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ArquiteturaRoute = ArquiteturaRouteImport.update({
-  id: '/arquitetura',
-  path: '/arquitetura',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuditoriaRoute = AuditoriaRouteImport.update({
@@ -91,11 +84,6 @@ const ProdutosRoute = ProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RelatorioRoute = RelatorioRouteImport.update({
-  id: '/relatorio',
-  path: '/relatorio',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SalariosRoute = SalariosRouteImport.update({
   id: '/salarios',
   path: '/salarios',
@@ -110,7 +98,6 @@ const ValidacoesRoute = ValidacoesRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/acesso': typeof AcessoRoute
-  '/arquitetura': typeof ArquiteturaRoute
   '/auditoria': typeof AuditoriaRoute
   '/bom': typeof BomRoute
   '/centro-de-custos': typeof CentroDeCustosRoute
@@ -121,14 +108,12 @@ export interface FileRoutesByFullPath {
   '/logistica': typeof LogisticaRoute
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
-  '/relatorio': typeof RelatorioRoute
   '/salarios': typeof SalariosRoute
   '/validacoes': typeof ValidacoesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/acesso': typeof AcessoRoute
-  '/arquitetura': typeof ArquiteturaRoute
   '/auditoria': typeof AuditoriaRoute
   '/bom': typeof BomRoute
   '/centro-de-custos': typeof CentroDeCustosRoute
@@ -139,7 +124,6 @@ export interface FileRoutesByTo {
   '/logistica': typeof LogisticaRoute
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
-  '/relatorio': typeof RelatorioRoute
   '/salarios': typeof SalariosRoute
   '/validacoes': typeof ValidacoesRoute
 }
@@ -147,7 +131,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/acesso': typeof AcessoRoute
-  '/arquitetura': typeof ArquiteturaRoute
   '/auditoria': typeof AuditoriaRoute
   '/bom': typeof BomRoute
   '/centro-de-custos': typeof CentroDeCustosRoute
@@ -158,7 +141,6 @@ export interface FileRoutesById {
   '/logistica': typeof LogisticaRoute
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
-  '/relatorio': typeof RelatorioRoute
   '/salarios': typeof SalariosRoute
   '/validacoes': typeof ValidacoesRoute
 }
@@ -167,7 +149,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/acesso'
-    | '/arquitetura'
     | '/auditoria'
     | '/bom'
     | '/centro-de-custos'
@@ -178,14 +159,12 @@ export interface FileRouteTypes {
     | '/logistica'
     | '/precificacao'
     | '/produtos'
-    | '/relatorio'
     | '/salarios'
     | '/validacoes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/acesso'
-    | '/arquitetura'
     | '/auditoria'
     | '/bom'
     | '/centro-de-custos'
@@ -196,14 +175,12 @@ export interface FileRouteTypes {
     | '/logistica'
     | '/precificacao'
     | '/produtos'
-    | '/relatorio'
     | '/salarios'
     | '/validacoes'
   id:
     | '__root__'
     | '/'
     | '/acesso'
-    | '/arquitetura'
     | '/auditoria'
     | '/bom'
     | '/centro-de-custos'
@@ -214,7 +191,6 @@ export interface FileRouteTypes {
     | '/logistica'
     | '/precificacao'
     | '/produtos'
-    | '/relatorio'
     | '/salarios'
     | '/validacoes'
   fileRoutesById: FileRoutesById
@@ -222,7 +198,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcessoRoute: typeof AcessoRoute
-  ArquiteturaRoute: typeof ArquiteturaRoute
   AuditoriaRoute: typeof AuditoriaRoute
   BomRoute: typeof BomRoute
   CentroDeCustosRoute: typeof CentroDeCustosRoute
@@ -233,7 +208,6 @@ export interface RootRouteChildren {
   LogisticaRoute: typeof LogisticaRoute
   PrecificacaoRoute: typeof PrecificacaoRoute
   ProdutosRoute: typeof ProdutosRoute
-  RelatorioRoute: typeof RelatorioRoute
   SalariosRoute: typeof SalariosRoute
   ValidacoesRoute: typeof ValidacoesRoute
 }
@@ -252,13 +226,6 @@ declare module '@tanstack/react-router' {
       path: '/acesso'
       fullPath: '/acesso'
       preLoaderRoute: typeof AcessoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/arquitetura': {
-      id: '/arquitetura'
-      path: '/arquitetura'
-      fullPath: '/arquitetura'
-      preLoaderRoute: typeof ArquiteturaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auditoria': {
@@ -331,13 +298,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/relatorio': {
-      id: '/relatorio'
-      path: '/relatorio'
-      fullPath: '/relatorio'
-      preLoaderRoute: typeof RelatorioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/salarios': {
       id: '/salarios'
       path: '/salarios'
@@ -358,7 +318,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcessoRoute: AcessoRoute,
-  ArquiteturaRoute: ArquiteturaRoute,
   AuditoriaRoute: AuditoriaRoute,
   BomRoute: BomRoute,
   CentroDeCustosRoute: CentroDeCustosRoute,
@@ -369,7 +328,6 @@ const rootRouteChildren: RootRouteChildren = {
   LogisticaRoute: LogisticaRoute,
   PrecificacaoRoute: PrecificacaoRoute,
   ProdutosRoute: ProdutosRoute,
-  RelatorioRoute: RelatorioRoute,
   SalariosRoute: SalariosRoute,
   ValidacoesRoute: ValidacoesRoute,
 }

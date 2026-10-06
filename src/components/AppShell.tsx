@@ -13,8 +13,6 @@ import {
   History,
   ShieldCheck,
   FileClock,
-  FileText,
-  Workflow,
   Menu,
   X,
 } from "lucide-react";
@@ -37,8 +35,6 @@ const nav = [
   { to: "/historico", label: "Histórico", icon: History },
   { to: "/validacoes", label: "Validações", icon: ShieldCheck },
   { to: "/auditoria", label: "Auditoria", icon: FileClock },
-  { to: "/arquitetura", label: "Arquitetura", icon: Workflow },
-  { to: "/relatorio", label: "Relatório Técnico", icon: FileText },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
