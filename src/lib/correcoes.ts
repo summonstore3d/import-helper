@@ -396,7 +396,7 @@ export function totaisPorMes(fonte: typeof despesas = despesas) {
     }
     if (!atual) continue;
     linha.valores.forEach((v, i) => {
-      if (i < n && isNum(v.valor)) atual[i] += v.valor;
+      if (i < n && isNum(v.valor)) atual![i]! += v.valor;
     });
   }
   const buscar = (prefixo: string) =>
@@ -406,7 +406,7 @@ export function totaisPorMes(fonte: typeof despesas = despesas) {
   const variaveis = buscar("007");
   const pessoal = buscar("009");
   const operacionais = buscar("010");
-  const total = variaveis.map((v, i) => v + pessoal[i] + operacionais[i]);
+  const total = variaveis.map((v, i) => v + pessoal[i]! + operacionais[i]!);
   return { porGrupo, cmv, variaveis, pessoal, operacionais, total };
 }
 
