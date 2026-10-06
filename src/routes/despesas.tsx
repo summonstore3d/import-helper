@@ -299,10 +299,20 @@ function Despesas() {
       <Panel
         className="mt-4"
         titulo="Demonstrativo mensal"
-        subtitulo="Valores por conta. A linha verde é a % mensal usada na média (sem combustíveis, caminhões, pedágios, IPVA e seguros, que já estão no frete). Exporte, preencha no Excel e importe de volta."
+        subtitulo="Valores por conta. Totais e percentuais são recalculados automaticamente a partir das contas. A linha verde é a % mensal usada na média. Exporte, preencha no Excel e importe de volta."
         acoes={<RealTag />}
         bodyClassName="p-0"
       >
+        <div className="flex flex-wrap items-center gap-2 border-b border-border bg-secondary/30 px-4 py-2.5 text-xs">
+          <span className="inline-flex items-center gap-1.5 font-semibold">
+            <Truck className="size-3.5 text-warn" /> Não entram no % de despesas (já estão no frete):
+          </span>
+          {[...CONTAS_DO_FRETE].map((conta) => (
+            <span key={conta} className="rounded-full border border-warn bg-demo px-2 py-0.5 font-medium text-demo-foreground">
+              {conta}
+            </span>
+          ))}
+        </div>
         <div className="max-h-[60vh] overflow-auto">
           <table className="w-full text-xs">
             <thead>
@@ -316,38 +326,101 @@ function Despesas() {
               </tr>
             </thead>
             <tbody>
-              {demonstrativo.linhas.map((l, i) => (
-                <tr
-                  key={`${l.nome}-${i}`}
-                  className={l.tipo === "grupo" ? "bg-table-group font-semibold" : "odd:bg-secondary/30"}
-                >
-                  <Td className="max-w-[16rem] truncate">{l.nome}</Td>
-                  {l.valores.map((v, j) => (
-                    <Td key={j} align="right" className="whitespace-nowrap">
-                      {autenticado ? (
-                        <input
-                          aria-label={`${l.nome} — ${demonstrativo.meses[j] ?? "mês"}`}
-                          type="number"
-                          step="0.01"
-                          value={v.valor ?? ""}
-                          onChange={(e) => atualizarDespesa(i, j, e.target.value === "" ? null : Number(e.target.value))}
-                          className="h-7 w-28 rounded-sm border border-transparent bg-transparent px-1 text-right tabular-nums hover:border-input focus:border-ring focus:bg-background focus:outline-none"
-                        />
-                      ) : isNum(v.valor) ? money(v.valor) : "–"}
+              {demonstrativo.linhas.map((l, i) => {
+                if (l.tipo === "grupo") {
+                  const somas = totais.porGrupo.get(l.nome) ?? [];
+                  return (
+                    <tr key={`${l.nome}-${i}`} className="bg-table-group font-semibold">
+                      <Td className="max-w-[16rem] truncate">{l.nome}</Td>
+                      {demonstrativo.meses.map((_, j) => (
+                        <Td key={j} align="right" className="whitespace-nowrap tabular-nums">
+                          {somas[j] ? money(somas[j]) : "–"}
+                        </Td>
+                      ))}
+                    </tr>
+                  );
+                }
+                const noFrete = ehContaDoFrete(l.nome);
+                return (
+                  <tr key={`${l.nome}-${i}`} className={noFrete ? "bg-demo/60" : "odd:bg-secondary/30"}>
+                    <Td className="max-w-[16rem] truncate">
+                      <span className="inline-flex items-center gap-1.5">
+                        {l.nome}
+                        {noFrete ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-warn bg-demo px-1.5 py-px text-[10px] font-semibold text-demo-foreground">
+                            <Truck className="size-3" /> já no frete
+                          </span>
+                        ) : null}
+                      </span>
                     </Td>
-                  ))}
-                </tr>
-              ))}
-              {demonstrativo.rodape.map((r, i) => (
-                <tr key={`${r.nome}-${i}`} className="bg-table-total font-bold">
-                  <Td>{/despesas \(%\)/i.test(r.nome) ? "Despesas (%) bruta — inclui frota" : r.nome}</Td>
-                  {r.valores.map((v, j) => (
-                    <Td key={j} align="right" className="whitespace-nowrap">
-                      {isNum(v) ? (Math.abs(v) < 1 ? pct(v, 2) : money(v)) : "–"}
+                    {l.valores.map((v, j) => (
+                      <Td key={j} align="right" className="whitespace-nowrap">
+                        {autenticado ? (
+                          <input
+                            aria-label={`${l.nome} — ${demonstrativo.meses[j] ?? "mês"}`}
+                            type="number"
+                            step="0.01"
+                            value={v.valor ?? ""}
+                            onChange={(e) => atualizarDespesa(i, j, e.target.value === "" ? null : Number(e.target.value))}
+                            className="h-7 w-28 rounded-sm border border-transparent bg-transparent px-1 text-right tabular-nums hover:border-input focus:border-ring focus:bg-background focus:outline-none"
+                          />
+                        ) : isNum(v.valor) ? money(v.valor) : "–"}
+                      </Td>
+                    ))}
+                  </tr>
+                );
+              })}
+              <tr className="bg-table-total font-bold">
+                <Td>Total despesas VAR por mês (calculado)</Td>
+                {totais.variaveis.map((v, j) => (
+                  <Td key={j} align="right" className="whitespace-nowrap tabular-nums">{v ? money(v) : "–"}</Td>
+                ))}
+              </tr>
+              <tr className="bg-table-total font-bold">
+                <Td>Total despesas PES por mês (calculado)</Td>
+                {totais.pessoal.map((v, j) => (
+                  <Td key={j} align="right" className="whitespace-nowrap tabular-nums">{v ? money(v) : "–"}</Td>
+                ))}
+              </tr>
+              <tr className="bg-table-total font-bold">
+                <Td>Total despesas OP por mês (calculado)</Td>
+                {totais.operacionais.map((v, j) => (
+                  <Td key={j} align="right" className="whitespace-nowrap tabular-nums">{v ? money(v) : "–"}</Td>
+                ))}
+              </tr>
+              <tr className="bg-table-total font-bold">
+                <Td>Total de despesas por mês (calculado)</Td>
+                {totais.total.map((v, j) => (
+                  <Td key={j} align="right" className="whitespace-nowrap tabular-nums">{v ? money(v) : "–"}</Td>
+                ))}
+              </tr>
+              <tr className="bg-table-total font-bold">
+                <Td>Faturamento por mês (informado)</Td>
+                {faturamentoPorMes.map((v, j) => (
+                  <Td key={j} align="right" className="whitespace-nowrap tabular-nums">{isNum(v) ? money(v) : "–"}</Td>
+                ))}
+              </tr>
+              <tr className="bg-table-total font-bold">
+                <Td>Despesas (%) bruta — inclui frota</Td>
+                {totais.total.map((v, j) => {
+                  const fat = faturamentoPorMes[j];
+                  return (
+                    <Td key={j} align="right" className="whitespace-nowrap tabular-nums">
+                      {v && isNum(fat) && fat > 0 ? pct(v / fat, 2) : "–"}
                     </Td>
-                  ))}
-                </tr>
-              ))}
+                  );
+                })}
+              </tr>
+              <tr className="bg-demo font-semibold text-demo-foreground">
+                <Td>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Truck className="size-3.5" /> (−) Já incluídas no frete
+                  </span>
+                </Td>
+                {fretePorMes.map((v, j) => (
+                  <Td key={j} align="right" className="whitespace-nowrap tabular-nums">{v ? money(-v) : "–"}</Td>
+                ))}
+              </tr>
               <tr className="bg-green-soft font-bold">
                 <Td>Despesas (%) aplicada — sem frota</Td>
                 {vigentes.taxasPorMes.map((v, j) => (
