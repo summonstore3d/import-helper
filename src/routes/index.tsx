@@ -48,6 +48,12 @@ function Dashboard() {
   const topCategorias = Array.from(categorias.entries()).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const maiorCategoria = topCategorias[0]?.[1] ?? 1;
 
+  const destaques = produtos
+    .slice(0, 200)
+    .map((p) => ({ produto: p.full, cenario: cenarioSugerido(p.full), preco: precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual }) }))
+    .filter((p) => p.preco !== null)
+    .slice(0, 6);
+
   const produtosProntos = produtos
     .slice(0, 200)
     .filter((p) => precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual }) !== null)
