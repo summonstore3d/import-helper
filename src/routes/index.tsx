@@ -2,9 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import {
   bom,
-  centroCustos,
   impostos,
-  insumos,
   logistica,
   parametros,
   produtos,
@@ -38,7 +36,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { itensBom, baseIndustrial, despesasPercentual } = usePrototype();
+  const { itensBom, baseIndustrial, despesasPercentual, comparativoDespesas, listaInsumos, centroCustos: ccVigente } = usePrototype();
+  const mesesDespesas = comparativoDespesas.meses;
   const problemas = checks();
   const criticos = problemas.filter((p) => p.severidade === "CRÍTICO");
   const categorias = new Map<string, number>();
@@ -73,7 +72,7 @@ function Dashboard() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KPI rotulo="Produtos cadastrados" valor={qtd(produtos.length)} detalhe="Lista de Produtos" />
-        <KPI rotulo="Insumos" valor={qtd(insumos.length)} detalhe="Custo unitário por insumo" />
+        <KPI rotulo="Insumos" valor={qtd(listaInsumos.length)} detalhe="Custo unitário por insumo" />
         <KPI
           rotulo="Linhas de estrutura (BOM)"
           valor={qtd(bom.length)}
@@ -103,11 +102,11 @@ function Dashboard() {
               {
                 t: "2. Custo de produção",
                 d: "Rateio de mão de obra, manutenção, acabamento e transporte interno por setor",
-                v: `${centroCustos.setores.length} setores`,
+                v: `${ccVigente.setores.length} setores`,
               },
               {
                 t: "3. Despesas operacionais",
-                d: "Média dos últimos 12 meses, sem as despesas de frota (já incluídas no frete)",
+                d: `Média dos ${mesesDespesas} meses com faturamento, sem as despesas de frota (já incluídas no frete)`,
                 v: pct(despesasPercentual, 4),
               },
               {
@@ -155,7 +154,7 @@ function Dashboard() {
           <Panel titulo="Estrutura de custos" subtitulo="Indicadores reais da planilha">
             <dl className="space-y-2 text-sm">
               {[
-                ["Despesas operacionais (média 12m, sem frota)", pct(despesasPercentual, 4)],
+                [`Despesas operacionais (média ${mesesDespesas}m, sem frota)`, pct(despesasPercentual, 4)],
                 ["Custo logístico por km", money(logistica.custoTotalPorKm)],
                 ["Km rodados/mês", qtd(logistica.kmRodadosMes)],
                 ["Custos fixos da frota/mês", money(logistica.totalFixos)],

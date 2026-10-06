@@ -66,7 +66,7 @@ export const Route = createFileRoute("/despesas")({
       {
         name: "description",
         content:
-          "Demonstrativo de resultado dos últimos 12 meses: custo de mercadoria, despesas administrativas, comerciais e o percentual médio aplicado no preço.",
+          "Demonstrativo de resultado mês a mês: custo de mercadoria, despesas administrativas, comerciais e o percentual médio aplicado no preço.",
       },
       { property: "og:title", content: "Despesas — Demonstrativo de 12 Meses" },
       {

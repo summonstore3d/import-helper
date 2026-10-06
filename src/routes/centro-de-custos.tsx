@@ -34,7 +34,7 @@ function valor(v: number | string | null, tipo: "money" | "pct" | "num") {
 function CentroDeCustos() {
   const { centroCustos, guiaCdc, baseIndustrial, setoresCalculados, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, autenticado } = usePrototype();
   const [aba, setAba] = useState<"setores" | "roteiro" | "guia">("setores");
-  const quebrados = centroCustos.setores.filter((s) => !isNum(s.horaReal)).length;
+  const quebrados = setoresCalculados.filter((s) => !isNum(s.horaReal)).length;
   const resumo = resumoCentroCustos(baseIndustrial);
 
   return (
