@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Check, ChevronDown, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { parametros, produtos } from "@/data";
 import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { custoMPOriginal, totalMP } from "@/lib/pricing";
@@ -31,6 +31,118 @@ export const Route = createFileRoute("/bom")({
   }),
   component: Bom,
 });
+
+function normalizar(texto: string) {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+}
+
+function SearchSelect({
+  valor,
+  opcoes,
+  onChange,
+  placeholder,
+  className,
+}: {
+  valor: string;
+  opcoes: string[];
+  onChange: (valor: string) => void;
+  placeholder?: string;
+  className?: string;
+}) {
+  const [aberto, setAberto] = useState(false);
+  const [busca, setBusca] = useState("");
+  const [destaque, setDestaque] = useState(0);
+  const raiz = useRef<HTMLDivElement>(null);
+
+  const filtradas = useMemo(() => {
+    const termo = normalizar(busca.trim());
+    if (!termo) return opcoes;
+    return opcoes.filter((o) => normalizar(o).includes(termo));
+  }, [opcoes, busca]);
+
+  useEffect(() => {
+    function aoClicarFora(e: MouseEvent) {
+      if (raiz.current && !raiz.current.contains(e.target as Node)) setAberto(false);
+    }
+    document.addEventListener("mousedown", aoClicarFora);
+    return () => document.removeEventListener("mousedown", aoClicarFora);
+  }, []);
+
+  function escolher(opcao: string) {
+    onChange(opcao);
+    setBusca("");
+    setAberto(false);
+  }
+
+  return (
+    <div ref={raiz} className={`relative ${className ?? ""}`}>
+      <div
+        className="flex h-9 cursor-pointer items-center gap-2 rounded-sm border border-input bg-background px-2 text-sm focus-within:border-ring"
+        onClick={() => {
+          setAberto(true);
+          raiz.current?.querySelector("input")?.focus();
+        }}
+      >
+        <Search className="size-3.5 shrink-0 text-muted-foreground" />
+        {aberto ? (
+          <input
+            value={busca}
+            onChange={(e) => {
+              setBusca(e.target.value);
+              setDestaque(0);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") {
+                e.preventDefault();
+                setDestaque((d) => Math.min(d + 1, filtradas.length - 1));
+              } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                setDestaque((d) => Math.max(d - 1, 0));
+              } else if (e.key === "Enter" && filtradas[destaque]) {
+                e.preventDefault();
+                escolher(filtradas[destaque]);
+              } else if (e.key === "Escape") {
+                setAberto(false);
+                setBusca("");
+              }
+            }}
+            placeholder={placeholder ?? "Digite para buscar…"}
+            className="w-full bg-transparent outline-none placeholder:text-muted-foreground"
+          />
+        ) : (
+          <span className="w-full truncate">{valor || (placeholder ?? "Selecione…")}</span>
+        )}
+        <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+      </div>
+      {aberto ? (
+        <ul className="absolute z-40 mt-1 max-h-64 w-full overflow-auto rounded-sm border border-border bg-popover py-1 shadow-panel">
+          {filtradas.length === 0 ? (
+            <li className="px-3 py-2 text-xs text-muted-foreground">Nenhum resultado para “{busca}”.</li>
+          ) : (
+            filtradas.slice(0, 100).map((opcao, i) => (
+              <li key={opcao}>
+                <button
+                  type="button"
+                  onMouseEnter={() => setDestaque(i)}
+                  onClick={() => escolher(opcao)}
+                  className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm ${
+                    i === destaque ? "bg-secondary" : ""
+                  }`}
+                >
+                  <Check className={`size-3.5 shrink-0 ${opcao === valor ? "text-green" : "opacity-0"}`} />
+                  <span className="truncate">{opcao}</span>
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
 
 function Bom() {
   const { produto } = Route.useSearch();
@@ -77,17 +189,13 @@ function Bom() {
         aba="Custo MP por Produto"
         descricao="A composição de matéria-prima deixa de ser um bloco de células e passa a ser um cadastro versionado por produto. Alterações feitas aqui recalculam o preço na hora e ficam registradas na auditoria."
         acoes={
-          <select
-            value={selecionado}
-            onChange={(e) => navigate({ search: { produto: e.target.value } })}
-            className="h-9 max-w-[26rem] rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring"
-          >
-            {produtos.map((p) => (
-              <option key={p.full} value={p.full}>
-                {p.full}
-              </option>
-            ))}
-          </select>
+          <SearchSelect
+            valor={selecionado}
+            opcoes={produtos.map((p) => p.full)}
+            onChange={(v) => navigate({ search: { produto: v } })}
+            placeholder="Buscar produto por nome ou código…"
+            className="w-[26rem] max-w-full"
+          />
         }
       />
       <EditLockBanner />
@@ -202,20 +310,16 @@ function Bom() {
                Selecione o insumo e informe o consumo por peça. A alteração fica compartilhada.
             </p>
             <div className="mt-4 space-y-3">
-              <label className="block text-sm">
+              <div className="block text-sm">
                 <span className="font-semibold">Insumo</span>
-                <select
-                  value={insumoSel}
-                  onChange={(e) => setInsumoSel(e.target.value)}
-                  className="mt-1 h-9 w-full rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring"
-                >
-                   {listaInsumos.map((i) => (
-                    <option key={i.full} value={i.full}>
-                      {i.full}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                <SearchSelect
+                  valor={insumoSel}
+                  opcoes={listaInsumos.map((i) => i.full)}
+                  onChange={setInsumoSel}
+                  placeholder="Buscar insumo…"
+                  className="mt-1"
+                />
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <label className="block text-sm">
                   <span className="font-semibold">Quantidade</span>
