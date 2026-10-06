@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { Download, Plus, Upload } from "lucide-react";
+import { Download, Plus, Truck, Upload } from "lucide-react";
 import { isNum, money, pct } from "@/lib/format";
-import { despesasPonderadas } from "@/lib/correcoes";
+import { CONTAS_DO_FRETE, despesasPonderadas, ehContaDoFrete, totaisPorMes } from "@/lib/correcoes";
 import {
   baixarArquivo,
   csvParaDespesas,
