@@ -23,7 +23,6 @@ import { Route as LogisticaRouteImport } from './routes/logistica'
 import { Route as PrecificacaoRouteImport } from './routes/precificacao'
 import { Route as ProdutosRouteImport } from './routes/produtos'
 import { Route as SalariosRouteImport } from './routes/salarios'
-import { Route as ValidacoesRouteImport } from './routes/validacoes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -95,11 +94,6 @@ const SalariosRoute = SalariosRouteImport.update({
   path: '/salarios',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ValidacoesRoute = ValidacoesRouteImport.update({
-  id: '/validacoes',
-  path: '/validacoes',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -116,7 +110,6 @@ export interface FileRoutesByFullPath {
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
   '/salarios': typeof SalariosRoute
-  '/validacoes': typeof ValidacoesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -133,7 +126,6 @@ export interface FileRoutesByTo {
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
   '/salarios': typeof SalariosRoute
-  '/validacoes': typeof ValidacoesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -151,7 +143,6 @@ export interface FileRoutesById {
   '/precificacao': typeof PrecificacaoRoute
   '/produtos': typeof ProdutosRoute
   '/salarios': typeof SalariosRoute
-  '/validacoes': typeof ValidacoesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,7 +161,6 @@ export interface FileRouteTypes {
     | '/precificacao'
     | '/produtos'
     | '/salarios'
-    | '/validacoes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -187,7 +177,6 @@ export interface FileRouteTypes {
     | '/precificacao'
     | '/produtos'
     | '/salarios'
-    | '/validacoes'
   id:
     | '__root__'
     | '/'
@@ -204,7 +193,6 @@ export interface FileRouteTypes {
     | '/precificacao'
     | '/produtos'
     | '/salarios'
-    | '/validacoes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -222,7 +210,6 @@ export interface RootRouteChildren {
   PrecificacaoRoute: typeof PrecificacaoRoute
   ProdutosRoute: typeof ProdutosRoute
   SalariosRoute: typeof SalariosRoute
-  ValidacoesRoute: typeof ValidacoesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -325,13 +312,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SalariosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/validacoes': {
-      id: '/validacoes'
-      path: '/validacoes'
-      fullPath: '/validacoes'
-      preLoaderRoute: typeof ValidacoesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -350,7 +330,6 @@ const rootRouteChildren: RootRouteChildren = {
   PrecificacaoRoute: PrecificacaoRoute,
   ProdutosRoute: ProdutosRoute,
   SalariosRoute: SalariosRoute,
-  ValidacoesRoute: ValidacoesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
