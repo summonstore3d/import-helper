@@ -11,7 +11,6 @@ import {
   Landmark,
   Calculator,
   History,
-  ShieldCheck,
   FileClock,
   Menu,
   X,
