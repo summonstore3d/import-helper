@@ -3,7 +3,6 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import {
   bom,
   centroCustos,
-  despesas,
   impostos,
   insumos,
   logistica,
