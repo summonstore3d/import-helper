@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Check, ChevronDown, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { parametros, produtos } from "@/data";
 import { isNum, money, moneyPreciso, qtd } from "@/lib/format";
 import { custoMPOriginal, totalMP } from "@/lib/pricing";
