@@ -94,6 +94,21 @@ function Despesas() {
   const [novoMes, setNovoMes] = useState("");
 
   const vigentes = useMemo(() => despesasPonderadas(demonstrativo), [demonstrativo]);
+  const totais = useMemo(() => totaisPorMes(demonstrativo), [demonstrativo]);
+  const faturamentoPorMes = useMemo(
+    () => demonstrativo.rodape.find((r) => r.nome.toLowerCase().includes("faturamento"))?.valores ?? [],
+    [demonstrativo],
+  );
+  const fretePorMes = useMemo(
+    () =>
+      demonstrativo.meses.map((_, j) =>
+        demonstrativo.linhas.reduce(
+          (soma, l) => (ehContaDoFrete(l.nome) && isNum(l.valores[j]?.valor) ? soma + l.valores[j].valor : soma),
+          0,
+        ),
+      ),
+    [demonstrativo],
+  );
   const mesesComDado = demonstrativo.linhas[0]?.valores.filter((v) => isNum(v.valor)).length ?? 0;
 
   function exportar() {
