@@ -284,7 +284,7 @@ function Despesas() {
       <Panel
         className="mt-4"
         titulo="Demonstrativo mensal"
-        subtitulo="Valores e participação sobre a receita, por conta. Exporte, preencha no Excel e importe de volta."
+        subtitulo="Valores por conta. A linha verde é a % mensal usada na média (sem combustíveis, caminhões, pedágios, IPVA e seguros, que já estão no frete). Exporte, preencha no Excel e importe de volta."
         acoes={<RealTag />}
         bodyClassName="p-0"
       >
@@ -325,7 +325,7 @@ function Despesas() {
               ))}
               {demonstrativo.rodape.map((r, i) => (
                 <tr key={`${r.nome}-${i}`} className="bg-table-total font-bold">
-                  <Td>{r.nome}</Td>
+                  <Td>{/despesas \(%\)/i.test(r.nome) ? "Despesas (%) bruta — inclui frota" : r.nome}</Td>
                   {r.valores.map((v, j) => (
                     <Td key={j} align="right" className="whitespace-nowrap">
                       {isNum(v) ? (Math.abs(v) < 1 ? pct(v, 2) : money(v)) : "–"}
@@ -333,6 +333,14 @@ function Despesas() {
                   ))}
                 </tr>
               ))}
+              <tr className="bg-green-soft font-bold">
+                <Td>Despesas (%) aplicada — sem frota</Td>
+                {vigentes.taxasPorMes.map((v, j) => (
+                  <Td key={j} align="right" className="whitespace-nowrap">
+                    {isNum(v) ? pct(v, 2) : "–"}
+                  </Td>
+                ))}
+              </tr>
             </tbody>
           </table>
         </div>
