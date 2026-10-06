@@ -3,7 +3,6 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import {
   bom,
   centroCustos,
-  despesas,
   impostos,
   insumos,
   logistica,
@@ -108,8 +107,8 @@ function Dashboard() {
               },
               {
                 t: "3. Despesas operacionais",
-                d: "Média dos últimos 12 meses do demonstrativo de resultado",
-                v: pct(despesas.mediaDespesas, 4),
+                d: "Média dos últimos 12 meses, sem as despesas de frota (já incluídas no frete)",
+                v: pct(despesasPercentual, 4),
               },
               {
                 t: "4. Impostos por cenário",
@@ -156,7 +155,7 @@ function Dashboard() {
           <Panel titulo="Estrutura de custos" subtitulo="Indicadores reais da planilha">
             <dl className="space-y-2 text-sm">
               {[
-                ["Despesas operacionais (média 12m)", pct(despesas.mediaDespesas, 4)],
+                ["Despesas operacionais (média 12m, sem frota)", pct(despesasPercentual, 4)],
                 ["Custo logístico por km", money(logistica.custoTotalPorKm)],
                 ["Km rodados/mês", qtd(logistica.kmRodadosMes)],
                 ["Custos fixos da frota/mês", money(logistica.totalFixos)],
