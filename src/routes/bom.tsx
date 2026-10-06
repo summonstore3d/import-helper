@@ -32,6 +32,118 @@ export const Route = createFileRoute("/bom")({
   component: Bom,
 });
 
+function normalizar(texto: string) {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+}
+
+function SearchSelect({
+  valor,
+  opcoes,
+  onChange,
+  placeholder,
+  className,
+}: {
+  valor: string;
+  opcoes: string[];
+  onChange: (valor: string) => void;
+  placeholder?: string;
+  className?: string;
+}) {
+  const [aberto, setAberto] = useState(false);
+  const [busca, setBusca] = useState("");
+  const [destaque, setDestaque] = useState(0);
+  const raiz = useRef<HTMLDivElement>(null);
+
+  const filtradas = useMemo(() => {
+    const termo = normalizar(busca.trim());
+    if (!termo) return opcoes;
+    return opcoes.filter((o) => normalizar(o).includes(termo));
+  }, [opcoes, busca]);
+
+  useEffect(() => {
+    function aoClicarFora(e: MouseEvent) {
+      if (raiz.current && !raiz.current.contains(e.target as Node)) setAberto(false);
+    }
+    document.addEventListener("mousedown", aoClicarFora);
+    return () => document.removeEventListener("mousedown", aoClicarFora);
+  }, []);
+
+  function escolher(opcao: string) {
+    onChange(opcao);
+    setBusca("");
+    setAberto(false);
+  }
+
+  return (
+    <div ref={raiz} className={`relative ${className ?? ""}`}>
+      <div
+        className="flex h-9 cursor-pointer items-center gap-2 rounded-sm border border-input bg-background px-2 text-sm focus-within:border-ring"
+        onClick={() => {
+          setAberto(true);
+          raiz.current?.querySelector("input")?.focus();
+        }}
+      >
+        <Search className="size-3.5 shrink-0 text-muted-foreground" />
+        {aberto ? (
+          <input
+            value={busca}
+            onChange={(e) => {
+              setBusca(e.target.value);
+              setDestaque(0);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") {
+                e.preventDefault();
+                setDestaque((d) => Math.min(d + 1, filtradas.length - 1));
+              } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                setDestaque((d) => Math.max(d - 1, 0));
+              } else if (e.key === "Enter" && filtradas[destaque]) {
+                e.preventDefault();
+                escolher(filtradas[destaque]);
+              } else if (e.key === "Escape") {
+                setAberto(false);
+                setBusca("");
+              }
+            }}
+            placeholder={placeholder ?? "Digite para buscar…"}
+            className="w-full bg-transparent outline-none placeholder:text-muted-foreground"
+          />
+        ) : (
+          <span className="w-full truncate">{valor || (placeholder ?? "Selecione…")}</span>
+        )}
+        <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+      </div>
+      {aberto ? (
+        <ul className="absolute z-40 mt-1 max-h-64 w-full overflow-auto rounded-sm border border-border bg-popover py-1 shadow-panel">
+          {filtradas.length === 0 ? (
+            <li className="px-3 py-2 text-xs text-muted-foreground">Nenhum resultado para “{busca}”.</li>
+          ) : (
+            filtradas.slice(0, 100).map((opcao, i) => (
+              <li key={opcao}>
+                <button
+                  type="button"
+                  onMouseEnter={() => setDestaque(i)}
+                  onClick={() => escolher(opcao)}
+                  className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm ${
+                    i === destaque ? "bg-secondary" : ""
+                  }`}
+                >
+                  <Check className={`size-3.5 shrink-0 ${opcao === valor ? "text-green" : "opacity-0"}`} />
+                  <span className="truncate">{opcao}</span>
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
 function Bom() {
   const { produto } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
