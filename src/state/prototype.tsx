@@ -134,7 +134,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null);
   const [sincronizando, setSincronizando] = useState(true);
   const [demonstrativo, setDemonstrativo] = useState<Despesas>(despesasBase);
-  const [metodoDespesas, setMetodoDespesas] = useState<MetodoDespesas>("media");
+  const [metodoDespesas, setMetodoDespesas] = useState<MetodoDespesas>("ponderado");
   const [listaInsumos, setListaInsumos] = useState<Insumo[]>(insumosBase);
   const [bomEditado, setBomEditado] = useState<Record<string, ItemAdicionado[]>>({});
   const [centroCustos, setCentroCustos] = useState<CentroCustosEditavel>(centroCustosBase);
