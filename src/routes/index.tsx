@@ -48,11 +48,10 @@ function Dashboard() {
   const topCategorias = Array.from(categorias.entries()).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const maiorCategoria = topCategorias[0]?.[1] ?? 1;
 
-  const destaques = produtos
+  const produtosProntos = produtos
     .slice(0, 200)
-    .map((p) => ({ produto: p.full, cenario: cenarioSugerido(p.full), preco: precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual }) }))
-    .filter((p) => p.preco !== null)
-    .slice(0, 6);
+    .filter((p) => precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual }) !== null)
+    .length;
 
   return (
     <>
@@ -60,15 +59,70 @@ function Dashboard() {
         titulo="Painel de Precificação"
         aba="Menu"
         descricao="Visão executiva do sistema. A base oficial vem da planilha ajustada e as alterações autorizadas ficam compartilhadas e auditadas."
-        acoes={
-          <Link
-            to="/precificacao"
-            className="inline-flex items-center gap-1.5 rounded-sm bg-green px-3 py-2 text-sm font-semibold text-green-foreground hover:opacity-90"
-          >
-            Simular preço <ArrowRight className="size-4" />
-          </Link>
-        }
       />
+
+      <section className="relative overflow-hidden rounded-lg border border-border bg-primary text-primary-foreground shadow-panel">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.35]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(115deg, transparent 0 22px, color-mix(in oklab, var(--primary-foreground) 6%, transparent) 22px 23px)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full opacity-20 blur-3xl"
+          style={{ background: "var(--green)" }}
+        />
+        <div className="relative grid gap-6 p-6 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-1.5 rounded-sm bg-green px-2 py-0.5 text-[10px] font-bold tracking-widest text-green-foreground uppercase">
+              <Sparkles className="size-3" /> Ferramenta principal
+            </span>
+            <h2 className="mt-3 text-2xl font-bold tracking-tight uppercase">
+              Simulador de preço
+            </h2>
+            <p className="mt-2 max-w-xl text-sm text-primary-foreground/80">
+              Monte uma cotação em segundos: escolha o produto, ajuste margem, comissão, inadimplência
+              e frete (FOB ou CIF) e copie a proposta pronta para enviar ao cliente.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2 text-xs">
+              {[
+                `${qtd(produtosProntos)} produtos prontos para simular`,
+                `Despesas ${pct(despesasPercentual, 2)}`,
+                `Margem padrão ${pct(parametros.margemPadrao, 0)}`,
+              ].map((chip) => (
+                <span
+                  key={chip}
+                  className="rounded-sm border border-primary-foreground/20 bg-primary-foreground/10 px-2 py-1 font-medium text-primary-foreground/90"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col items-stretch gap-3 lg:items-end">
+            <Link
+              to="/precificacao"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-green px-6 py-3.5 text-base font-bold text-green-foreground shadow-lg transition hover:opacity-90"
+            >
+              Abrir simulador <ArrowRight className="size-5" />
+            </Link>
+            <ul className="space-y-1 text-xs text-primary-foreground/70 lg:text-right">
+              {["Condições comerciais editáveis", "Total do lote por quantidade", "Cópia da cotação para WhatsApp/e-mail"].map(
+                (item) => (
+                  <li key={item} className="flex items-center gap-1.5 lg:justify-end">
+                    <Check className="size-3.5 text-green" />
+                    {item}
+                  </li>
+                ),
+              )}
+            </ul>
+          </div>
+        </div>
+      </section>
+
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KPI rotulo="Produtos cadastrados" valor={qtd(produtos.length)} detalhe="Lista de Produtos" />
