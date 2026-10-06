@@ -360,23 +360,60 @@ function rodapePor(nome: string, fonte: typeof despesas = despesas): (number | n
   return fonte.rodape.find((r) => r.nome.toLowerCase().startsWith(nome))?.valores ?? [];
 }
 
+/** Contas de logística/frota que já entram no cálculo do frete e por isso saem do % de despesas. */
+export const CONTAS_DO_FRETE = new Set([
+  "COMBUSTIVEIS VEICULOS FABRICA",
+  "DESPESAS COM CAMINHOES",
+  "PEDAGIOS",
+  "IPVA",
+  "SEGUROS",
+]);
+
+const normalizarConta = (valor: string) =>
+  valor
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toUpperCase();
+
+export function ehContaDoFrete(nome: string) {
+  return CONTAS_DO_FRETE.has(normalizarConta(nome));
+}
+
+/**
+ * Totais por mês calculados a partir das contas (nunca dos totais guardados da planilha).
+ * Total de despesas = VAR (007) + PES (009) + OP (010); o CMV (005) é custo de mercadoria, não despesa.
+ */
+export function totaisPorMes(fonte: typeof despesas = despesas) {
+  const n = fonte.meses.length;
+  const porGrupo = new Map<string, number[]>();
+  let atual: number[] | null = null;
+  for (const linha of fonte.linhas) {
+    if (linha.tipo === "grupo") {
+      atual = Array.from({ length: n }, () => 0);
+      porGrupo.set(linha.nome, atual);
+      continue;
+    }
+    if (!atual) continue;
+    linha.valores.forEach((v, i) => {
+      if (i < n && isNum(v.valor)) atual![i]! += v.valor;
+    });
+  }
+  const buscar = (prefixo: string) =>
+    [...porGrupo.entries()].find(([nome]) => nome.includes(prefixo))?.[1] ??
+    Array.from({ length: n }, () => 0);
+  const cmv = buscar("005");
+  const variaveis = buscar("007");
+  const pessoal = buscar("009");
+  const operacionais = buscar("010");
+  const total = variaveis.map((v, i) => v + pessoal[i]! + operacionais[i]!);
+  return { porGrupo, cmv, variaveis, pessoal, operacionais, total };
+}
+
 export function despesasPonderadas(fonte: typeof despesas = despesas) {
-  const totais = rodapePor("total depesas por mês", fonte);
+  const totais = totaisPorMes(fonte).total;
   const receita = rodapePor("faturamento por mês", fonte);
-  const contasDoFrete = new Set([
-    "COMBUSTIVEIS VEICULOS FABRICA",
-    "DESPESAS COM CAMINHOES",
-    "PEDAGIOS",
-    "IPVA",
-    "SEGUROS",
-  ]);
-  const normalizar = (valor: string) =>
-    valor
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim()
-      .toUpperCase();
-  const linhasDoFrete = fonte.linhas.filter((linha) => contasDoFrete.has(normalizar(linha.nome)));
+  const linhasDoFrete = fonte.linhas.filter((linha) => ehContaDoFrete(linha.nome));
   let somaDespesas = 0;
   let somaReceita = 0;
   let meses = 0;
