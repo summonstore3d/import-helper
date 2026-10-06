@@ -2,9 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import {
   bom,
-  centroCustos,
   impostos,
-  insumos,
   logistica,
   parametros,
   produtos,
