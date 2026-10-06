@@ -8,6 +8,13 @@
       "when": 1791209003688,
       "tag": "0000_create_pricing_system",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791287463298,
+      "tag": "0001_access_levels",
+      "breakpoints": true
     }
   ]
 }

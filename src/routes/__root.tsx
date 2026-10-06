@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/AppShell";
+import { Toaster } from "@/components/ui/sonner";
 import { PrototypeProvider } from "@/state/prototype";
 
 function NotFoundComponent() {
@@ -127,6 +128,7 @@ function RootComponent() {
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </AppShell>
+        <Toaster />
       </PrototypeProvider>
     </QueryClientProvider>
   );
