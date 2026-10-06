@@ -13,8 +13,6 @@ import {
   History,
   ShieldCheck,
   FileClock,
-  FileText,
-  Workflow,
   Menu,
   X,
 } from "lucide-react";
