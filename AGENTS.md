@@ -12,3 +12,4 @@
 - Keep shared pricing master data in `system_state` domains and append audit/history rows separately, because this preserves the current calculation APIs while adding durable multi-user storage.
 - Keep the pricing screen seller-first and isolate calculation memory in a technical section, because future seller roles must hide it while managers and administrators retain access.
 - Derive sector hourly rates and production cost at calculation time from the editable labor/maintenance allocation (`src/lib/custos-industriais.ts`), never from stored spreadsheet results, so every edit flows into the price.
+- Gate tabs by role via `user_roles` + editable `role_permissions` (checked in AppShell with `src/lib/acesso.ts`); first account becomes admin through `ensure_my_role()`, because admins must configure visibility without code changes.
