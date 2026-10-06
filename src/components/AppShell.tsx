@@ -15,11 +15,14 @@ import {
   FileClock,
   Menu,
   X,
+  KeyRound,
+  Lock,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { AuthPanel } from "@/components/AuthPanel";
 import { SaveStatus } from "@/components/SaveStatus";
+import { NIVEIS, podeVer, useAcesso } from "@/lib/acesso";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -35,11 +38,17 @@ const nav = [
   { to: "/historico", label: "Histórico", icon: History },
   { to: "/validacoes", label: "Validações", icon: ShieldCheck },
   { to: "/auditoria", label: "Auditoria", icon: FileClock },
+  { to: "/acessos", label: "Níveis de acesso", icon: KeyRound },
 ] as const;
+
+export const ABAS = nav.map((n) => ({ to: n.to, label: n.label }));
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [aberto, setAberto] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const acesso = useAcesso();
+  const visiveis = nav.filter((n) => podeVer(acesso.nivel, acesso.abas, n.to));
+  const liberado = acesso.carregando || podeVer(acesso.nivel, acesso.abas, pathname);
 
   return (
     <div className="min-h-screen bg-background lg:flex">
@@ -70,7 +79,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             Menu
           </p>
           <ul className="space-y-0.5">
-            {nav.map((item) => {
+            {visiveis.map((item) => {
               const ativo = pathname === item.to;
               const Icon = item.icon;
               return (
@@ -94,6 +103,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           </ul>
         </nav>
         <div className="border-t border-navy-foreground/15 px-4 py-3 text-[11px] text-navy-muted">
+          {acesso.nivel ? (
+            <p className="mb-1 font-semibold text-navy-foreground">
+              Nível: {NIVEIS.find((n) => n.id === acesso.nivel)?.nome}
+            </p>
+          ) : null}
           Base: Ferramenta de Precificação
           <br />
           atualizada em 28.08.2026
@@ -134,7 +148,34 @@ export function AppShell({ children }: { children: ReactNode }) {
             <AuthPanel compact />
           </div>
         </header>
-        <main className="min-w-0 flex-1 px-4 py-6 lg:px-6">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-6 lg:px-6">
+          {liberado ? (
+            children
+          ) : (
+            <div className="mx-auto mt-16 max-w-md rounded-md border border-border bg-card p-6 text-center shadow-panel">
+              <Lock className="mx-auto size-8 text-muted-foreground" />
+              <h1 className="mt-3 text-lg font-bold text-foreground">
+                {acesso.logado ? "Sem acesso a esta tela" : "Entre para continuar"}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {acesso.logado
+                  ? "Seu nível de acesso não inclui esta tela. Fale com o administrador."
+                  : "Este sistema é de uso interno. Entre com sua conta para ver as telas liberadas para você."}
+              </p>
+              {acesso.logado ? (
+                visiveis[0] ? (
+                  <Link to={visiveis[0].to} className="mt-4 inline-block text-sm font-semibold text-primary underline">
+                    Ir para {visiveis[0].label}
+                  </Link>
+                ) : null
+              ) : (
+                <Link to="/acesso" className="mt-4 inline-block rounded-sm bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+                  Entrar
+                </Link>
+              )}
+            </div>
+          )}
+        </main>
         <footer className="border-t border-border px-4 py-3 text-[11px] text-muted-foreground lg:px-6">
           Sistema de precificação industrial com dados compartilhados, memória de cálculo e auditoria.
         </footer>
