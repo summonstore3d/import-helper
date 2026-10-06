@@ -189,17 +189,13 @@ function Bom() {
         aba="Custo MP por Produto"
         descricao="A composição de matéria-prima deixa de ser um bloco de células e passa a ser um cadastro versionado por produto. Alterações feitas aqui recalculam o preço na hora e ficam registradas na auditoria."
         acoes={
-          <select
-            value={selecionado}
-            onChange={(e) => navigate({ search: { produto: e.target.value } })}
-            className="h-9 max-w-[26rem] rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring"
-          >
-            {produtos.map((p) => (
-              <option key={p.full} value={p.full}>
-                {p.full}
-              </option>
-            ))}
-          </select>
+          <SearchSelect
+            valor={selecionado}
+            opcoes={produtos.map((p) => p.full)}
+            onChange={(v) => navigate({ search: { produto: v } })}
+            placeholder="Buscar produto por nome ou código…"
+            className="w-[26rem] max-w-full"
+          />
         }
       />
       <EditLockBanner />
@@ -314,20 +310,16 @@ function Bom() {
                Selecione o insumo e informe o consumo por peça. A alteração fica compartilhada.
             </p>
             <div className="mt-4 space-y-3">
-              <label className="block text-sm">
+              <div className="block text-sm">
                 <span className="font-semibold">Insumo</span>
-                <select
-                  value={insumoSel}
-                  onChange={(e) => setInsumoSel(e.target.value)}
-                  className="mt-1 h-9 w-full rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring"
-                >
-                   {listaInsumos.map((i) => (
-                    <option key={i.full} value={i.full}>
-                      {i.full}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                <SearchSelect
+                  valor={insumoSel}
+                  opcoes={listaInsumos.map((i) => i.full)}
+                  onChange={setInsumoSel}
+                  placeholder="Buscar insumo…"
+                  className="mt-1"
+                />
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <label className="block text-sm">
                   <span className="font-semibold">Quantidade</span>
