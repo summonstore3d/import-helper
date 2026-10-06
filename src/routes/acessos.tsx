@@ -48,7 +48,10 @@ function Acessos() {
     const { error } = tem
       ? await supabase.from("role_permissions").delete().eq("role", role).eq("tab", tab)
       : await supabase.from("role_permissions").insert({ role, tab });
-    if (error) return toast.error("Não foi possível salvar. Só administradores podem alterar acessos.");
+    if (error) {
+      toast.error("Não foi possível salvar. Só administradores podem alterar acessos.");
+      return;
+    }
     const novo = new Set(perms);
     if (tem) novo.delete(chave);
     else novo.add(chave);
@@ -59,10 +62,16 @@ function Acessos() {
   async function mudarNivel(u: Usuario, role: Nivel) {
     if (u.user_id === meuId && role !== "admin") {
       const admins = usuarios.filter((x) => x.role === "admin").length;
-      if (admins <= 1) return toast.error("Você é o único administrador. Defina outro antes de mudar seu nível.");
+      if (admins <= 1) {
+        toast.error("Você é o único administrador. Defina outro antes de mudar seu nível.");
+        return;
+      }
     }
     const { error } = await supabase.from("user_roles").update({ role }).eq("user_id", u.user_id);
-    if (error) return toast.error("Não foi possível alterar o nível.");
+    if (error) {
+      toast.error("Não foi possível alterar o nível.");
+      return;
+    }
     setUsuarios((l) => l.map((x) => (x.user_id === u.user_id ? { ...x, role } : x)));
     toast.success("Nível atualizado.");
     window.dispatchEvent(new Event("acessos-alterados"));
