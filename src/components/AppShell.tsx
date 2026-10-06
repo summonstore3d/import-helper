@@ -11,7 +11,6 @@ import {
   Landmark,
   Calculator,
   History,
-  ShieldCheck,
   FileClock,
   Menu,
   X,
@@ -36,7 +35,6 @@ const nav = [
   { to: "/impostos", label: "Impostos", icon: Landmark },
   { to: "/precificacao", label: "Precificação", icon: Calculator },
   { to: "/historico", label: "Histórico", icon: History },
-  { to: "/validacoes", label: "Validações", icon: ShieldCheck },
   { to: "/auditoria", label: "Auditoria", icon: FileClock },
   { to: "/acessos", label: "Níveis de acesso", icon: KeyRound },
 ] as const;
