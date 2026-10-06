@@ -381,6 +381,7 @@ export function despesasPonderadas(fonte: typeof despesas = despesas) {
   let somaReceita = 0;
   let meses = 0;
   const taxasMensais: number[] = [];
+  const taxasPorMes: (number | null)[] = receita.map(() => null);
   receita.forEach((rec, i) => {
     const desp = totais[i];
     if (isNum(rec) && rec > 0 && isNum(desp) && desp > 0) {
@@ -392,6 +393,7 @@ export function despesasPonderadas(fonte: typeof despesas = despesas) {
       somaReceita += rec;
       somaDespesas += despesaAjustada;
       taxasMensais.push(despesaAjustada / rec);
+      taxasPorMes[i] = despesaAjustada / rec;
       meses += 1;
     }
   });
@@ -405,6 +407,7 @@ export function despesasPonderadas(fonte: typeof despesas = despesas) {
     meses,
     ponderada,
     mediaSimples,
+    taxasPorMes,
     diferenca: ponderada === null ? null : ponderada - mediaSimples,
   };
 }
