@@ -25,6 +25,8 @@ export const Route = createFileRoute("/")({
           "Painel executivo de precificação: produtos, insumos, estruturas de custo e formação de preço em um sistema compartilhado.",
       },
       { property: "og:title", content: "Painel de Precificação — D'AGOSTINI" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content:
@@ -36,7 +38,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { itensBom, baseIndustrial, despesasPercentual, comparativoDespesas, listaInsumos, centroCustos: ccVigente } = usePrototype();
+  const { itensBom, baseIndustrial, despesasPercentual, comparativoDespesas, metodoDespesas, listaInsumos, centroCustos: ccVigente } = usePrototype();
   const mesesDespesas = comparativoDespesas.meses;
   const problemas = checks();
   const criticos = problemas.filter((p) => p.severidade === "CRÍTICO");
@@ -166,7 +168,7 @@ function Dashboard() {
               },
               {
                 t: "3. Despesas operacionais",
-                d: `Média dos ${mesesDespesas} meses com faturamento, sem as despesas de frota (já incluídas no frete)`,
+                d: `${metodoDespesas === "ponderado" ? "Taxa ponderada" : "Média simples"} dos ${mesesDespesas} meses com faturamento, sem as despesas de frota (já incluídas no frete)`,
                 v: pct(despesasPercentual, 4),
               },
               {

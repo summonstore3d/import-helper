@@ -216,8 +216,44 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
 
   // Agrupa gravações rápidas (digitação) por domínio e informa o resultado.
   const pendentes = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const revisaoLocal = useRef(0);
+  const dominiosEmGravacao = useRef(new Set<string>());
+
+  // Atualiza outras sessões sem sobrescrever uma edição local ainda não salva.
+  useEffect(() => {
+    const atualizarDespesasCompartilhadas = async () => {
+      if (!loaded.current || document.visibilityState !== "visible" || dominiosEmGravacao.current.size) return;
+      const revisao = revisaoLocal.current;
+      const { data, error } = await supabase.from("system_state").select("domain,payload").in("domain", ["expenses", "settings"]);
+      if (error || revisao !== revisaoLocal.current || dominiosEmGravacao.current.size) return;
+      for (const row of data ?? []) {
+        if (!row.payload || typeof row.payload !== "object" || Array.isArray(row.payload)) continue;
+        if (row.domain === "expenses") {
+          const value = row.payload as Partial<Despesas>;
+          if (value.meses?.length && value.linhas?.length && value.rodape) {
+            setDemonstrativo((anterior) => JSON.stringify(anterior) === JSON.stringify(value) ? anterior : value as Despesas);
+          }
+        } else {
+          const method = (row.payload as { expenseMethod?: string }).expenseMethod;
+          if (method === "media" || method === "weighted") setMetodoDespesas(method === "media" ? "media" : "ponderado");
+        }
+      }
+    };
+    const atualizar = () => { void atualizarDespesasCompartilhadas(); };
+    window.addEventListener("focus", atualizar);
+    document.addEventListener("visibilitychange", atualizar);
+    const intervalo = window.setInterval(atualizar, 15000);
+    return () => {
+      window.removeEventListener("focus", atualizar);
+      document.removeEventListener("visibilitychange", atualizar);
+      window.clearInterval(intervalo);
+    };
+  }, []);
+
   const persistir = useCallback(async (domain: string, payload: unknown) => {
     if (!loaded.current || !userId) return;
+    revisaoLocal.current += 1;
+    dominiosEmGravacao.current.add(domain);
     setGravacao({ estado: "salvando" });
     const anterior = pendentes.current.get(domain);
     if (anterior) clearTimeout(anterior);
@@ -228,7 +264,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
         .upsert({ domain, payload: payload as Json, updated_by: userId })
         .then(({ error }) => {
           if (error) setGravacao({ estado: "erro", mensagem: "Não foi possível salvar a alteração. Verifique sua conexão e tente novamente." });
-          else if (pendentes.current.size === 0) setGravacao({ estado: "salvo", em: new Date().toISOString() });
+          else {
+            if (!pendentes.current.has(domain)) dominiosEmGravacao.current.delete(domain);
+            if (dominiosEmGravacao.current.size === 0) setGravacao({ estado: "salvo", em: new Date().toISOString() });
+          }
         });
     }, 600));
   }, [userId]);
@@ -299,7 +338,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const definirMetodoDespesas = useCallback((m: MetodoDespesas) => {
     const anterior = metodoDespesas;
     setMetodoDespesas(m);
-    void persistir("settings", { expenseMethod: m === "media" ? "media" : "weighted", adjustedExpenseRate: 0.22894826434794963 });
+    void persistir("settings", { expenseMethod: m === "media" ? "media" : "weighted" });
     if (anterior !== m) registrarAuditoria({ modulo: "Despesas", registro: "Parâmetros", campo: "Método", valorAnterior: anterior, valorNovo: m, motivo: "Comparação de critérios" });
   }, [metodoDespesas, persistir, registrarAuditoria]);
 
