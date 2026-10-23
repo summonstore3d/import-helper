@@ -499,7 +499,9 @@ function Precificacao() {
               ))}
             </div>
           </section>
+          ) : null}
 
+          {veDetalhes ? (
           <section aria-label="Condições comerciais">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Condições comerciais · editáveis</p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -522,6 +524,7 @@ function Precificacao() {
               ))}
             </div>
           </section>
+          ) : null}
 
           {r.bloqueios.length ? (
             <EmptyNote>
