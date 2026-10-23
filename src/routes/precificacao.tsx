@@ -364,7 +364,9 @@ function Precificacao() {
       <PageHeader
         titulo="Precificação"
         aba="Precificação"
-        descricao="Selecione o produto, ajuste as condições comerciais e consulte o preço final."
+        descricao={veDetalhes
+          ? "Selecione o produto, ajuste as condições comerciais e consulte o preço final."
+          : "Selecione o produto, o tipo de venda e a entrega para consultar o preço final."}
         acoes={
           <>
             {veDetalhes ? (
