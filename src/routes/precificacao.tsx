@@ -22,6 +22,7 @@ import { categoriaDoProduto, parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
+import { useAcesso } from "@/lib/acesso";
 import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planilha-precificacao";
 import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
@@ -72,6 +73,9 @@ function Precificacao() {
     autenticado,
     baseIndustrial,
   } = usePrototype();
+  const acesso = useAcesso();
+  // Custos, encargos, condições comerciais e memória de cálculo: somente gerente e admin.
+  const veDetalhes = acesso.nivel === "admin" || acesso.nivel === "gerente";
   const padrao = parametrosPadrao();
 
   const selecionado =
