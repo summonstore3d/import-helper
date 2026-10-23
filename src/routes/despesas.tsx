@@ -9,6 +9,8 @@ import { usePrototype } from "@/state/prototype";
 import { EditLockBanner } from "@/components/EditLockBanner";
 import { ImportarDre } from "@/components/ImportarDre";
 import { anoDoArquivo, lerDreGerencial, type MesDre } from "@/lib/importar-dre";
+import type { Despesas as Demonstrativo } from "@/data";
+import { SincronizacaoDre, type EstadoSincronizacaoDre } from "@/components/SincronizacaoDre";
 
 const MESES = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
 
@@ -92,6 +94,24 @@ function Despesas() {
   const [novoMes, setNovoMes] = useState("");
   const dreRef = useRef<HTMLInputElement>(null);
   const [dre, setDre] = useState<{ arquivo: string; meses: MesDre[]; ano: number } | null>(null);
+  const [sincronizacaoDre, setSincronizacaoDre] = useState<EstadoSincronizacaoDre | null>(null);
+  const importacaoPendente = useRef<{ novo: Demonstrativo; arquivo: string; resumo: string } | null>(null);
+
+  async function sincronizarImportacao() {
+    const pendente = importacaoPendente.current;
+    if (!pendente) return;
+    setSincronizacaoDre({ estado: "salvando", arquivo: pendente.arquivo });
+    try {
+      const confirmado = await importarDemonstrativo(pendente.novo, pendente.arquivo);
+      const taxas = despesasPonderadas(confirmado);
+      const taxa = metodoDespesas === "media" ? taxas.mediaSimples : taxas.ponderada;
+      setSincronizacaoDre({ estado: "salvo", arquivo: pendente.arquivo, taxa: pct(taxa, 4) });
+      setAviso({ tipo: "ok", texto: `Despesas sincronizadas. ${pendente.resumo}` });
+      importacaoPendente.current = null;
+    } catch (erro) {
+      setSincronizacaoDre({ estado: "erro", arquivo: pendente.arquivo, mensagem: erro instanceof Error ? erro.message : "Não foi possível sincronizar as despesas." });
+    }
+  }
 
   async function lerDre(arquivo: File) {
     try {
@@ -180,6 +200,7 @@ function Despesas() {
         }
       />
       <EditLockBanner />
+      <SincronizacaoDre estado={sincronizacaoDre} onFechar={() => setSincronizacaoDre(null)} onTentarNovamente={() => { void sincronizarImportacao(); }} />
 
       {autenticado && dre ? (
         <ImportarDre
@@ -190,9 +211,9 @@ function Despesas() {
           base={demonstrativo}
           onCancelar={() => setDre(null)}
           onConfirmar={(novo, resumo) => {
-            importarDemonstrativo(novo, dre.arquivo);
+            importacaoPendente.current = { novo, arquivo: dre.arquivo, resumo };
             setDre(null);
-            setAviso({ tipo: "ok", texto: resumo });
+            void sincronizarImportacao();
           }}
         />
       ) : null}

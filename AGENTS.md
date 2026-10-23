@@ -14,3 +14,4 @@
 - Derive sector hourly rates and production cost at calculation time from the editable labor/maintenance allocation (`src/lib/custos-industriais.ts`), never from stored spreadsheet results, so every edit flows into the price.
 - Gate tabs by role via `user_roles` + editable `role_permissions` (checked in AppShell with `src/lib/acesso.ts`); first account becomes admin through `ensure_my_role()`, because admins must configure visibility without code changes.
 - Derive the simulator expense rate directly from the shared demonstrative and refresh expenses/settings on focus and periodically; protect pending local writes so other sessions cannot overwrite unsaved edits.
+- DRE imports await a direct shared-state write and read-back before updating the demonstrative or showing synchronization success; keep the import status separate from generic autosave status.

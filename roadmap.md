@@ -13,3 +13,4 @@
 - [x] Deixar claro quando a edição exige login (aviso nas telas, botão Entrar, cadastro, formulário de novo mês e aviso de gravação).
 - [x] Teste completo com conta real (conta administradora disponível e conferida no preview).
 - [x] Garantir atualização da taxa ponderada entre telas e sessões, testar edição real e explicar a variação após importar o DRE.
+- [x] Mostrar carregamento D'AGOSTINI em cada importação e confirmar despesas sincronizadas após salvar e conferir os dados.
