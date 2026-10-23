@@ -58,13 +58,15 @@ function NovoMesForm({
 export const Route = createFileRoute("/despesas")({
   head: () => ({
     meta: [
-      { title: "Despesas — Demonstrativo de 12 Meses" },
+      { title: "Despesas mensais — D'AGOSTINI" },
       {
         name: "description",
         content:
           "Demonstrativo de resultado mês a mês: custo de mercadoria, despesas administrativas, comerciais e o percentual médio aplicado no preço.",
       },
-      { property: "og:title", content: "Despesas — Demonstrativo de 12 Meses" },
+      { property: "og:title", content: "Despesas mensais — D'AGOSTINI" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "De onde sai o percentual de despesas operacionais usado na precificação.",
@@ -84,6 +86,7 @@ function Despesas() {
     adicionarMesDespesas,
     atualizarDespesa,
     autenticado,
+    sincronizando,
   } = usePrototype();
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   const [novoMes, setNovoMes] = useState("");
@@ -353,6 +356,7 @@ function Despesas() {
                             type="number"
                             step="0.01"
                             value={v.valor ?? ""}
+                            disabled={sincronizando}
                             onChange={(e) => atualizarDespesa(i, j, e.target.value === "" ? null : Number(e.target.value))}
                             className="h-7 w-28 rounded-sm border border-transparent bg-transparent px-1 text-right tabular-nums hover:border-input focus:border-ring focus:bg-background focus:outline-none"
                           />

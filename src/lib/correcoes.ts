@@ -421,7 +421,7 @@ export function despesasPonderadas(fonte: typeof despesas = despesas) {
   const taxasPorMes: (number | null)[] = receita.map(() => null);
   receita.forEach((rec, i) => {
     const desp = totais[i];
-    if (isNum(rec) && rec > 0 && isNum(desp) && desp > 0) {
+    if (isNum(rec) && rec > 0 && isNum(desp)) {
       const despesasJaNoFrete = linhasDoFrete.reduce(
         (total, linha) => total + (isNum(linha.valores[i]?.valor) ? linha.valores[i].valor : 0),
         0,

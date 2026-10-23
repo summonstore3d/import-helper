@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   BadgeDollarSign,
   Boxes,
@@ -85,12 +85,7 @@ function Precificacao() {
   const [margem, setMargem] = useState(padrao.margem * 100);
   const [comissao, setComissao] = useState(padrao.comissao * 100);
   const [inadimplencia, setInadimplencia] = useState(padrao.inadimplencia * 100);
-  const [despesasPct, setDespesasPct] = useState((despesasPercentual ?? padrao.despesas) * 100);
-
-  // Trocar o método de apuração das despesas repõe o percentual vigente no simulador.
-  useEffect(() => {
-    if (despesasPercentual !== null) setDespesasPct(despesasPercentual * 100);
-  }, [despesasPercentual]);
+  const despesasPct = (despesasPercentual ?? padrao.despesas) * 100;
 
   const [frota, setFrota] = useState(false);
   const [km, setKm] = useState(padrao.km);
@@ -583,10 +578,10 @@ function Precificacao() {
                   min="0"
                   step="0.01"
                   value={Number(despesasPct.toFixed(4))}
-                  onChange={(e) => { setDespesasPct(Number(e.target.value)); setSalvo(null); }}
+                  readOnly
                   className="mt-2 h-10 w-full rounded-sm border border-input bg-background px-3 text-sm tabular-nums outline-none focus:border-ring"
                 />
-                <span className="mt-1 block text-xs text-muted-foreground">Ajuste técnico excepcional para esta simulação.</span>
+                <span className="mt-1 block text-xs text-muted-foreground">Percentual vigente do demonstrativo de despesas.</span>
               </label>
             </div>
           <Panel
