@@ -203,11 +203,11 @@ export function aplicarMesDre(d: Despesas, a: Analise): ResultadoDre {
   const total = (totais["007"] ?? 0) + (totais["009"] ?? 0) + (totais["010"] ?? 0);
   novo.rodape.forEach((r) => {
     const n = r.nome.toLowerCase();
-    r.valores[col] = n.includes("var")
+    r.valores[col] = /\bvar\b/.test(n)
       ? totais["007"] ?? 0
-      : n.includes("pes")
+      : /\bpes\b/.test(n)
         ? totais["009"] ?? 0
-        : n.includes(" op")
+        : /\bop\b/.test(n)
           ? totais["010"] ?? 0
           : n.includes("faturamento")
             ? fat
