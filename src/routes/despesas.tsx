@@ -184,7 +184,7 @@ function Despesas() {
               disabled={!autenticado}
               title={autenticado ? "Importar o DRE Gerencial do mês" : "Entre na sua conta para editar"}
               onClick={() => dreRef.current?.click()}
-              className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-success px-3 text-sm font-semibold text-success-foreground disabled:opacity-40"
+              className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-40"
             >
               <Upload className="size-4" /> Importar DRE mensal
             </button>
