@@ -71,7 +71,7 @@ type AuditInput = Omit<AuditoriaEntrada, "id" | "data" | "origem" | "usuario"> &
 
 type Ctx = {
   demonstrativo: Despesas;
-  importarDemonstrativo: (novo: Despesas, arquivo: string) => void;
+  importarDemonstrativo: (novo: Despesas, arquivo: string) => Promise<Despesas>;
   adicionarMesDespesas: (competencia: string) => void;
   atualizarDespesa: (linha: number, mes: number, valor: number | null) => void;
   metodoDespesas: MetodoDespesas;
@@ -299,11 +299,32 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     });
   }, [userId, usuario]);
 
-  const importarDemonstrativo = useCallback((novo: Despesas, arquivo: string) => {
-    setDemonstrativo(novo);
-    void persistir("expenses", novo);
-    registrarAuditoria({ modulo: "Despesas", registro: "Demonstrativo mensal", campo: "Importação", valorAnterior: "Base anterior", valorNovo: arquivo, motivo: "Importação validada" });
-  }, [persistir, registrarAuditoria]);
+  const importarDemonstrativo = useCallback(async (novo: Despesas, arquivo: string): Promise<Despesas> => {
+    if (!loaded.current || !userId) throw new Error("Entre na sua conta e aguarde o carregamento dos dados antes de importar.");
+    revisaoLocal.current += 1;
+    dominiosEmGravacao.current.add("expenses");
+    const anterior = pendentes.current.get("expenses");
+    if (anterior) clearTimeout(anterior);
+    pendentes.current.delete("expenses");
+    setGravacao({ estado: "salvando" });
+    try {
+      const { error } = await supabase.from("system_state").upsert({ domain: "expenses", payload: novo as unknown as Json, updated_by: userId });
+      if (error) throw error;
+      const { data, error: leituraErro } = await supabase.from("system_state").select("payload").eq("domain", "expenses").single();
+      if (leituraErro || !data?.payload || typeof data.payload !== "object" || Array.isArray(data.payload)) throw new Error("Falha ao conferir as despesas salvas.");
+      const confirmado = data.payload as unknown as Despesas;
+      if (!confirmado.meses?.length || !confirmado.linhas?.length || !confirmado.rodape) throw new Error("Não foi possível conferir o demonstrativo salvo.");
+      setDemonstrativo(confirmado);
+      dominiosEmGravacao.current.delete("expenses");
+      setGravacao({ estado: "salvo", em: new Date().toISOString() });
+      registrarAuditoria({ modulo: "Despesas", registro: "Demonstrativo mensal", campo: "Importação", valorAnterior: "Base anterior", valorNovo: arquivo, motivo: "Importação validada e sincronizada" });
+      return confirmado;
+    } catch {
+      const mensagem = "Não foi possível confirmar a sincronização das despesas. Verifique sua conexão e tente novamente.";
+      setGravacao({ estado: "erro", mensagem });
+      throw new Error(mensagem);
+    }
+  }, [userId, registrarAuditoria]);
 
   const adicionarMesDespesas = useCallback((competencia: string) => {
     const mes = competencia.trim().toUpperCase();
