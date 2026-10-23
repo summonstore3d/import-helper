@@ -11,4 +11,5 @@
 
 - [x] Reorganizar a Precificação para o fluxo comercial da referência, preservando detalhes técnicos por perfil futuro.
 - [x] Deixar claro quando a edição exige login (aviso nas telas, botão Entrar, cadastro, formulário de novo mês e aviso de gravação).
-- [ ] Teste completo com conta real (aguarda o usuário criar a primeira conta e confirmar o e-mail).
+- [x] Teste completo com conta real (conta administradora disponível e conferida no preview).
+- [ ] Garantir atualização da taxa ponderada entre telas e sessões, testar edição real e explicar a variação após importar o DRE.
