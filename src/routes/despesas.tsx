@@ -13,6 +13,8 @@ import {
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { usePrototype } from "@/state/prototype";
 import { EditLockBanner } from "@/components/EditLockBanner";
+import { ImportarDre } from "@/components/ImportarDre";
+import { anoDoArquivo, lerDreGerencial, type MesDre } from "@/lib/importar-dre";
 
 const MESES = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
 
@@ -92,6 +94,18 @@ function Despesas() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   const [novoMes, setNovoMes] = useState("");
+  const dreRef = useRef<HTMLInputElement>(null);
+  const [dre, setDre] = useState<{ arquivo: string; meses: MesDre[]; ano: number } | null>(null);
+
+  async function lerDre(arquivo: File) {
+    try {
+      const meses = await lerDreGerencial(arquivo);
+      setDre({ arquivo: arquivo.name, meses, ano: anoDoArquivo(arquivo.name) ?? new Date().getFullYear() });
+      setAviso(null);
+    } catch (e) {
+      setAviso({ tipo: "erro", texto: e instanceof Error ? e.message : "Não foi possível ler o DRE." });
+    }
+  }
 
   const vigentes = useMemo(() => despesasPonderadas(demonstrativo), [demonstrativo]);
   const totais = useMemo(() => totaisPorMes(demonstrativo), [demonstrativo]);
@@ -167,6 +181,26 @@ function Despesas() {
             </button>
             <button
               type="button"
+              disabled={!autenticado}
+              title={autenticado ? "Importar o DRE Gerencial do mês" : "Entre na sua conta para editar"}
+              onClick={() => dreRef.current?.click()}
+              className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-40"
+            >
+              <Upload className="size-4" /> Importar DRE mensal
+            </button>
+            <input
+              ref={dreRef}
+              type="file"
+              accept=".xlsx,.xlsm,.xls"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void lerDre(f);
+                e.target.value = "";
+              }}
+            />
+            <button
+              type="button"
               onClick={exportarExcel}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
             >
@@ -201,6 +235,22 @@ function Despesas() {
         }
       />
       <EditLockBanner />
+
+      {autenticado && dre ? (
+        <ImportarDre
+          key={dre.arquivo + dre.ano}
+          arquivo={dre.arquivo}
+          meses={dre.meses}
+          anoInicial={dre.ano}
+          base={demonstrativo}
+          onCancelar={() => setDre(null)}
+          onConfirmar={(novo, resumo) => {
+            importarDemonstrativo(novo, dre.arquivo);
+            setDre(null);
+            setAviso({ tipo: "ok", texto: resumo });
+          }}
+        />
+      ) : null}
 
       {autenticado && novoMes ? (
         <NovoMesForm
