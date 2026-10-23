@@ -550,6 +550,8 @@ function Precificacao() {
             </div>
           ) : null}
 
+          {veDetalhes ? (
+          <>
           {r.reconciliacao ? (
             <p
               className={
@@ -666,6 +668,8 @@ function Precificacao() {
             </div>
           </Panel>
           </details>
+          </>
+          ) : null}
         </div>
       </div>
     </>
