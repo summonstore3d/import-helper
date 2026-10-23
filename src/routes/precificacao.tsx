@@ -367,13 +367,15 @@ function Precificacao() {
         descricao="Selecione o produto, ajuste as condições comerciais e consulte o preço final."
         acoes={
           <>
-            <Button
-              variant="outline"
-              type="button"
-              onClick={exportarExcel}
-            >
-              <Download className="size-4" /> Exportar Excel
-            </Button>
+            {veDetalhes ? (
+              <Button
+                variant="outline"
+                type="button"
+                onClick={exportarExcel}
+              >
+                <Download className="size-4" /> Exportar Excel
+              </Button>
+            ) : null}
             <Button
               type="button"
               onClick={salvar}
@@ -479,6 +481,7 @@ function Precificacao() {
             </div>
           </section>
 
+          {veDetalhes ? (
           <section aria-label="Custos calculados">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Custos e encargos · calculados pelo sistema</p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
