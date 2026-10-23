@@ -218,7 +218,7 @@ function Despesas() {
               onClick={() => inputRef.current?.click()}
               className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"
             >
-              <Upload className="size-4" /> Importar planilha (Excel ou CSV)
+              <Upload className="size-4" /> Restaurar exportação (Excel/CSV)
             </button>
             <input
               ref={inputRef}
