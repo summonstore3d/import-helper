@@ -3,13 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import { Download, Plus, Truck, Upload } from "lucide-react";
 import { isNum, money, pct } from "@/lib/format";
 import { CONTAS_DO_FRETE, despesasPonderadas, ehContaDoFrete, totaisPorMes } from "@/lib/correcoes";
-import {
-  baixarArquivo,
-  csvParaDespesas,
-  despesasParaCsv,
-  exportarDespesasExcel,
-  importarDespesasExcel,
-} from "@/lib/planilha-despesas";
+import { exportarDespesasExcel } from "@/lib/planilha-despesas";
 import { KPI, PageHeader, Panel, RealTag, Td, Th } from "@/components/ui-kit";
 import { usePrototype } from "@/state/prototype";
 import { EditLockBanner } from "@/components/EditLockBanner";
@@ -91,7 +85,6 @@ function Despesas() {
     atualizarDespesa,
     autenticado,
   } = usePrototype();
-  const inputRef = useRef<HTMLInputElement>(null);
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   const [novoMes, setNovoMes] = useState("");
   const dreRef = useRef<HTMLInputElement>(null);
@@ -125,42 +118,16 @@ function Despesas() {
   );
   const mesesComDado = demonstrativo.linhas[0]?.valores.filter((v) => isNum(v.valor)).length ?? 0;
 
-  function exportar() {
-    baixarArquivo("demonstrativo-mensal.csv", despesasParaCsv(demonstrativo));
-    setAviso({
-      tipo: "ok",
-      texto:
-        "Planilha exportada. Preencha os valores no Excel mantendo as colunas Tipo e Conta e depois importe o arquivo de volta.",
-    });
-  }
 
   function exportarExcel() {
     exportarDespesasExcel(demonstrativo);
     setAviso({
       tipo: "ok",
       texto:
-        "Planilha Excel exportada com uma coluna por mês. Preencha os valores mantendo as colunas Tipo e Conta e importe o arquivo de volta.",
+        "Planilha Excel exportada com uma coluna por mês, no padrão de formatação da empresa. Guarde como backup ou envie para conferência.",
     });
   }
 
-  async function importar(arquivo: File) {
-    try {
-      const resultado = arquivo.name.toLowerCase().endsWith(".xlsx")
-        ? await importarDespesasExcel(arquivo, demonstrativo)
-        : csvParaDespesas(await arquivo.text(), demonstrativo);
-      importarDemonstrativo(resultado.despesas, arquivo.name);
-      setAviso({
-        tipo: "ok",
-        texto: `Planilha "${arquivo.name}" importada: ${resultado.linhasAtualizadas} contas atualizadas${
-          resultado.linhasIgnoradas.length
-            ? `, ${resultado.linhasIgnoradas.length} mantidas como estavam (não encontradas no arquivo)`
-            : ""
-        }.`,
-      });
-    } catch (e) {
-      setAviso({ tipo: "erro", texto: e instanceof Error ? e.message : "Não foi possível ler a planilha." });
-    }
-  }
 
   return (
     <>
@@ -206,31 +173,6 @@ function Despesas() {
             >
               <Download className="size-4" /> Exportar Excel
             </button>
-            <button
-              type="button"
-              onClick={exportar}
-              className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-border px-3 text-sm font-semibold"
-            >
-              <Download className="size-4" /> Exportar CSV
-            </button>
-            <button
-              type="button"
-              onClick={() => inputRef.current?.click()}
-              className="inline-flex h-8 items-center gap-1.5 rounded-sm bg-primary px-3 text-sm font-semibold text-primary-foreground"
-            >
-              <Upload className="size-4" /> Restaurar exportação (Excel/CSV)
-            </button>
-            <input
-              ref={inputRef}
-              type="file"
-              accept=".xlsx,.csv"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void importar(f);
-                e.target.value = "";
-              }}
-            />
           </div>
         }
       />
@@ -349,7 +291,7 @@ function Despesas() {
       <Panel
         className="mt-4"
         titulo="Demonstrativo mensal"
-        subtitulo="Valores por conta. Totais e percentuais são recalculados automaticamente a partir das contas. A linha verde é a % mensal usada na média. Exporte, preencha no Excel e importe de volta."
+        subtitulo="Valores por conta. Totais e percentuais são recalculados automaticamente a partir das contas. A linha verde é a % mensal usada no cálculo do preço."
         acoes={<RealTag />}
         bodyClassName="p-0"
       >
