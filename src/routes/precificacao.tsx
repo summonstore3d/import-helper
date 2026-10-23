@@ -22,6 +22,7 @@ import { categoriaDoProduto, parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
+import { useAcesso } from "@/lib/acesso";
 import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planilha-precificacao";
 import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
@@ -72,6 +73,9 @@ function Precificacao() {
     autenticado,
     baseIndustrial,
   } = usePrototype();
+  const acesso = useAcesso();
+  // Custos, encargos, condições comerciais e memória de cálculo: somente gerente e admin.
+  const veDetalhes = acesso.nivel === "admin" || acesso.nivel === "gerente";
   const padrao = parametrosPadrao();
 
   const selecionado =
@@ -363,13 +367,15 @@ function Precificacao() {
         descricao="Selecione o produto, ajuste as condições comerciais e consulte o preço final."
         acoes={
           <>
-            <Button
-              variant="outline"
-              type="button"
-              onClick={exportarExcel}
-            >
-              <Download className="size-4" /> Exportar Excel
-            </Button>
+            {veDetalhes ? (
+              <Button
+                variant="outline"
+                type="button"
+                onClick={exportarExcel}
+              >
+                <Download className="size-4" /> Exportar Excel
+              </Button>
+            ) : null}
             <Button
               type="button"
               onClick={salvar}
@@ -475,6 +481,7 @@ function Precificacao() {
             </div>
           </section>
 
+          {veDetalhes ? (
           <section aria-label="Custos calculados">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Custos e encargos · calculados pelo sistema</p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -492,7 +499,9 @@ function Precificacao() {
               ))}
             </div>
           </section>
+          ) : null}
 
+          {veDetalhes ? (
           <section aria-label="Condições comerciais">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Condições comerciais · editáveis</p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -515,6 +524,7 @@ function Precificacao() {
               ))}
             </div>
           </section>
+          ) : null}
 
           {r.bloqueios.length ? (
             <EmptyNote>
@@ -540,6 +550,8 @@ function Precificacao() {
             </div>
           ) : null}
 
+          {veDetalhes ? (
+          <>
           {r.reconciliacao ? (
             <p
               className={
@@ -656,6 +668,8 @@ function Precificacao() {
             </div>
           </Panel>
           </details>
+          </>
+          ) : null}
         </div>
       </div>
     </>
