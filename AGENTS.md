@@ -16,3 +16,5 @@
 - Derive the simulator expense rate directly from the shared demonstrative and refresh expenses/settings on focus and periodically; protect pending local writes so other sessions cannot overwrite unsaved edits.
 - DRE imports await a direct shared-state write and read-back before updating the demonstrative or showing synchronization success; keep the import status separate from generic autosave status.
 - Pricing view previews are administrator-only, local presentation state and never change actual roles or permissions; use the shared visibility predicate to preserve seller restrictions.
+
+- Store individual product margins in one `system_state` domain per stable product code (`margin:<code>`), validate manager/admin writes in the database, and use the same lookup across pricing, catalog and dashboard; per-product writes avoid overwriting another product's margin.

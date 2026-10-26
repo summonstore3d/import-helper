@@ -25,6 +25,7 @@ import {
 } from "@/data";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
+import { codigoMargem, lerMargens, margemDoProduto, margemValida, type MargensProdutos } from "@/lib/margens";
 
 export type ItemAdicionado = {
   item: string;
@@ -70,6 +71,8 @@ type AuditInput = Omit<AuditoriaEntrada, "id" | "data" | "origem" | "usuario"> &
 };
 
 type Ctx = {
+  margemProduto: (produto: string) => number;
+  salvarMargemProduto: (produto: string, margem: number) => Promise<void>;
   demonstrativo: Despesas;
   importarDemonstrativo: (novo: Despesas, arquivo: string) => Promise<Despesas>;
   adicionarMesDespesas: (competencia: string) => void;
@@ -141,6 +144,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const [guiaCdc, setGuiaCdc] = useState<GuiaCdc>(guiaCdcBase);
   const [auditoria, setAuditoria] = useState<AuditoriaEntrada[]>([]);
   const [historico, setHistorico] = useState<VersaoPreco[]>([]);
+  const [margens, setMargens] = useState<MargensProdutos>({});
   const [gravacao, setGravacao] = useState<EstadoGravacao>({ estado: "ocioso" });
   const loaded = useRef(false);
 
@@ -153,6 +157,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     setUserId(user?.id ?? null);
     setUsuario(user?.email ?? "Visitante");
     const state = new Map((states ?? []).map((row) => [row.domain, row.payload]));
+    setMargens(lerMargens(states ?? []));
     const materials = state.get("materials");
     const bomState = state.get("bom");
     const costs = state.get("costCenters");
@@ -224,8 +229,9 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     const atualizarDespesasCompartilhadas = async () => {
       if (!loaded.current || document.visibilityState !== "visible" || dominiosEmGravacao.current.size) return;
       const revisao = revisaoLocal.current;
-      const { data, error } = await supabase.from("system_state").select("domain,payload").in("domain", ["expenses", "settings"]);
+      const { data, error } = await supabase.from("system_state").select("domain,payload").or("domain.in.(expenses,settings),domain.like.margin:*");
       if (error || revisao !== revisaoLocal.current || dominiosEmGravacao.current.size) return;
+      setMargens(lerMargens(data ?? []));
       for (const row of data ?? []) {
         if (!row.payload || typeof row.payload !== "object" || Array.isArray(row.payload)) continue;
         if (row.domain === "expenses") {
@@ -233,7 +239,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
           if (value.meses?.length && value.linhas?.length && value.rodape) {
             setDemonstrativo((anterior) => JSON.stringify(anterior) === JSON.stringify(value) ? anterior : value as Despesas);
           }
-        } else {
+        } else if (row.domain === "settings") {
           const method = (row.payload as { expenseMethod?: string }).expenseMethod;
           if (method === "media" || method === "weighted") setMetodoDespesas(method === "media" ? "media" : "ponderado");
         }
@@ -298,6 +304,33 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
       reason: e.motivo,
     });
   }, [userId, usuario]);
+
+  const margemProduto = useCallback((produto: string) => margemDoProduto(produto, margens), [margens]);
+  const salvarMargemProduto = useCallback(async (produto: string, margem: number) => {
+    if (!loaded.current || !userId) throw new Error("Entre na sua conta e aguarde o carregamento dos dados.");
+    if (!margemValida(margem)) throw new Error("Informe uma margem entre 0% e menos de 100%.");
+    const codigo = codigoMargem(produto);
+    const domain = `margin:${codigo}`;
+    const anterior = margemDoProduto(produto, margens);
+    revisaoLocal.current += 1;
+    dominiosEmGravacao.current.add(domain);
+    setGravacao({ estado: "salvando" });
+    try {
+      const { error } = await supabase.from("system_state").upsert({ domain, payload: { margin: margem }, updated_by: userId });
+      if (error) throw error;
+      const { data, error: leituraErro } = await supabase.from("system_state").select("domain,payload").eq("domain", domain).single();
+      if (leituraErro || !data || lerMargens([data])[codigo] !== margem) throw new Error("Não foi possível conferir a margem salva.");
+      setMargens((prev) => ({ ...prev, [codigo]: margem }));
+      registrarAuditoria({ modulo: "Precificação", registro: produto, campo: "Margem de lucro", valorAnterior: `${anterior * 100}%`, valorNovo: `${margem * 100}%`, motivo: "Margem individual do produto" });
+      setGravacao({ estado: "salvo", em: new Date().toISOString() });
+    } catch {
+      const mensagem = "Não foi possível salvar a margem. Verifique sua conexão e seu acesso de gerente ou administrador.";
+      setGravacao({ estado: "erro", mensagem });
+      throw new Error(mensagem);
+    } finally {
+      dominiosEmGravacao.current.delete(domain);
+    }
+  }, [userId, margens, registrarAuditoria]);
 
   const importarDemonstrativo = useCallback(async (novo: Despesas, arquivo: string): Promise<Despesas> => {
     if (!loaded.current || !userId) throw new Error("Entre na sua conta e aguarde o carregamento dos dados antes de importar.");
@@ -477,14 +510,14 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   }, [userId]);
 
   const value = useMemo<Ctx>(() => ({
-    demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa,
+    margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa,
     metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas,
     listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom,
     salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc,
     baseIndustrial, setoresCalculados: setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao,
     auditoria, registrarAuditoria, historico, registrarVersao, usuario,
     autenticado: userId !== null, sincronizando, gravacao,
-  }), [demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
+  }), [margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
 
   return <PrototypeContext.Provider value={value}>{children}</PrototypeContext.Provider>;
 }
