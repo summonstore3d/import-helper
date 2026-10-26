@@ -515,11 +515,11 @@ function Precificacao() {
                 </label>
                 <span className="col-start-2 text-[10px] font-normal">Máximo: {pct(teto, 0)}</span>
               </div>
-              <div className="mt-3 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-green/30 pt-2.5">
+              <div className="mt-3 mb-3 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-green/30 pt-2.5">
                 <p className="min-w-0 text-[11px] font-semibold uppercase">Total do pedido</p>
                 <p className="text-right text-base font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
               </div>
-              <Button type="button" variant="outline" className="mt-3 h-9 w-full text-xs" disabled={preco === null} onClick={copiarCotacao}>
+              <Button type="button" variant="outline" className="mt-auto h-9 w-full text-xs" disabled={preco === null} onClick={copiarCotacao}>
                 {copiado ? <Check className="size-4" /> : <Copy className="size-4" />} {copiado ? "Cotação copiada" : "Copiar cotação"}
               </Button>
             </div>
