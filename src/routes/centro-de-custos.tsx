@@ -32,7 +32,7 @@ function valor(v: number | string | null, tipo: "money" | "pct" | "num") {
 }
 
 function CentroDeCustos() {
-  const { centroCustos, guiaCdc, baseIndustrial, setoresCalculados, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, autenticado } = usePrototype();
+  const { centroCustos, guiaCdc, baseIndustrial, setoresCalculados, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, autenticado } = usePrototype();
   const [aba, setAba] = useState<"setores" | "roteiro" | "guia">("setores");
   const quebrados = setoresCalculados.filter((s) => !isNum(s.horaReal)).length;
   const resumo = resumoCentroCustos(baseIndustrial);
@@ -42,7 +42,7 @@ function CentroDeCustos() {
       <PageHeader
         titulo="Centro de Custos"
         aba="Centro de Custos + Guia - CDC"
-        descricao="O rateio industrial que transforma folha de pagamento e manutenção em custo por hora de setor, e este em custo de produção por produto."
+        descricao="O rateio industrial que transforma a folha de pagamento em custo por hora de setor, e este em custo de produção por produto. A manutenção de máquinas não é rateada: entra no % de despesas."
       />
       <EditLockBanner />
 
@@ -93,7 +93,7 @@ function CentroDeCustos() {
         <Panel
           className="mt-4"
           titulo="Custo por setor"
-          subtitulo="Mão de obra, manutenção, eficiência e horas disponíveis"
+          subtitulo="Mão de obra, eficiência e horas disponíveis — manutenção de máquinas entra no % de despesas"
           acoes={<RealTag />}
           bodyClassName="p-0"
         >
