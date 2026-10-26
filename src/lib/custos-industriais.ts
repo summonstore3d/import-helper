@@ -47,11 +47,10 @@ export function setoresCalculados(base: BaseIndustrial, salario = SALARIO_MEDIO_
     const coluna = s.nome in COLUNA_MAO_DE_OBRA ? COLUNA_MAO_DE_OBRA[s.nome] : s.nome;
     const maoDeObra =
       coluna && pessoas[coluna] !== undefined ? pessoas[coluna] * salario : s.maoDeObra;
-    const regra = MANUTENCAO_POR_SETOR[s.nome];
-    const manutencao =
-      regra === "zero" ? 0 : regra ? manutencaoDaLinha(base.guia, regra.linha) / regra.divisor : s.manutencao;
-    const valido = isNum(maoDeObra) && (manutencao === null || isNum(manutencao));
-    const mesTotal = valido ? num(maoDeObra) + num(manutencao) : "#REF!";
+    // Manutenção de máquinas entra apenas no % de despesas (número real do DRE).
+    const manutencao = 0;
+    const valido = isNum(maoDeObra);
+    const mesTotal = valido ? num(maoDeObra) : "#REF!";
     const horas = num(s.horasDisponiveis);
     const eficiencia = num(s.eficienciaPerdida);
     const numerador = valido
