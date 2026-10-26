@@ -1,8 +1,8 @@
 # Roadmap
 
-- [ ] Definir teto individual inicial de desconto de 10% e permitir sua edição por gerente/administrador.
-- [ ] Aplicar desconto iniciado em 0% ao preço final, cotação, total e simulação, sem superar o teto.
-- [ ] Testar limites, persistência e fluxo de desconto na Precificação.
+- [x] Definir teto individual inicial de desconto de 10% e permitir sua edição por gerente/administrador.
+- [x] Aplicar desconto iniciado em 0% ao preço final, cotação, total e simulação, sem superar o teto.
+- [x] Testar limites, persistência e fluxo de desconto na Precificação.
 
 - [x] Inicializar todos os produtos com margem de 25% e permitir salvar margens individuais na Precificação.
 - [x] Usar a margem individual em Produtos e Dashboard e verificar persistência e isolamento entre produtos.
