@@ -545,10 +545,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas,
     listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom,
     salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc,
-    baseIndustrial, setoresCalculados: setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao,
+    baseIndustrial, setoresCalculados: setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra,
     auditoria, registrarAuditoria, historico, registrarVersao, usuario,
     autenticado: userId !== null, sincronizando, gravacao,
-  }), [tetoDescontoProduto, salvarTetoDesconto, margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
+  }), [tetoDescontoProduto, salvarTetoDesconto, margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
 
   return <PrototypeContext.Provider value={value}>{children}</PrototypeContext.Provider>;
 }
