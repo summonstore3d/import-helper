@@ -11,7 +11,7 @@
 
 - Keep shared pricing master data in `system_state` domains and append audit/history rows separately, because this preserves the current calculation APIs while adding durable multi-user storage.
 - Keep the pricing screen seller-first and isolate calculation memory in a technical section, because future seller roles must hide it while managers and administrators retain access.
-- Derive sector hourly rates and production cost at calculation time from the editable labor/maintenance allocation (`src/lib/custos-industriais.ts`), never from stored spreadsheet results, so every edit flows into the price.
+- Derive sector hourly rates and production cost at calculation time from the editable labor allocation (`src/lib/custos-industriais.ts`), never from stored spreadsheet results, so every edit flows into the price; machine maintenance is never allocated to sectors — it counts only in the expense percentage from the real DRE account, to avoid double counting.
 - Gate tabs by role via `user_roles` + editable `role_permissions` (checked in AppShell with `src/lib/acesso.ts`); first account becomes admin through `ensure_my_role()`, because admins must configure visibility without code changes.
 - Derive the simulator expense rate directly from the shared demonstrative and refresh expenses/settings on focus and periodically; protect pending local writes so other sessions cannot overwrite unsaved edits.
 - DRE imports await a direct shared-state write and read-back before updating the demonstrative or showing synchronization success; keep the import status separate from generic autosave status.
