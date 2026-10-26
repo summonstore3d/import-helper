@@ -520,32 +520,32 @@ function Precificacao() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-md border-2 border-green bg-green-soft p-4 text-accent-foreground">
+            <div className="flex min-w-0 flex-col rounded-md border-2 border-green bg-green-soft p-4 text-accent-foreground">
               <div>
                 <p className="flex items-center gap-2 text-xs font-bold uppercase"><BadgeDollarSign className="size-4" /> Preço final unitário</p>
                 <p className="mt-1 text-4xl font-black tabular-nums">{preco === null ? "Indisponível" : money(preco)}</p>
                 <p className="text-xs font-medium">{cenario} · {frota ? `CIF, frete ${money(r.logistica)}/peça` : "FOB, sem frete"}</p>
               </div>
               {desconto > 0 ? <p className="mt-2 text-xs">De <span className="line-through">{money(r.preco)}</span> · desconto {pct(desconto, 2)}</p> : null}
-              <div className="mt-4 grid grid-cols-2 items-start gap-3">
-                <label className="text-xs font-semibold">Quantidade
-                  <input type="number" min="1" value={quantidade} onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value) || 1))} className="mt-1 block h-9 w-20 rounded-sm border border-green bg-background px-2 text-sm outline-none focus:border-ring" />
+              <div className="mt-5 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
+                <label className="min-w-0 text-xs font-semibold">Quantidade
+                  <input aria-label="Quantidade" type="number" min="1" value={quantidade} onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value) || 1))} className="mt-1.5 block h-10 w-full min-w-0 rounded-sm border border-green bg-background px-3 text-base font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
                 </label>
-                <label className="text-xs font-semibold">Desconto (%)
+                <label className="min-w-0 text-xs font-semibold">Desconto (%)
                   <input aria-label="Desconto (%)" type="number" min="0" max={teto * 100} step="0.5" value={Number((desconto * 100).toFixed(2))} disabled={sincronizando} onChange={(e) => {
                     const informado = Number(e.target.value);
                     if (informado > teto * 100) toast.error(`Desconto máximo deste produto: ${pct(teto, 2)}.`);
                     setDescontoEditado({ produto: selecionado, valor: limitarDesconto(informado / 100, teto) });
                     setSalvo(null); setCopiado(false);
-                  }} className="mt-1 block h-9 w-full min-w-0 rounded-sm border border-green bg-background px-2 text-sm outline-none focus:border-ring" />
-                  <span className="mt-1 block text-[11px] font-normal">Máximo: {pct(teto, 0)}</span>
+                  }} className="mt-1.5 block h-10 w-full min-w-0 rounded-sm border border-green bg-background px-3 text-base font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
                 </label>
-                <div className="col-span-2 min-w-0 border-t border-green/30 pt-2 text-right">
-                  <p className="text-[11px] font-semibold uppercase">Total do pedido</p>
-                  <p className="text-lg font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
-                </div>
+                <span className="col-start-2 text-[11px] font-normal">Máximo: {pct(teto, 0)}</span>
               </div>
-              <Button type="button" variant="outline" className="mt-3" disabled={preco === null} onClick={copiarCotacao}>
+              <div className="mt-4 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-t border-green/30 pt-3">
+                <p className="min-w-0 text-[11px] font-semibold uppercase">Total do pedido</p>
+                <p className="text-right text-xl font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
+              </div>
+              <Button type="button" variant="outline" className="mt-4 h-10 w-full" disabled={preco === null} onClick={copiarCotacao}>
                 {copiado ? <Check className="size-4" /> : <Copy className="size-4" />} {copiado ? "Cotação copiada" : "Copiar cotação"}
               </Button>
             </div>
