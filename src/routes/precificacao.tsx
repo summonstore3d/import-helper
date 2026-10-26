@@ -86,7 +86,6 @@ function Precificacao() {
   } = usePrototype();
   const acesso = useAcesso();
   const [visaoVendedor, setVisaoVendedor] = useState(false);
-  const [tipoVendaAberto, setTipoVendaAberto] = useState(false);
   // Custos, encargos, condições comerciais e memória de cálculo: somente gerente e admin.
   const veDetalhes = mostraDetalhesPrecificacao(acesso.nivel, visaoVendedor);
   const padrao = parametrosPadrao();
@@ -122,6 +121,9 @@ function Precificacao() {
   const [quantidade, setQuantidade] = useState(1);
   const [descontoEditado, setDescontoEditado] = useState<{ produto: string; valor: number } | null>(null);
   const teto = tetoDescontoProduto(selecionado);
+  const [codigoSelecionado, ...partesDescricao] = selecionado.split(" - ");
+  const descricaoSelecionada = partesDescricao.join(" - ");
+
   const desconto = limitarDesconto(descontoEditado?.produto === selecionado ? descontoEditado.valor : DESCONTO_INICIAL, teto);
   const [tetoEditado, setTetoEditado] = useState<{ produto: string; valor: number } | null>(null);
   const tetoRascunho = tetoEditado?.produto === selecionado ? tetoEditado.valor : teto * 100;
