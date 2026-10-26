@@ -575,19 +575,19 @@ function Precificacao() {
           <section aria-label="Condições comerciais" aria-busy={salvandoMargem}>
             <fieldset disabled={salvandoMargem || sincronizando} className="min-w-0">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Condições comerciais · editáveis</p>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-2.5 sm:grid-cols-3">
               {[
                 { label: "Margem de lucro", value: margem, setValue: setMargem, Icon: BadgeDollarSign },
                 { label: "Comissão", value: comissao, setValue: setComissao, Icon: Percent },
                 { label: "Inadimplência", value: inadimplencia, setValue: setInadimplencia, Icon: ShieldAlert },
               ].map(({ label, value, setValue, Icon }) => (
-                <label key={label} className="rounded-md border border-green bg-card px-4 py-3 shadow-panel">
-                  <span className="flex items-center gap-2 text-xs font-bold text-accent-foreground uppercase"><Icon className="size-4" />{label}</span>
+                <label key={label} className="rounded-md border border-green bg-card px-3 py-2.5 shadow-panel">
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold text-accent-foreground uppercase"><Icon className="size-3.5" />{label}</span>
                   <span className="mt-2 flex items-center gap-2">
                     <Button type="button" size="icon" variant="outline" aria-label={`Diminuir ${label}`} onClick={(e) => { e.preventDefault(); setValue(Math.max(0, Math.round((value - 0.5) * 100) / 100)); setSalvo(null); }}><Minus className="size-4" /></Button>
                     <span className="relative flex-1">
-                      <input type="number" min="0" step="0.01" value={Number(value.toFixed(4))} onChange={(e) => { setValue(Number(e.target.value)); setSalvo(null); }} className="h-10 w-full rounded-sm border border-input bg-green-soft px-3 pr-8 text-right text-lg font-black text-accent-foreground outline-none focus:ring-2 focus:ring-ring" />
-                      <span className="pointer-events-none absolute top-2.5 right-3 text-sm font-bold text-accent-foreground">%</span>
+                      <input type="number" min="0" step="0.01" value={Number(value.toFixed(4))} onChange={(e) => { setValue(Number(e.target.value)); setSalvo(null); }} className="h-9 w-full rounded-sm border border-input bg-green-soft px-2.5 pr-7 text-right text-base font-black text-accent-foreground outline-none focus:ring-2 focus:ring-ring" />
+                      <span className="pointer-events-none absolute top-2 right-2.5 text-xs font-bold text-accent-foreground">%</span>
                     </span>
                     <Button type="button" size="icon" variant="outline" aria-label={`Aumentar ${label}`} onClick={(e) => { e.preventDefault(); setValue(Math.round((value + 0.5) * 100) / 100); setSalvo(null); }}><Plus className="size-4" /></Button>
                   </span>
