@@ -22,6 +22,13 @@
       "when": 1793012855826,
       "tag": "0002_protect_individual_product_margins",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793013215292,
+      "tag": "0003_protect_product_discount_caps",
+      "breakpoints": true
     }
   ]
 }

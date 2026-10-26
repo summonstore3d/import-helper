@@ -25,6 +25,7 @@ import {
 } from "@/data";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
+import { lerTetos, tetoDoProduto, tetoValido, type TetosDesconto } from "@/lib/descontos";
 import { codigoMargem, lerMargens, margemDoProduto, margemValida, type MargensProdutos } from "@/lib/margens";
 
 export type ItemAdicionado = {
@@ -57,6 +58,9 @@ export type VersaoPreco = {
   margem: number;
   preco: number;
   cenario: string;
+  desconto?: number;
+  precoOriginal?: number;
+  quantidade?: number;
   status: "Vigente" | "Substituída" | "Simulação";
   origem: "Sistema compartilhado";
 };
@@ -71,6 +75,8 @@ type AuditInput = Omit<AuditoriaEntrada, "id" | "data" | "origem" | "usuario"> &
 };
 
 type Ctx = {
+  tetoDescontoProduto: (produto: string) => number;
+  salvarTetoDesconto: (produto: string, teto: number) => Promise<void>;
   margemProduto: (produto: string) => number;
   salvarMargemProduto: (produto: string, margem: number) => Promise<void>;
   demonstrativo: Despesas;
@@ -144,6 +150,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const [guiaCdc, setGuiaCdc] = useState<GuiaCdc>(guiaCdcBase);
   const [auditoria, setAuditoria] = useState<AuditoriaEntrada[]>([]);
   const [historico, setHistorico] = useState<VersaoPreco[]>([]);
+  const [tetos, setTetos] = useState<TetosDesconto>({});
   const [margens, setMargens] = useState<MargensProdutos>({});
   const [gravacao, setGravacao] = useState<EstadoGravacao>({ estado: "ocioso" });
   const loaded = useRef(false);
@@ -158,6 +165,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     setUsuario(user?.email ?? "Visitante");
     const state = new Map((states ?? []).map((row) => [row.domain, row.payload]));
     setMargens(lerMargens(states ?? []));
+    setTetos(lerTetos(states ?? []));
     const materials = state.get("materials");
     const bomState = state.get("bom");
     const costs = state.get("costCenters");
@@ -229,9 +237,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     const atualizarDespesasCompartilhadas = async () => {
       if (!loaded.current || document.visibilityState !== "visible" || dominiosEmGravacao.current.size) return;
       const revisao = revisaoLocal.current;
-      const { data, error } = await supabase.from("system_state").select("domain,payload").or("domain.in.(expenses,settings),domain.like.margin:*");
+      const { data, error } = await supabase.from("system_state").select("domain,payload").or("domain.in.(expenses,settings),domain.like.margin:*,domain.like.discount:*");
       if (error || revisao !== revisaoLocal.current || dominiosEmGravacao.current.size) return;
       setMargens(lerMargens(data ?? []));
+      setTetos(lerTetos(data ?? []));
       for (const row of data ?? []) {
         if (!row.payload || typeof row.payload !== "object" || Array.isArray(row.payload)) continue;
         if (row.domain === "expenses") {
@@ -331,6 +340,33 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
       dominiosEmGravacao.current.delete(domain);
     }
   }, [userId, margens, registrarAuditoria]);
+
+  const tetoDescontoProduto = useCallback((produto: string) => tetoDoProduto(produto, tetos), [tetos]);
+  const salvarTetoDesconto = useCallback(async (produto: string, teto: number) => {
+    if (!loaded.current || !userId) throw new Error("Entre na sua conta e aguarde o carregamento dos dados.");
+    if (!tetoValido(teto)) throw new Error("Informe um teto entre 0% e 10%.");
+    const codigo = codigoMargem(produto);
+    const domain = `discount:${codigo}`;
+    const anterior = tetoDoProduto(produto, tetos);
+    revisaoLocal.current += 1;
+    dominiosEmGravacao.current.add(domain);
+    setGravacao({ estado: "salvando" });
+    try {
+      const { error } = await supabase.from("system_state").upsert({ domain, payload: { cap: teto }, updated_by: userId });
+      if (error) throw error;
+      const { data, error: leituraErro } = await supabase.from("system_state").select("domain,payload").eq("domain", domain).single();
+      if (leituraErro || !data || lerTetos([data])[codigo] !== teto) throw new Error("Não foi possível conferir o teto salvo.");
+      setTetos((prev) => ({ ...prev, [codigo]: teto }));
+      registrarAuditoria({ modulo: "Precificação", registro: produto, campo: "Teto de desconto", valorAnterior: `${anterior * 100}%`, valorNovo: `${teto * 100}%`, motivo: "Teto individual do produto" });
+      setGravacao({ estado: "salvo", em: new Date().toISOString() });
+    } catch {
+      const mensagem = "Não foi possível salvar o teto. Verifique sua conexão e seu acesso de gerente ou administrador.";
+      setGravacao({ estado: "erro", mensagem });
+      throw new Error(mensagem);
+    } finally {
+      dominiosEmGravacao.current.delete(domain);
+    }
+  }, [userId, tetos, registrarAuditoria]);
 
   const importarDemonstrativo = useCallback(async (novo: Despesas, arquivo: string): Promise<Despesas> => {
     if (!loaded.current || !userId) throw new Error("Entre na sua conta e aguarde o carregamento dos dados antes de importar.");
@@ -506,18 +542,18 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     if (!userId) return;
     const local: VersaoPreco = { ...v, id: crypto.randomUUID(), data: new Date().toISOString(), origem: "Sistema compartilhado" };
     setHistorico((prev) => [local, ...prev]);
-    void supabase.from("price_simulations").insert({ user_id: userId, product: v.produto, scenario: v.cenario, cost: v.custo, margin: v.margem, price: v.preco, calculation: { source: "pricing-cockpit" }, status: v.status });
+    void supabase.from("price_simulations").insert({ user_id: userId, product: v.produto, scenario: v.cenario, cost: v.custo, margin: v.margem, price: v.preco, calculation: { source: "pricing-cockpit", ...(v.desconto !== undefined ? { discount: v.desconto, basePrice: v.precoOriginal, quantity: v.quantidade } : {}) }, status: v.status });
   }, [userId]);
 
   const value = useMemo<Ctx>(() => ({
-    margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa,
+    tetoDescontoProduto, salvarTetoDesconto, margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa,
     metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas,
     listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom,
     salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc,
     baseIndustrial, setoresCalculados: setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao,
     auditoria, registrarAuditoria, historico, registrarVersao, usuario,
     autenticado: userId !== null, sincronizando, gravacao,
-  }), [margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
+  }), [tetoDescontoProduto, salvarTetoDesconto, margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
 
   return <PrototypeContext.Provider value={value}>{children}</PrototypeContext.Provider>;
 }
