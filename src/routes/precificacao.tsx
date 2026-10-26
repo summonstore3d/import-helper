@@ -86,7 +86,6 @@ function Precificacao() {
   } = usePrototype();
   const acesso = useAcesso();
   const [visaoVendedor, setVisaoVendedor] = useState(false);
-  const [tipoVendaAberto, setTipoVendaAberto] = useState(false);
   // Custos, encargos, condições comerciais e memória de cálculo: somente gerente e admin.
   const veDetalhes = mostraDetalhesPrecificacao(acesso.nivel, visaoVendedor);
   const padrao = parametrosPadrao();
@@ -122,6 +121,9 @@ function Precificacao() {
   const [quantidade, setQuantidade] = useState(1);
   const [descontoEditado, setDescontoEditado] = useState<{ produto: string; valor: number } | null>(null);
   const teto = tetoDescontoProduto(selecionado);
+  const [codigoSelecionado, ...partesDescricao] = selecionado.split(" - ");
+  const descricaoSelecionada = partesDescricao.join(" - ");
+
   const desconto = limitarDesconto(descontoEditado?.produto === selecionado ? descontoEditado.valor : DESCONTO_INICIAL, teto);
   const [tetoEditado, setTetoEditado] = useState<{ produto: string; valor: number } | null>(null);
   const tetoRascunho = tetoEditado?.produto === selecionado ? tetoEditado.valor : teto * 100;
@@ -468,38 +470,35 @@ function Precificacao() {
         </aside>
 
         <div className="min-w-0 space-y-4">
-          <section className="grid items-start gap-3 rounded-md border border-border bg-card p-4 shadow-panel lg:grid-cols-[minmax(0,1fr)_18rem]">
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-green uppercase">Produto selecionado</p>
-              <h2 className="mt-0.5 text-base leading-snug font-black text-foreground">{selecionado}</h2>
-              <div className="mt-3">
-                <button
-                  type="button"
-                  aria-expanded={tipoVendaAberto}
-                  onClick={() => setTipoVendaAberto((v) => !v)}
-                  className="inline-flex items-center gap-1.5 rounded-sm border border-border px-2.5 py-1.5 text-[11px] font-bold text-muted-foreground uppercase hover:bg-secondary"
-                >
-                  Tipo de venda
-                  <span className="font-black text-foreground normal-case">{cenario}</span>
-                  <ChevronDown className={`size-3.5 transition-transform ${tipoVendaAberto ? "rotate-180" : ""}`} />
-                </button>
-                {tipoVendaAberto ? (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {CENARIOS.map((c) => (
-                      <Button key={c} type="button" size="sm" variant={cenario === c ? "default" : "outline"} onClick={() => { setCenario(c); setSalvo(null); setTipoVendaAberto(false); }}>
-                        {c}
-                      </Button>
-                    ))}
-                  </div>
-                ) : null}
+          <section className="grid items-stretch gap-3 rounded-md border border-border bg-card p-4 shadow-panel lg:grid-cols-[minmax(0,1fr)_19rem]">
+            <div className="flex min-w-0 flex-col justify-center gap-3">
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold text-green uppercase">Produto selecionado</p>
+                <h2 className="mt-1 text-2xl leading-snug font-black break-words text-foreground">{descricaoSelecionada || codigoSelecionado}</h2>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="rounded-sm border border-border bg-secondary/60 px-1.5 py-0.5 text-[11px] font-black text-foreground">{codigoSelecionado}</span>
+                  <span className="rounded-full border border-border bg-secondary/60 px-2 py-0.5 text-[10px] font-bold text-muted-foreground uppercase">{categoriaDoProduto(selecionado)}</span>
+                </div>
+
               </div>
+              <label className="inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                Tipo de venda
+                <select
+                  aria-label="Tipo de venda"
+                  value={cenario}
+                  onChange={(e) => { setCenario(e.target.value as Cenario); setSalvo(null); }}
+                  className="h-7 max-w-full rounded-sm border border-border bg-background px-1.5 text-[11px] font-bold text-foreground outline-none focus:border-ring"
+                >
+                  {CENARIOS.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </label>
             </div>
+
 
             <div className="flex min-w-0 flex-col rounded-md border border-green bg-green-soft p-3 text-accent-foreground">
               <div>
                 <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase"><BadgeDollarSign className="size-3.5" /> Preço final unitário</p>
                 <p className="mt-0.5 text-2xl font-black tabular-nums">{preco === null ? "Indisponível" : money(preco)}</p>
-                <p className="text-[11px] font-medium">{cenario}</p>
               </div>
               {desconto > 0 ? <p className="mt-1.5 text-[11px]">De <span className="line-through">{money(r.preco)}</span> · desconto {pct(desconto, 2)}</p> : null}
               <div className="mt-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-x-2.5 gap-y-1">
@@ -516,11 +515,11 @@ function Precificacao() {
                 </label>
                 <span className="col-start-2 text-[10px] font-normal">Máximo: {pct(teto, 0)}</span>
               </div>
-              <div className="mt-3 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-green/30 pt-2.5">
+              <div className="mt-3 mb-3 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-green/30 pt-2.5">
                 <p className="min-w-0 text-[11px] font-semibold uppercase">Total do pedido</p>
                 <p className="text-right text-base font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
               </div>
-              <Button type="button" variant="outline" className="mt-3 h-9 w-full text-xs" disabled={preco === null} onClick={copiarCotacao}>
+              <Button type="button" variant="outline" className="mt-auto h-9 w-full text-xs" disabled={preco === null} onClick={copiarCotacao}>
                 {copiado ? <Check className="size-4" /> : <Copy className="size-4" />} {copiado ? "Cotação copiada" : "Copiar cotação"}
               </Button>
             </div>
