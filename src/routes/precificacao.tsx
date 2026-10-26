@@ -14,7 +14,6 @@ import {
   Plus,
   Search,
   ShieldAlert,
-  Truck,
   WalletCards,
   Save,
   Eye,
@@ -31,7 +30,7 @@ import { usePrototype } from "@/state/prototype";
 import { useAcesso } from "@/lib/acesso";
 import { mostraDetalhesPrecificacao } from "@/lib/visao-precificacao";
 import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planilha-precificacao";
-import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
+import { despesasVigentes, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 import { Button } from "@/components/ui/button";
 
@@ -116,9 +115,6 @@ function Precificacao() {
   const [inadimplencia, setInadimplencia] = useState(padrao.inadimplencia * 100);
   const despesasPct = (despesasPercentual ?? padrao.despesas) * 100;
 
-  const [frota, setFrota] = useState(false);
-  const [km, setKm] = useState(padrao.km);
-  const [pecas, setPecas] = useState(padrao.pecasPorEntrega);
   const [salvo, setSalvo] = useState<string | null>(null);
   const [buscaProduto, setBuscaProduto] = useState("");
   const [categoria, setCategoria] = useState("TODOS");
@@ -160,9 +156,9 @@ function Precificacao() {
     comissao: comissao / 100,
     inadimplencia: inadimplencia / 100,
     despesas: despesasPct / 100,
-    frota,
-    km,
-    pecasPorEntrega: pecas,
+    frota: false,
+    km: padrao.km,
+    pecasPorEntrega: padrao.pecasPorEntrega,
     base: baseIndustrial,
   });
 
@@ -188,9 +184,9 @@ function Precificacao() {
               comissao: comissao / 100,
               inadimplencia: inadimplencia / 100,
               despesas: taxa,
-              frota,
-              km,
-              pecasPorEntrega: pecas,
+              frota: false,
+              km: padrao.km,
+              pecasPorEntrega: padrao.pecasPorEntrega,
               base: baseIndustrial,
             }).preco,
     };
