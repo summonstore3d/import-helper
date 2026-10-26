@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Inicializar todos os produtos com margem de 25% e permitir salvar margens individuais na Precificação.
-- [ ] Usar a margem individual em Produtos e Dashboard e verificar persistência e isolamento entre produtos.
+- [x] Inicializar todos os produtos com margem de 25% e permitir salvar margens individuais na Precificação.
+- [x] Usar a margem individual em Produtos e Dashboard e verificar persistência e isolamento entre produtos.
 
 - [x] Ativar o Lovable Cloud e autenticação por e-mail/Google.
 - [x] Criar armazenamento compartilhado, auditoria e histórico de simulações com permissões.
