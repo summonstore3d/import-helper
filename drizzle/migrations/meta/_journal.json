@@ -15,6 +15,13 @@
       "when": 1791287463298,
       "tag": "0001_access_levels",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793012855826,
+      "tag": "0002_protect_individual_product_margins",
+      "breakpoints": true
     }
   ]
 }
