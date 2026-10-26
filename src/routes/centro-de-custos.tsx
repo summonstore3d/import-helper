@@ -252,31 +252,13 @@ function CentroDeCustos() {
             </div>
           </Panel>
 
-          <Panel titulo="Rateio de manutenção por setor" bodyClassName="p-0">
-            <div className="max-h-[52vh] overflow-auto">
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <Th>Setor</Th>
-                    <Th align="right">Total</Th>
-                    <Th align="right">% do total</Th>
-                    <Th align="right">Manutenção do setor</Th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {guiaCdc.manutencao.map((m, i) => (
-                    <tr key={`${m.setor}-${i}`} className="odd:bg-secondary/30">
-                      <Td className="font-medium">{m.setor}</Td>
-                       <Td align="right"><EditableNumber disabled={!autenticado} value={m.total} onChange={(v) => atualizarManutencao(i, "total", v)} /></Td>
-                       <Td align="right"><EditableNumber disabled={!autenticado} value={m.percentual} onChange={(v) => atualizarManutencao(i, "percentual", v)} /></Td>
-                      <Td align="right" className="font-semibold">
-                        {money(typeof m.total === "number" && typeof m.percentual === "number" ? m.total * m.percentual : m.manutencaoSetor)}
-                      </Td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <Panel titulo="Manutenção de máquinas — onde ela entra" bodyClassName="p-3">
+            <p className="text-sm text-muted-foreground">
+              A manutenção de máquinas e equipamentos <strong>não é mais rateada por setor</strong>. Ela entra
+              apenas no <strong>% de despesas</strong> aplicado no preço, a partir da conta real do DRE
+              ("MANUTENÇÃO DE MAQUINAS E EQUIPAMENTOS", grupo 007), que é um número preciso de cada mês.
+              Ratear de novo no custo por hora contaria a manutenção duas vezes e inflaria o preço.
+            </p>
           </Panel>
         </div>
       ) : null}
