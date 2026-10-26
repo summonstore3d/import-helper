@@ -22,6 +22,7 @@ import {
   LoaderCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { DESCONTO_INICIAL, limitarDesconto, precoComDesconto, tetoValido } from "@/lib/descontos";
 import { margemValida } from "@/lib/margens";
 import { categoriaDoProduto, parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
@@ -69,6 +70,8 @@ function Precificacao() {
   const { produto } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const {
+    tetoDescontoProduto,
+    salvarTetoDesconto,
     margemProduto,
     salvarMargemProduto,
     sincronizando,
@@ -120,6 +123,22 @@ function Precificacao() {
   const [buscaProduto, setBuscaProduto] = useState("");
   const [categoria, setCategoria] = useState("TODOS");
   const [quantidade, setQuantidade] = useState(1);
+  const [descontoEditado, setDescontoEditado] = useState<{ produto: string; valor: number } | null>(null);
+  const teto = tetoDescontoProduto(selecionado);
+  const desconto = limitarDesconto(descontoEditado?.produto === selecionado ? descontoEditado.valor : DESCONTO_INICIAL, teto);
+  const [tetoEditado, setTetoEditado] = useState<{ produto: string; valor: number } | null>(null);
+  const tetoRascunho = tetoEditado?.produto === selecionado ? tetoEditado.valor : teto * 100;
+  const [salvandoTeto, setSalvandoTeto] = useState(false);
+  async function salvarTeto() {
+    setSalvandoTeto(true);
+    try {
+      await salvarTetoDesconto(selecionado, tetoRascunho / 100);
+      setTetoEditado(null);
+      toast.success("Teto de desconto salvo.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível salvar o teto.");
+    } finally { setSalvandoTeto(false); }
+  }
   const [copiado, setCopiado] = useState(false);
   const categorias = useMemo(() => Array.from(new Set(produtos.map((p) => categoriaDoProduto(p.full)))).sort(), []);
   const produtosFiltrados = useMemo(
@@ -147,7 +166,7 @@ function Precificacao() {
     base: baseIndustrial,
   });
 
-  const preco = r.preco;
+  const preco = precoComDesconto(r.preco, desconto, teto);
 
   /** Mesmo produto e parâmetros, trocando apenas a forma de apurar as despesas. */
   const precoPorMetodo = (
@@ -259,9 +278,11 @@ function Precificacao() {
     {
       rotulo: "Preço de venda sugerido",
       base: "Preço bruto + frete, arredondado em 2 casas",
-      valor: money(preco),
-      tipo: "total",
+      valor: money(r.preco),
+      tipo: "grupo",
     },
+    { rotulo: "9. Desconto comercial", base: `Teto do produto: ${pct(teto, 2)}`, valor: pct(desconto, 2) },
+    { rotulo: "Preço final com desconto", base: "Preço sugerido × (1 − desconto)", valor: money(preco), tipo: "total" },
   ];
 
   /** Mesma memória de cálculo da tela, com valores numéricos para o Excel. */
@@ -323,10 +344,12 @@ function Precificacao() {
     {
       rotulo: "Preço de venda sugerido",
       base: "Preço bruto + frete",
-      valor: preco,
+      valor: r.preco,
       formato: "moeda",
-      tipo: "total",
+      tipo: "grupo",
     },
+    { rotulo: "9. Desconto comercial", base: `Teto do produto: ${pct(teto, 2)}`, valor: desconto, formato: "percentual" },
+    { rotulo: "Preço final com desconto", base: "Preço sugerido × (1 − desconto)", valor: preco, formato: "moeda", tipo: "total" },
   ];
 
   function exportarExcel() {
@@ -350,6 +373,7 @@ function Precificacao() {
     const texto = [
       `Cotação D'AGOSTINI — ${selecionado}`,
       `Preço unitário: ${money(preco)}`,
+      ...(desconto > 0 ? [`Desconto: ${pct(desconto, 2)}`] : []),
       `Quantidade: ${qtd(quantidade)}`,
       `Total: ${money(preco * quantidade)}`,
     ].join("\n");
@@ -366,6 +390,9 @@ function Precificacao() {
       custo: r.custoAbsoluto,
       margem: r.margem,
       preco,
+      desconto,
+      precoOriginal: r.preco ?? 0,
+      quantidade,
       cenario,
       status: "Simulação",
     });
@@ -447,7 +474,7 @@ function Precificacao() {
             <div className="max-h-72 overflow-auto p-1.5 xl:max-h-[56vh]">
               {produtosFiltrados.map((p) => {
                 const [codigo, ...descricao] = p.full.split(" - ");
-                return <Button key={p.full} variant="ghost" type="button" onClick={() => { navigate({ search: { produto: p.full } }); setCenario(cenarioSugerido(p.full)); setMargemEditada(null); setSalvo(null); }} className={`mb-1 h-auto w-full justify-start whitespace-normal rounded-sm border-l-2 px-3 py-2 text-left shadow-none ${selecionado === p.full ? "border-green bg-green-soft hover:bg-green-soft" : "border-transparent hover:bg-secondary"}`}>
+                return <Button key={p.full} variant="ghost" type="button" onClick={() => { navigate({ search: { produto: p.full } }); setCenario(cenarioSugerido(p.full)); setMargemEditada(null); setTetoEditado(null); setDescontoEditado(null); setSalvo(null); }} className={`mb-1 h-auto w-full justify-start whitespace-normal rounded-sm border-l-2 px-3 py-2 text-left shadow-none ${selecionado === p.full ? "border-green bg-green-soft hover:bg-green-soft" : "border-transparent hover:bg-secondary"}`}>
                   <span className="min-w-0">
                   <span className="block text-xs font-black text-foreground">{codigo}</span>
                   <span className="mt-0.5 block line-clamp-2 text-[11px] text-muted-foreground">{descricao.join(" - ")}</span>
@@ -499,11 +526,21 @@ function Precificacao() {
                 <p className="mt-1 text-4xl font-black tabular-nums">{preco === null ? "Indisponível" : money(preco)}</p>
                 <p className="text-xs font-medium">{cenario} · {frota ? `CIF, frete ${money(r.logistica)}/peça` : "FOB, sem frete"}</p>
               </div>
-              <div className="mt-4 flex items-end gap-2">
+              {desconto > 0 ? <p className="mt-2 text-xs">De <span className="line-through">{money(r.preco)}</span> · desconto {pct(desconto, 2)}</p> : null}
+              <div className="mt-4 grid grid-cols-2 items-start gap-3">
                 <label className="text-xs font-semibold">Quantidade
                   <input type="number" min="1" value={quantidade} onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value) || 1))} className="mt-1 block h-9 w-20 rounded-sm border border-green bg-background px-2 text-sm outline-none focus:border-ring" />
                 </label>
-                <div className="min-w-0 flex-1 text-right">
+                <label className="text-xs font-semibold">Desconto (%)
+                  <input aria-label="Desconto (%)" type="number" min="0" max={teto * 100} step="0.5" value={Number((desconto * 100).toFixed(2))} disabled={sincronizando} onChange={(e) => {
+                    const informado = Number(e.target.value);
+                    if (informado > teto * 100) toast.error(`Desconto máximo deste produto: ${pct(teto, 2)}.`);
+                    setDescontoEditado({ produto: selecionado, valor: limitarDesconto(informado / 100, teto) });
+                    setSalvo(null); setCopiado(false);
+                  }} className="mt-1 block h-9 w-full min-w-0 rounded-sm border border-green bg-background px-2 text-sm outline-none focus:border-ring" />
+                  <span className="mt-1 block text-[11px] font-normal">Máximo: {pct(teto, 0)}</span>
+                </label>
+                <div className="col-span-2 min-w-0 border-t border-green/30 pt-2 text-right">
                   <p className="text-[11px] font-semibold uppercase">Total do pedido</p>
                   <p className="text-lg font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
                 </div>
@@ -565,6 +602,17 @@ function Precificacao() {
             </div>
             </fieldset>
           </section>
+          ) : null}
+
+          {veDetalhes ? (
+            <section aria-label="Teto de desconto" className="flex flex-wrap items-end justify-between gap-3 border-t border-border pt-4">
+              <label className="text-xs font-semibold text-foreground">Teto de desconto do produto (%)
+                <input aria-label="Teto de desconto do produto (%)" type="number" min="0" max="10" step="0.5" value={tetoRascunho} disabled={sincronizando || salvandoTeto} onChange={(e) => setTetoEditado({ produto: selecionado, valor: Math.min(10, Math.max(0, Number(e.target.value) || 0)) })} className="mt-1 block h-9 w-32 rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring" />
+              </label>
+              <Button type="button" size="sm" variant="outline" onClick={salvarTeto} disabled={sincronizando || salvandoTeto || !autenticado || tetoRascunho === teto * 100 || !tetoValido(tetoRascunho / 100)}>
+                {salvandoTeto ? <LoaderCircle className="size-4 animate-spin" /> : <Save className="size-4" />} Salvar teto do produto
+              </Button>
+            </section>
           ) : null}
 
           {r.bloqueios.length ? (
