@@ -14,7 +14,7 @@ export const Route = createFileRoute("/centro-de-custos")({
       {
         name: "description",
         content:
-          "Setores produtivos, rateio de mão de obra e manutenção, horas disponíveis e custo por hora real de cada centro de custo.",
+          "Setores produtivos, rateio de mão de obra, horas disponíveis e custo por hora real de cada centro de custo.",
       },
       { property: "og:title", content: "Centro de Custos — Sistema de Precificação" },
       {
