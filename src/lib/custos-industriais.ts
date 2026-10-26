@@ -40,10 +40,6 @@ export function colaboradoresPorSetor(guia: GuiaCdc): Record<string, number> {
   return total;
 }
 
-export function manutencaoDaLinha(guia: GuiaCdc, linha: string): number {
-  const m = guia.manutencao.find((x) => x.setor.trim() === linha);
-  return m ? num(m.total) * num(m.percentual) : 0;
-}
 
 export function setoresCalculados(base: BaseIndustrial, salario = SALARIO_MEDIO_MOD): Setor[] {
   const pessoas = colaboradoresPorSetor(base.guia);
