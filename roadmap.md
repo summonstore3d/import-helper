@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Separar R$ 36.000 mensais da MOI em linha MOI logística excluída e amarela, incluindo futuras importações sem dedução duplicada.
-- [ ] Atualizar dados compartilhados, testar totais e conferir a nova taxa em Despesas e Precificação.
+- [x] Separar R$ 36.000 mensais da MOI em linha MOI logística excluída e amarela, incluindo futuras importações sem dedução duplicada.
+- [x] Atualizar dados compartilhados, testar totais e conferir a nova taxa em Despesas e Precificação.
 
 - [x] Definir teto individual inicial de desconto de 10% e permitir sua edição por gerente/administrador.
 - [x] Aplicar desconto iniciado em 0% ao preço final, cotação, total e simulação, sem superar o teto.
