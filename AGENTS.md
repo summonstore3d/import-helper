@@ -20,3 +20,5 @@
 - Store individual product margins in one `system_state` domain per stable product code (`margin:<code>`), validate manager/admin writes in the database, and use the same lookup across pricing, catalog and dashboard; per-product writes avoid overwriting another product's margin.
 
 - Store discount caps per product code in `system_state` domains (`discount:<code>`), enforce manager/admin cap writes and discount limits in the database, and apply bounded discounts after final price calculation; simulations retain the original price and applied discount.
+
+- Represent logistics MOI as a synthetic excluded expense account split from gross MOI once; DRE import reconstructs the split from original monthly MOI to preserve gross totals and avoid repeated deductions.
