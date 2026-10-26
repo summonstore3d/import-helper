@@ -14,7 +14,7 @@ export const Route = createFileRoute("/centro-de-custos")({
       {
         name: "description",
         content:
-          "Setores produtivos, rateio de mão de obra e manutenção, horas disponíveis e custo por hora real de cada centro de custo.",
+          "Setores produtivos, rateio de mão de obra, horas disponíveis e custo por hora real de cada centro de custo.",
       },
       { property: "og:title", content: "Centro de Custos — Sistema de Precificação" },
       {
@@ -32,7 +32,7 @@ function valor(v: number | string | null, tipo: "money" | "pct" | "num") {
 }
 
 function CentroDeCustos() {
-  const { centroCustos, guiaCdc, baseIndustrial, setoresCalculados, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, autenticado } = usePrototype();
+  const { centroCustos, guiaCdc, baseIndustrial, setoresCalculados, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, autenticado } = usePrototype();
   const [aba, setAba] = useState<"setores" | "roteiro" | "guia">("setores");
   const quebrados = setoresCalculados.filter((s) => !isNum(s.horaReal)).length;
   const resumo = resumoCentroCustos(baseIndustrial);
@@ -42,7 +42,7 @@ function CentroDeCustos() {
       <PageHeader
         titulo="Centro de Custos"
         aba="Centro de Custos + Guia - CDC"
-        descricao="O rateio industrial que transforma folha de pagamento e manutenção em custo por hora de setor, e este em custo de produção por produto."
+        descricao="O rateio industrial que transforma a folha de pagamento em custo por hora de setor, e este em custo de produção por produto. A manutenção de máquinas não é rateada: entra no % de despesas."
       />
       <EditLockBanner />
 
@@ -93,7 +93,7 @@ function CentroDeCustos() {
         <Panel
           className="mt-4"
           titulo="Custo por setor"
-          subtitulo="Mão de obra, manutenção, eficiência e horas disponíveis"
+          subtitulo="Mão de obra, eficiência e horas disponíveis — manutenção de máquinas entra no % de despesas"
           acoes={<RealTag />}
           bodyClassName="p-0"
         >
@@ -104,7 +104,6 @@ function CentroDeCustos() {
                   <Th>Setor</Th>
                   <Th>Grupo</Th>
                   <Th align="right">Mão de obra</Th>
-                  <Th align="right">Manutenção</Th>
                   <Th align="right">Total mês</Th>
                   <Th align="right">Eficiência</Th>
                   <Th align="right">Transp. interno</Th>
@@ -119,7 +118,6 @@ function CentroDeCustos() {
                     <Td className="font-semibold">{s.nome}</Td>
                     <Td className="text-xs">{s.grupo ?? "—"}</Td>
                     <Td align="right">{valor(calc.maoDeObra, "money")}</Td>
-                    <Td align="right">{valor(calc.manutencao, "money")}</Td>
                     <Td align="right">{valor(calc.mesTotal, "money")}</Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.eficienciaPerdida} onChange={(v) => atualizarSetor(i, { ...s, eficienciaPerdida: v })} /></Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.transporteInterno} onChange={(v) => atualizarSetor(i, { ...s, transporteInterno: v })} /></Td>
@@ -254,31 +252,13 @@ function CentroDeCustos() {
             </div>
           </Panel>
 
-          <Panel titulo="Rateio de manutenção por setor" bodyClassName="p-0">
-            <div className="max-h-[52vh] overflow-auto">
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <Th>Setor</Th>
-                    <Th align="right">Total</Th>
-                    <Th align="right">% do total</Th>
-                    <Th align="right">Manutenção do setor</Th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {guiaCdc.manutencao.map((m, i) => (
-                    <tr key={`${m.setor}-${i}`} className="odd:bg-secondary/30">
-                      <Td className="font-medium">{m.setor}</Td>
-                       <Td align="right"><EditableNumber disabled={!autenticado} value={m.total} onChange={(v) => atualizarManutencao(i, "total", v)} /></Td>
-                       <Td align="right"><EditableNumber disabled={!autenticado} value={m.percentual} onChange={(v) => atualizarManutencao(i, "percentual", v)} /></Td>
-                      <Td align="right" className="font-semibold">
-                        {money(typeof m.total === "number" && typeof m.percentual === "number" ? m.total * m.percentual : m.manutencaoSetor)}
-                      </Td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <Panel titulo="Manutenção de máquinas — onde ela entra" bodyClassName="p-3">
+            <p className="text-sm text-muted-foreground">
+              A manutenção de máquinas e equipamentos <strong>não é mais rateada por setor</strong>. Ela entra
+              apenas no <strong>% de despesas</strong> aplicado no preço, a partir da conta real do DRE
+              ("MANUTENÇÃO DE MAQUINAS E EQUIPAMENTOS", grupo 007), que é um número preciso de cada mês.
+              Ratear de novo no custo por hora contaria a manutenção duas vezes e inflaria o preço.
+            </p>
           </Panel>
         </div>
       ) : null}

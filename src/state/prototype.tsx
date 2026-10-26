@@ -105,7 +105,6 @@ type Ctx = {
   atualizarSetor: (indice: number, setor: Setor) => void;
   atualizarRoteiro: (indice: number, roteiro: RoteiroLinha) => void;
   atualizarMaoDeObra: (linha: number, setor: string, valor: number) => void;
-  atualizarManutencao: (indice: number, campo: "total" | "percentual" | "manutencaoSetor", valor: number | null) => void;
   auditoria: AuditoriaEntrada[];
   registrarAuditoria: (e: AuditInput) => void;
   historico: VersaoPreco[];
@@ -533,12 +532,6 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     alvo.valores[setor] = valor; setGuiaCdc(novo); persistirCustos(centroCustos, novo);
     registrarAuditoria({ modulo: "Centro de Custos", registro: `${alvo.funcao} — ${setor}`, campo: "Rateio de mão de obra", valorAnterior: String(antes ?? "—"), valorNovo: String(valor), motivo: "Manutenção industrial" });
   }, [guiaCdc, centroCustos, persistirCustos, registrarAuditoria]);
-  const atualizarManutencao = useCallback((indice: number, campo: "total" | "percentual" | "manutencaoSetor", valor: number | null) => {
-    const novo = structuredClone(guiaCdc); const alvo = novo.manutencao[indice]; if (!alvo) return;
-    alvo[campo] = valor;
-    if (campo !== "manutencaoSetor") alvo.manutencaoSetor = typeof alvo.total === "number" && typeof alvo.percentual === "number" ? alvo.total * alvo.percentual : null;
-    setGuiaCdc(novo); persistirCustos(centroCustos, novo);
-  }, [guiaCdc, centroCustos, persistirCustos]);
 
   const registrarVersao = useCallback((v: Omit<VersaoPreco, "id" | "data" | "origem">) => {
     if (!userId) return;
@@ -552,10 +545,10 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas,
     listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom,
     salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc,
-    baseIndustrial, setoresCalculados: setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao,
+    baseIndustrial, setoresCalculados: setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra,
     auditoria, registrarAuditoria, historico, registrarVersao, usuario,
     autenticado: userId !== null, sincronizando, gravacao,
-  }), [tetoDescontoProduto, salvarTetoDesconto, margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, atualizarManutencao, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
+  }), [tetoDescontoProduto, salvarTetoDesconto, margemProduto, salvarMargemProduto, demonstrativo, importarDemonstrativo, adicionarMesDespesas, atualizarDespesa, metodoDespesas, definirMetodoDespesas, despesasPercentual, comparativoDespesas, listaInsumos, salvarInsumo, importarInsumos, itensBom, adicionarItemBom, salvarItemBom, removerItemBom, removerItemAdicionado, centroCustos, guiaCdc, baseIndustrial, setoresCalculadosVigentes, atualizarSetor, atualizarRoteiro, atualizarMaoDeObra, auditoria, registrarAuditoria, historico, registrarVersao, usuario, userId, sincronizando, gravacao]);
 
   return <PrototypeContext.Provider value={value}>{children}</PrototypeContext.Provider>;
 }

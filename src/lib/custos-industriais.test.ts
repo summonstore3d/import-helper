@@ -7,10 +7,22 @@ const base = { setores: centroCustos.setores, roteiro: centroCustos.roteiro, gui
 const produto = "AN001 - ANEL DN 600 X 750 X 70 PBJE EA2";
 
 describe("cadeia de custo industrial dinâmica", () => {
-  it("reproduz o $/hora real da planilha a partir do rateio", () => {
+  it("reproduz o $/hora real da planilha (mão de obra sem manutenção)", () => {
     const s = setoresCalculados(base);
     expect(taxaHora(s, "Robô")).toBeCloseTo(69.80486915, 6);
     expect(taxaHora(s, "Siome")).toBeCloseTo(104.83958244, 6);
+  });
+
+  it("o rateio de manutenção não entra no $/hora (manutenção de máquinas fica no % de despesas)", () => {
+    const guia = structuredClone(guiaCdc);
+    for (const m of guia.manutencao) {
+      if (typeof m.percentual === "number" && m.percentual > 0) m.total = 50000;
+    }
+    const comRateio = setoresCalculados({ ...base, guia });
+    const semRateio = setoresCalculados(base);
+    for (const setor of base.setores) {
+      expect(taxaHora(comRateio, setor.nome)).toEqual(taxaHora(semRateio, setor.nome));
+    }
   });
 
   it("mudar colaboradores no rateio muda o custo de produção", () => {
