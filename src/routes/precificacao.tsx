@@ -471,14 +471,15 @@ function Precificacao() {
 
         <div className="min-w-0 space-y-4">
           <section className="grid items-stretch gap-3 rounded-md border border-border bg-card p-4 shadow-panel lg:grid-cols-[minmax(0,1fr)_19rem]">
-            <div className="flex min-w-0 flex-col justify-between gap-4">
+            <div className="flex min-w-0 flex-col justify-center gap-3">
               <div className="min-w-0">
                 <p className="text-[11px] font-bold text-green uppercase">Produto selecionado</p>
-                <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                  <h2 className="min-w-0 text-3xl leading-none font-black tracking-tight break-words text-foreground">{codigoSelecionado}</h2>
+                <h2 className="mt-1 text-2xl leading-snug font-black break-words text-foreground">{descricaoSelecionada || codigoSelecionado}</h2>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="rounded-sm border border-border bg-secondary/60 px-1.5 py-0.5 text-[11px] font-black text-foreground">{codigoSelecionado}</span>
                   <span className="rounded-full border border-border bg-secondary/60 px-2 py-0.5 text-[10px] font-bold text-muted-foreground uppercase">{categoriaDoProduto(selecionado)}</span>
                 </div>
-                {descricaoSelecionada ? <p className="mt-2 line-clamp-2 text-sm leading-snug font-semibold text-muted-foreground">{descricaoSelecionada}</p> : null}
+
               </div>
               <label className="inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
                 Tipo de venda
@@ -498,7 +499,6 @@ function Precificacao() {
               <div>
                 <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase"><BadgeDollarSign className="size-3.5" /> Preço final unitário</p>
                 <p className="mt-0.5 text-2xl font-black tabular-nums">{preco === null ? "Indisponível" : money(preco)}</p>
-                <p className="text-[11px] font-medium">{cenario}</p>
               </div>
               {desconto > 0 ? <p className="mt-1.5 text-[11px]">De <span className="line-through">{money(r.preco)}</span> · desconto {pct(desconto, 2)}</p> : null}
               <div className="mt-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-x-2.5 gap-y-1">

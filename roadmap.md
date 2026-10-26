@@ -25,3 +25,5 @@
 - [x] Garantir atualização da taxa ponderada entre telas e sessões, testar edição real e explicar a variação após importar o DRE.
 - [x] Mostrar carregamento D'AGOSTINI em cada importação e confirmar despesas sincronizadas após salvar e conferir os dados.
 - [x] Remover o rateio de manutenção do custo por setor: manutenção de máquinas conta só no % de despesas, pelo valor real do DRE.
+
+- [ ] Dar mais destaque ao produto selecionado na Precificação (nome maior que o código) e encolher o controle de tipo de venda.
