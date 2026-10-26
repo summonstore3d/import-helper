@@ -241,7 +241,7 @@ export function calcularPreco(e: EntradaCalculo): ResultadoCalculo {
 export function precoRapido(
   produto: string,
   cenario: Cenario = "Venda Normal",
-  vigente?: { itensMP: ItemMP[]; base?: BaseIndustrial; despesas?: number | null },
+  vigente?: { itensMP: ItemMP[]; base?: BaseIndustrial; despesas?: number | null; margem?: number },
 ): number | null {
   const p = parametrosPadrao();
   return calcularPreco({
@@ -249,7 +249,7 @@ export function precoRapido(
     cenario,
     ...(vigente?.base ? { base: vigente.base } : {}),
     itensMP: vigente?.itensMP ?? bomDoProduto(produto),
-    margem: p.margem,
+    margem: vigente?.margem ?? p.margem,
     comissao: p.comissao,
     inadimplencia: p.inadimplencia,
     despesas: vigente?.despesas ?? p.despesas,
