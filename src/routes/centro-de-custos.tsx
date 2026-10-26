@@ -104,7 +104,6 @@ function CentroDeCustos() {
                   <Th>Setor</Th>
                   <Th>Grupo</Th>
                   <Th align="right">Mão de obra</Th>
-                  <Th align="right">Manutenção</Th>
                   <Th align="right">Total mês</Th>
                   <Th align="right">Eficiência</Th>
                   <Th align="right">Transp. interno</Th>
@@ -119,7 +118,6 @@ function CentroDeCustos() {
                     <Td className="font-semibold">{s.nome}</Td>
                     <Td className="text-xs">{s.grupo ?? "—"}</Td>
                     <Td align="right">{valor(calc.maoDeObra, "money")}</Td>
-                    <Td align="right">{valor(calc.manutencao, "money")}</Td>
                     <Td align="right">{valor(calc.mesTotal, "money")}</Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.eficienciaPerdida} onChange={(v) => atualizarSetor(i, { ...s, eficienciaPerdida: v })} /></Td>
                     <Td align="right"><EditableNumber disabled={!autenticado} value={s.transporteInterno} onChange={(v) => atualizarSetor(i, { ...s, transporteInterno: v })} /></Td>
