@@ -344,7 +344,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const tetoDescontoProduto = useCallback((produto: string) => tetoDoProduto(produto, tetos), [tetos]);
   const salvarTetoDesconto = useCallback(async (produto: string, teto: number) => {
     if (!loaded.current || !userId) throw new Error("Entre na sua conta e aguarde o carregamento dos dados.");
-    if (!tetoValido(teto)) throw new Error("Informe uma teto entre 0% e 10%.");
+    if (!tetoValido(teto)) throw new Error("Informe um teto entre 0% e 10%.");
     const codigo = codigoMargem(produto);
     const domain = `discount:${codigo}`;
     const anterior = tetoDoProduto(produto, tetos);
@@ -352,15 +352,15 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     dominiosEmGravacao.current.add(domain);
     setGravacao({ estado: "salvando" });
     try {
-      const { error } = await supabase.from("system_state").upsert({ domain, payload: { discount: teto }, updated_by: userId });
+      const { error } = await supabase.from("system_state").upsert({ domain, payload: { cap: teto }, updated_by: userId });
       if (error) throw error;
       const { data, error: leituraErro } = await supabase.from("system_state").select("domain,payload").eq("domain", domain).single();
-      if (leituraErro || !data || lerTetos([data])[codigo] !== teto) throw new Error("Não foi possível conferir a teto salva.");
+      if (leituraErro || !data || lerTetos([data])[codigo] !== teto) throw new Error("Não foi possível conferir o teto salvo.");
       setTetos((prev) => ({ ...prev, [codigo]: teto }));
       registrarAuditoria({ modulo: "Precificação", registro: produto, campo: "Teto de desconto", valorAnterior: `${anterior * 100}%`, valorNovo: `${teto * 100}%`, motivo: "Teto individual do produto" });
       setGravacao({ estado: "salvo", em: new Date().toISOString() });
     } catch {
-      const mensagem = "Não foi possível salvar a teto. Verifique sua conexão e seu acesso de gerente ou administrador.";
+      const mensagem = "Não foi possível salvar o teto. Verifique sua conexão e seu acesso de gerente ou administrador.";
       setGravacao({ estado: "erro", mensagem });
       throw new Error(mensagem);
     } finally {
