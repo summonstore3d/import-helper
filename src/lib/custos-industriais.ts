@@ -3,8 +3,7 @@
  * (mesma lógica das abas "Guia - CDC" e "Centro de Custos" da planilha):
  *
  *   Mão de obra do setor  = colaboradores rateados no setor × salário médio MOD
- *   Manutenção do setor   = Total × % (rateio de manutenção)
- *   $ Mês                 = Mão de obra + Manutenção
+ *   $ Mês                 = Mão de obra
  *   $/Hora ideal          = ($ Mês + Acabamento + Transporte interno + $/Hora ponte) ÷ Horas disponíveis
  *   $/Hora real           = $/Hora ideal ÷ Eficiência
  *   $/Hora do produto     = setor "Chão" → média de Tampa, Anéis e Galerias; demais → $/Hora real do setor
@@ -25,18 +24,10 @@ const COLUNA_MAO_DE_OBRA: Record<string, string | null> = {
   Manual: "Galeria/Gradil",
 };
 
-/** Linha do rateio de manutenção usada por setor (e divisor). */
-const MANUTENCAO_POR_SETOR: Record<string, { linha: string; divisor: number } | "zero"> = {
-  Robô: "zero",
-  Siome: { linha: "Siome", divisor: 1 },
-  Radial: { linha: "Radial", divisor: 1 },
-  PH: { linha: "PH", divisor: 1 },
-  Tampa: { linha: "Chão", divisor: 3 },
-  Anéis: { linha: "Chão", divisor: 3 },
-  Galerias: { linha: "Chão", divisor: 3 },
-  Vibromatic: { linha: "Vibromatic", divisor: 1 },
-};
-
+/**
+ * Manutenção de máquinas não é mais rateada por setor: entra apenas no % de
+ * despesas (conta real do DRE), para não contar o mesmo custo duas vezes.
+ */
 const SETORES_CHAO = ["Tampa", "Anéis", "Galerias"];
 const num = (v: unknown) => (isNum(v) ? v : 0);
 
