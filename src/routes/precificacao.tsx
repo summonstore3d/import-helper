@@ -14,7 +14,6 @@ import {
   Plus,
   Search,
   ShieldAlert,
-  Truck,
   WalletCards,
   Save,
   Eye,
@@ -31,7 +30,7 @@ import { usePrototype } from "@/state/prototype";
 import { useAcesso } from "@/lib/acesso";
 import { mostraDetalhesPrecificacao } from "@/lib/visao-precificacao";
 import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planilha-precificacao";
-import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
+import { despesasVigentes, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 import { Button } from "@/components/ui/button";
 
@@ -116,9 +115,6 @@ function Precificacao() {
   const [inadimplencia, setInadimplencia] = useState(padrao.inadimplencia * 100);
   const despesasPct = (despesasPercentual ?? padrao.despesas) * 100;
 
-  const [frota, setFrota] = useState(false);
-  const [km, setKm] = useState(padrao.km);
-  const [pecas, setPecas] = useState(padrao.pecasPorEntrega);
   const [salvo, setSalvo] = useState<string | null>(null);
   const [buscaProduto, setBuscaProduto] = useState("");
   const [categoria, setCategoria] = useState("TODOS");
@@ -160,9 +156,9 @@ function Precificacao() {
     comissao: comissao / 100,
     inadimplencia: inadimplencia / 100,
     despesas: despesasPct / 100,
-    frota,
-    km,
-    pecasPorEntrega: pecas,
+    frota: false,
+    km: padrao.km,
+    pecasPorEntrega: padrao.pecasPorEntrega,
     base: baseIndustrial,
   });
 
@@ -188,9 +184,9 @@ function Precificacao() {
               comissao: comissao / 100,
               inadimplencia: inadimplencia / 100,
               despesas: taxa,
-              frota,
-              km,
-              pecasPorEntrega: pecas,
+              frota: false,
+              km: padrao.km,
+              pecasPorEntrega: padrao.pecasPorEntrega,
               base: baseIndustrial,
             }).preco,
     };
@@ -267,21 +263,12 @@ function Precificacao() {
       tipo: "grupo",
     },
     {
-      rotulo: "8. Frete (frota própria)",
-      base: frota
-        ? `${qtd(km)} km ÷ ${qtd(pecas)} peças × ${money(frotaParams.custoTotalPorKm)}/km × ${qtd(
-            parametros.fatorFrete,
-          )} (ida e volta)`
-        : "Entrega não incluída (retirada no pátio)",
-      valor: money(r.logistica),
-    },
-    {
       rotulo: "Preço de venda sugerido",
-      base: "Preço bruto + frete, arredondado em 2 casas",
+      base: "Preço bruto arredondado em 2 casas",
       valor: money(r.preco),
       tipo: "grupo",
     },
-    { rotulo: "9. Desconto comercial", base: `Teto do produto: ${pct(teto, 2)}`, valor: pct(desconto, 2) },
+    { rotulo: "8. Desconto comercial", base: `Teto do produto: ${pct(teto, 2)}`, valor: pct(desconto, 2) },
     { rotulo: "Preço final com desconto", base: "Preço sugerido × (1 − desconto)", valor: money(preco), tipo: "total" },
   ];
 
@@ -336,19 +323,13 @@ function Precificacao() {
       tipo: "grupo",
     },
     {
-      rotulo: "8. Frete (frota própria)",
-      base: linhasMemoria[11]?.base ?? "",
-      valor: r.logistica,
-      formato: "moeda",
-    },
-    {
       rotulo: "Preço de venda sugerido",
-      base: "Preço bruto + frete",
+      base: "Preço bruto arredondado em 2 casas",
       valor: r.preco,
       formato: "moeda",
       tipo: "grupo",
     },
-    { rotulo: "9. Desconto comercial", base: `Teto do produto: ${pct(teto, 2)}`, valor: desconto, formato: "percentual" },
+    { rotulo: "8. Desconto comercial", base: `Teto do produto: ${pct(teto, 2)}`, valor: desconto, formato: "percentual" },
     { rotulo: "Preço final com desconto", base: "Preço sugerido × (1 − desconto)", valor: preco, formato: "moeda", tipo: "total" },
   ];
 
@@ -414,7 +395,7 @@ function Precificacao() {
         aba="Precificação"
         descricao={veDetalhes
           ? "Selecione o produto, ajuste as condições comerciais e consulte o preço final."
-          : "Selecione o produto, o tipo de venda e a entrega para consultar o preço final."}
+          : "Selecione o produto e o tipo de venda para consultar o preço final."}
         acoes={
           <>
             {acesso.nivel === "admin" ? (
@@ -498,33 +479,13 @@ function Precificacao() {
                   </Button>
                 ))}
               </div>
-              <p className="mb-1.5 mt-3 text-xs font-bold text-muted-foreground uppercase">Entrega</p>
-              <div className="flex flex-wrap items-end gap-3">
-                <div className="inline-flex rounded-md border border-border p-0.5" role="group" aria-label="Modalidade de entrega">
-                  {([[false, "FOB · Retira"], [true, "CIF · Entregue"]] as const).map(([v, l]) => (
-                    <Button key={l} type="button" size="sm" variant={frota === v ? "default" : "ghost"} onClick={() => { setFrota(v); setSalvo(null); }}>
-                      {v ? <Truck className="size-4" /> : null}{l}
-                    </Button>
-                  ))}
-                </div>
-                {frota ? (
-                  <>
-                    <label className="text-xs font-semibold">Distância (km)
-                      <input type="number" min="0" value={km} onChange={(e) => setKm(Number(e.target.value))} className="mt-1 block h-9 w-24 rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring" />
-                    </label>
-                    <label className="text-xs font-semibold">Peças/entrega
-                      <input type="number" min="1" value={pecas} onChange={(e) => setPecas(Number(e.target.value))} className="mt-1 block h-9 w-24 rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring" />
-                    </label>
-                  </>
-                ) : null}
-              </div>
             </div>
 
             <div className="flex min-w-0 flex-col rounded-md border border-green bg-green-soft p-3 text-accent-foreground">
               <div>
                 <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase"><BadgeDollarSign className="size-3.5" /> Preço final unitário</p>
                 <p className="mt-0.5 text-2xl font-black tabular-nums">{preco === null ? "Indisponível" : money(preco)}</p>
-                <p className="text-[11px] font-medium">{cenario} · {frota ? `CIF, frete ${money(r.logistica)}/peça` : "FOB, sem frete"}</p>
+                <p className="text-[11px] font-medium">{cenario}</p>
               </div>
               {desconto > 0 ? <p className="mt-1.5 text-[11px]">De <span className="line-through">{money(r.preco)}</span> · desconto {pct(desconto, 2)}</p> : null}
               <div className="mt-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-x-2.5 gap-y-1">
