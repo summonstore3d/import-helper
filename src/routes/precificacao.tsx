@@ -17,12 +17,15 @@ import {
   Truck,
   WalletCards,
   Save,
+  Eye,
+  ShieldCheck,
 } from "lucide-react";
 import { categoriaDoProduto, parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
 import { useAcesso } from "@/lib/acesso";
+import { mostraDetalhesPrecificacao } from "@/lib/visao-precificacao";
 import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planilha-precificacao";
 import { despesasVigentes, frota as frotaParams, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
@@ -74,8 +77,9 @@ function Precificacao() {
     baseIndustrial,
   } = usePrototype();
   const acesso = useAcesso();
+  const [visaoVendedor, setVisaoVendedor] = useState(false);
   // Custos, encargos, condições comerciais e memória de cálculo: somente gerente e admin.
-  const veDetalhes = acesso.nivel === "admin" || acesso.nivel === "gerente";
+  const veDetalhes = mostraDetalhesPrecificacao(acesso.nivel, visaoVendedor);
   const padrao = parametrosPadrao();
 
   const selecionado =
@@ -364,6 +368,16 @@ function Precificacao() {
           : "Selecione o produto, o tipo de venda e a entrega para consultar o preço final."}
         acoes={
           <>
+            {acesso.nivel === "admin" ? (
+              <div role="group" aria-label="Visão da Precificação" className="inline-flex items-center gap-1 rounded-md border border-border bg-secondary/40 p-1">
+                <Button type="button" size="sm" variant={!visaoVendedor ? "default" : "ghost"} aria-pressed={!visaoVendedor} onClick={() => setVisaoVendedor(false)}>
+                  <ShieldCheck className="size-4" /> Visão adm
+                </Button>
+                <Button type="button" size="sm" variant={visaoVendedor ? "default" : "ghost"} aria-pressed={visaoVendedor} onClick={() => setVisaoVendedor(true)}>
+                  <Eye className="size-4" /> Visão vendedor
+                </Button>
+              </div>
+            ) : null}
             {veDetalhes ? (
               <Button
                 variant="outline"
