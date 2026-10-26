@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx-js-style";
 import type { Despesas } from "@/data";
+import { separarMoiLogistica, ehMoiLogistica, ehSalarioMoi, MEDIA_MOI_LOGISTICA } from "./moi-logistica";
 
 /**
  * Importação mensal do DRE Gerencial. Lê apenas as abas cujo nome termina em
@@ -173,7 +174,7 @@ export function valorDaConta(dre: MesDre, grupo: string, nome: string): number |
 export type ResultadoDre = { despesas: Despesas; naoEncontradas: string[] };
 
 export function aplicarMesDre(d: Despesas, a: Analise): ResultadoDre {
-  const novo = structuredClone(d);
+  const novo = structuredClone(separarMoiLogistica(d));
   const rotulo = `${a.dre.mes}/${a.ano}`;
   let col = a.coluna;
   if (col === null) {
@@ -195,8 +196,14 @@ export function aplicarMesDre(d: Despesas, a: Analise): ResultadoDre {
       valor = a.dre.grupos.get(grupo) ?? null;
       totais[grupo] = valor ?? 0;
     } else {
-      valor = valorDaConta(a.dre, grupo, l.nome);
-      if (valor === null) naoEncontradas.push(l.nome);
+      if (ehMoiLogistica(l.nome)) {
+        const moi = novo.linhas.find((linha) => ehSalarioMoi(linha.nome));
+        valor = moi && valorDaConta(a.dre, grupo, moi.nome) !== null ? MEDIA_MOI_LOGISTICA : null;
+      } else {
+        valor = valorDaConta(a.dre, grupo, l.nome);
+        if (valor === null) naoEncontradas.push(l.nome);
+        else if (ehSalarioMoi(l.nome)) valor -= MEDIA_MOI_LOGISTICA;
+      }
     }
     l.valores[col] = { valor, percentual: fat && valor !== null ? valor / fat : null };
   });

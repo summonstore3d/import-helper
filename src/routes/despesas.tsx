@@ -371,7 +371,7 @@ function Despesas() {
                     </Td>
                     {l.valores.map((v, j) => (
                       <Td key={j} align="right" className="whitespace-nowrap">
-                        {autenticado ? (
+                        {autenticado && l.nome !== "MOI logística" ? (
                           <input
                             aria-label={`${l.nome} — ${demonstrativo.meses[j] ?? "mês"}`}
                             type="number"

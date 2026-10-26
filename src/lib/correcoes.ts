@@ -367,6 +367,7 @@ export const CONTAS_DO_FRETE = new Set([
   "PEDAGIOS",
   "IPVA",
   "SEGUROS",
+  "MOI LOGISTICA",
 ]);
 
 const normalizarConta = (valor: string) =>

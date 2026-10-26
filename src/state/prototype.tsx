@@ -26,6 +26,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 import { lerTetos, tetoDoProduto, tetoValido, type TetosDesconto } from "@/lib/descontos";
+import { separarMoiLogistica } from "@/lib/moi-logistica";
 import { codigoMargem, lerMargens, margemDoProduto, margemValida, type MargensProdutos } from "@/lib/margens";
 
 export type ItemAdicionado = {
@@ -142,7 +143,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState("Visitante");
   const [userId, setUserId] = useState<string | null>(null);
   const [sincronizando, setSincronizando] = useState(true);
-  const [demonstrativo, setDemonstrativo] = useState<Despesas>(despesasBase);
+  const [demonstrativo, setDemonstrativo] = useState<Despesas>(() => separarMoiLogistica(despesasBase));
   const [metodoDespesas, setMetodoDespesas] = useState<MetodoDespesas>("ponderado");
   const [listaInsumos, setListaInsumos] = useState<Insumo[]>(insumosBase);
   const [bomEditado, setBomEditado] = useState<Record<string, ItemAdicionado[]>>({});
@@ -180,7 +181,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
     }
     if (expenses && typeof expenses === "object" && !Array.isArray(expenses)) {
       const value = expenses as Partial<Despesas>;
-      if (value.meses?.length && value.linhas?.length && value.rodape) setDemonstrativo(value as Despesas);
+      if (value.meses?.length && value.linhas?.length && value.rodape) setDemonstrativo(separarMoiLogistica(value as Despesas));
     }
     if (settings && typeof settings === "object" && !Array.isArray(settings)) {
       const method = (settings as { expenseMethod?: string }).expenseMethod;
@@ -246,7 +247,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
         if (row.domain === "expenses") {
           const value = row.payload as Partial<Despesas>;
           if (value.meses?.length && value.linhas?.length && value.rodape) {
-            setDemonstrativo((anterior) => JSON.stringify(anterior) === JSON.stringify(value) ? anterior : value as Despesas);
+            const separado = separarMoiLogistica(value as Despesas);
+            setDemonstrativo((anterior) => JSON.stringify(anterior) === JSON.stringify(separado) ? anterior : separado);
           }
         } else if (row.domain === "settings") {
           const method = (row.payload as { expenseMethod?: string }).expenseMethod;
