@@ -531,21 +531,21 @@ function Precificacao() {
                 <label className="min-w-0 text-[11px] font-semibold">Quantidade
                   <input aria-label="Quantidade" type="number" min="1" value={quantidade} onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value) || 1))} className="mt-1 block h-9 w-full min-w-0 rounded-sm border border-green bg-background px-2.5 text-sm font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
                 </label>
-                <label className="min-w-0 text-xs font-semibold">Desconto (%)
+                <label className="min-w-0 text-[11px] font-semibold">Desconto (%)
                   <input aria-label="Desconto (%)" type="number" min="0" max={teto * 100} step="0.5" value={Number((desconto * 100).toFixed(2))} disabled={sincronizando} onChange={(e) => {
                     const informado = Number(e.target.value);
                     if (informado > teto * 100) toast.error(`Desconto máximo deste produto: ${pct(teto, 2)}.`);
                     setDescontoEditado({ produto: selecionado, valor: limitarDesconto(informado / 100, teto) });
                     setSalvo(null); setCopiado(false);
-                  }} className="mt-1.5 block h-10 w-full min-w-0 rounded-sm border border-green bg-background px-3 text-base font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
+                  }} className="mt-1 block h-9 w-full min-w-0 rounded-sm border border-green bg-background px-2.5 text-sm font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
                 </label>
-                <span className="col-start-2 text-[11px] font-normal">Máximo: {pct(teto, 0)}</span>
+                <span className="col-start-2 text-[10px] font-normal">Máximo: {pct(teto, 0)}</span>
               </div>
-              <div className="mt-4 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-t border-green/30 pt-3">
+              <div className="mt-3 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-green/30 pt-2.5">
                 <p className="min-w-0 text-[11px] font-semibold uppercase">Total do pedido</p>
-                <p className="text-right text-xl font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
+                <p className="text-right text-base font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
               </div>
-              <Button type="button" variant="outline" className="mt-4 h-10 w-full" disabled={preco === null} onClick={copiarCotacao}>
+              <Button type="button" variant="outline" className="mt-3 h-9 w-full text-xs" disabled={preco === null} onClick={copiarCotacao}>
                 {copiado ? <Check className="size-4" /> : <Copy className="size-4" />} {copiado ? "Cotação copiada" : "Copiar cotação"}
               </Button>
             </div>
@@ -554,17 +554,17 @@ function Precificacao() {
           {veDetalhes ? (
           <section aria-label="Custos calculados">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Custos e encargos · calculados pelo sistema</p>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { label: "Matéria-prima", value: money(r.custoMP), detail: `${qtd(itens.length)} componentes`, Icon: Boxes },
                 { label: "Custo de produção", value: r.custoProducao === null ? "Bloqueado" : money(r.custoProducao), detail: "Roteiro e centros de custos", Icon: Factory },
                 { label: "Despesas", value: pct(r.despesas, 2), detail: metodoDespesas === "media" ? "Média ajustada" : "Taxa ponderada ajustada", Icon: WalletCards },
                 { label: "Impostos", value: pct(r.impostos, 2), detail: cenario, Icon: BriefcaseBusiness },
               ].map(({ label, value, detail, Icon }) => (
-                <article key={label} className="rounded-md border border-border bg-secondary/40 px-4 py-3">
-                  <p className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase"><Icon className="size-4" />{label}</p>
-                  <p className="mt-1 text-xl font-black text-foreground tabular-nums">{value}</p>
-                  <p className="text-xs text-muted-foreground">{detail}</p>
+                <article key={label} className="rounded-md border border-border bg-secondary/40 px-3 py-2.5">
+                  <p className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground uppercase"><Icon className="size-3.5" />{label}</p>
+                  <p className="mt-0.5 text-lg font-black text-foreground tabular-nums">{value}</p>
+                  <p className="text-[11px] text-muted-foreground">{detail}</p>
                 </article>
               ))}
             </div>
