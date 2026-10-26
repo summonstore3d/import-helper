@@ -459,7 +459,7 @@ function Precificacao() {
         </p>
       ) : null}
 
-      <div className="grid gap-5 xl:grid-cols-[18rem_minmax(0,1fr)]">
+      <div className="grid gap-4 xl:grid-cols-[17rem_minmax(0,1fr)]">
         <aside className="space-y-4 xl:sticky xl:top-20 xl:self-start">
           <Panel titulo="Produtos" subtitulo={`${produtosFiltrados.length} encontrados`} bodyClassName="p-0">
             <div className="relative border-b border-border p-3">
@@ -485,12 +485,12 @@ function Precificacao() {
           </Panel>
         </aside>
 
-        <div className="min-w-0 space-y-5">
-          <section className="grid gap-4 rounded-md border border-border bg-card p-5 shadow-panel lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="min-w-0 space-y-4">
+          <section className="grid items-start gap-3 rounded-md border border-border bg-card p-4 shadow-panel lg:grid-cols-[minmax(0,1fr)_18rem]">
             <div className="min-w-0">
               <p className="text-xs font-bold text-green uppercase">Produto selecionado</p>
-              <h2 className="mt-1 text-xl font-black text-foreground">{selecionado}</h2>
-              <p className="mb-2 mt-4 text-xs font-bold text-muted-foreground uppercase">Tipo de venda</p>
+              <h2 className="mt-0.5 text-base leading-snug font-black text-foreground">{selecionado}</h2>
+              <p className="mb-1.5 mt-3 text-xs font-bold text-muted-foreground uppercase">Tipo de venda</p>
               <div className="flex flex-wrap gap-2">
                 {CENARIOS.map((c) => (
                   <Button key={c} type="button" size="sm" variant={cenario === c ? "default" : "outline"} onClick={() => { setCenario(c); setSalvo(null); }}>
@@ -498,7 +498,7 @@ function Precificacao() {
                   </Button>
                 ))}
               </div>
-              <p className="mb-2 mt-4 text-xs font-bold text-muted-foreground uppercase">Entrega</p>
+              <p className="mb-1.5 mt-3 text-xs font-bold text-muted-foreground uppercase">Entrega</p>
               <div className="flex flex-wrap items-end gap-3">
                 <div className="inline-flex rounded-md border border-border p-0.5" role="group" aria-label="Modalidade de entrega">
                   {([[false, "FOB · Retira"], [true, "CIF · Entregue"]] as const).map(([v, l]) => (
@@ -520,32 +520,32 @@ function Precificacao() {
               </div>
             </div>
 
-            <div className="flex min-w-0 flex-col rounded-md border-2 border-green bg-green-soft p-4 text-accent-foreground">
+            <div className="flex min-w-0 flex-col rounded-md border border-green bg-green-soft p-3 text-accent-foreground">
               <div>
-                <p className="flex items-center gap-2 text-xs font-bold uppercase"><BadgeDollarSign className="size-4" /> Preço final unitário</p>
-                <p className="mt-1 text-4xl font-black tabular-nums">{preco === null ? "Indisponível" : money(preco)}</p>
-                <p className="text-xs font-medium">{cenario} · {frota ? `CIF, frete ${money(r.logistica)}/peça` : "FOB, sem frete"}</p>
+                <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase"><BadgeDollarSign className="size-3.5" /> Preço final unitário</p>
+                <p className="mt-0.5 text-2xl font-black tabular-nums">{preco === null ? "Indisponível" : money(preco)}</p>
+                <p className="text-[11px] font-medium">{cenario} · {frota ? `CIF, frete ${money(r.logistica)}/peça` : "FOB, sem frete"}</p>
               </div>
-              {desconto > 0 ? <p className="mt-2 text-xs">De <span className="line-through">{money(r.preco)}</span> · desconto {pct(desconto, 2)}</p> : null}
-              <div className="mt-5 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-x-3 gap-y-2">
-                <label className="min-w-0 text-xs font-semibold">Quantidade
-                  <input aria-label="Quantidade" type="number" min="1" value={quantidade} onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value) || 1))} className="mt-1.5 block h-10 w-full min-w-0 rounded-sm border border-green bg-background px-3 text-base font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
+              {desconto > 0 ? <p className="mt-1.5 text-[11px]">De <span className="line-through">{money(r.preco)}</span> · desconto {pct(desconto, 2)}</p> : null}
+              <div className="mt-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-x-2.5 gap-y-1">
+                <label className="min-w-0 text-[11px] font-semibold">Quantidade
+                  <input aria-label="Quantidade" type="number" min="1" value={quantidade} onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value) || 1))} className="mt-1 block h-9 w-full min-w-0 rounded-sm border border-green bg-background px-2.5 text-sm font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
                 </label>
-                <label className="min-w-0 text-xs font-semibold">Desconto (%)
+                <label className="min-w-0 text-[11px] font-semibold">Desconto (%)
                   <input aria-label="Desconto (%)" type="number" min="0" max={teto * 100} step="0.5" value={Number((desconto * 100).toFixed(2))} disabled={sincronizando} onChange={(e) => {
                     const informado = Number(e.target.value);
                     if (informado > teto * 100) toast.error(`Desconto máximo deste produto: ${pct(teto, 2)}.`);
                     setDescontoEditado({ produto: selecionado, valor: limitarDesconto(informado / 100, teto) });
                     setSalvo(null); setCopiado(false);
-                  }} className="mt-1.5 block h-10 w-full min-w-0 rounded-sm border border-green bg-background px-3 text-base font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
+                  }} className="mt-1 block h-9 w-full min-w-0 rounded-sm border border-green bg-background px-2.5 text-sm font-semibold tabular-nums outline-none focus:ring-2 focus:ring-ring" />
                 </label>
-                <span className="col-start-2 text-[11px] font-normal">Máximo: {pct(teto, 0)}</span>
+                <span className="col-start-2 text-[10px] font-normal">Máximo: {pct(teto, 0)}</span>
               </div>
-              <div className="mt-4 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-t border-green/30 pt-3">
+              <div className="mt-3 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-green/30 pt-2.5">
                 <p className="min-w-0 text-[11px] font-semibold uppercase">Total do pedido</p>
-                <p className="text-right text-xl font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
+                <p className="text-right text-base font-black tabular-nums">{preco === null ? "—" : money(preco * quantidade)}</p>
               </div>
-              <Button type="button" variant="outline" className="mt-4 h-10 w-full" disabled={preco === null} onClick={copiarCotacao}>
+              <Button type="button" variant="outline" className="mt-3 h-9 w-full text-xs" disabled={preco === null} onClick={copiarCotacao}>
                 {copiado ? <Check className="size-4" /> : <Copy className="size-4" />} {copiado ? "Cotação copiada" : "Copiar cotação"}
               </Button>
             </div>
@@ -554,17 +554,17 @@ function Precificacao() {
           {veDetalhes ? (
           <section aria-label="Custos calculados">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Custos e encargos · calculados pelo sistema</p>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { label: "Matéria-prima", value: money(r.custoMP), detail: `${qtd(itens.length)} componentes`, Icon: Boxes },
                 { label: "Custo de produção", value: r.custoProducao === null ? "Bloqueado" : money(r.custoProducao), detail: "Roteiro e centros de custos", Icon: Factory },
                 { label: "Despesas", value: pct(r.despesas, 2), detail: metodoDespesas === "media" ? "Média ajustada" : "Taxa ponderada ajustada", Icon: WalletCards },
                 { label: "Impostos", value: pct(r.impostos, 2), detail: cenario, Icon: BriefcaseBusiness },
               ].map(({ label, value, detail, Icon }) => (
-                <article key={label} className="rounded-md border border-border bg-secondary/40 px-4 py-3">
-                  <p className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase"><Icon className="size-4" />{label}</p>
-                  <p className="mt-1 text-xl font-black text-foreground tabular-nums">{value}</p>
-                  <p className="text-xs text-muted-foreground">{detail}</p>
+                <article key={label} className="rounded-md border border-border bg-secondary/40 px-3 py-2.5">
+                  <p className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground uppercase"><Icon className="size-3.5" />{label}</p>
+                  <p className="mt-0.5 text-lg font-black text-foreground tabular-nums">{value}</p>
+                  <p className="text-[11px] text-muted-foreground">{detail}</p>
                 </article>
               ))}
             </div>
@@ -575,19 +575,19 @@ function Precificacao() {
           <section aria-label="Condições comerciais" aria-busy={salvandoMargem}>
             <fieldset disabled={salvandoMargem || sincronizando} className="min-w-0">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Condições comerciais · editáveis</p>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-2.5 sm:grid-cols-3">
               {[
                 { label: "Margem de lucro", value: margem, setValue: setMargem, Icon: BadgeDollarSign },
                 { label: "Comissão", value: comissao, setValue: setComissao, Icon: Percent },
                 { label: "Inadimplência", value: inadimplencia, setValue: setInadimplencia, Icon: ShieldAlert },
               ].map(({ label, value, setValue, Icon }) => (
-                <label key={label} className="rounded-md border border-green bg-card px-4 py-3 shadow-panel">
-                  <span className="flex items-center gap-2 text-xs font-bold text-accent-foreground uppercase"><Icon className="size-4" />{label}</span>
+                <label key={label} className="rounded-md border border-green bg-card px-3 py-2.5 shadow-panel">
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold text-accent-foreground uppercase"><Icon className="size-3.5" />{label}</span>
                   <span className="mt-2 flex items-center gap-2">
                     <Button type="button" size="icon" variant="outline" aria-label={`Diminuir ${label}`} onClick={(e) => { e.preventDefault(); setValue(Math.max(0, Math.round((value - 0.5) * 100) / 100)); setSalvo(null); }}><Minus className="size-4" /></Button>
                     <span className="relative flex-1">
-                      <input type="number" min="0" step="0.01" value={Number(value.toFixed(4))} onChange={(e) => { setValue(Number(e.target.value)); setSalvo(null); }} className="h-10 w-full rounded-sm border border-input bg-green-soft px-3 pr-8 text-right text-lg font-black text-accent-foreground outline-none focus:ring-2 focus:ring-ring" />
-                      <span className="pointer-events-none absolute top-2.5 right-3 text-sm font-bold text-accent-foreground">%</span>
+                      <input type="number" min="0" step="0.01" value={Number(value.toFixed(4))} onChange={(e) => { setValue(Number(e.target.value)); setSalvo(null); }} className="h-9 w-full rounded-sm border border-input bg-green-soft px-2.5 pr-7 text-right text-base font-black text-accent-foreground outline-none focus:ring-2 focus:ring-ring" />
+                      <span className="pointer-events-none absolute top-2 right-2.5 text-xs font-bold text-accent-foreground">%</span>
                     </span>
                     <Button type="button" size="icon" variant="outline" aria-label={`Aumentar ${label}`} onClick={(e) => { e.preventDefault(); setValue(Math.round((value + 0.5) * 100) / 100); setSalvo(null); }}><Plus className="size-4" /></Button>
                   </span>
