@@ -86,6 +86,7 @@ function Precificacao() {
   } = usePrototype();
   const acesso = useAcesso();
   const [visaoVendedor, setVisaoVendedor] = useState(false);
+  const [tipoVendaAberto, setTipoVendaAberto] = useState(false);
   // Custos, encargos, condições comerciais e memória de cálculo: somente gerente e admin.
   const veDetalhes = mostraDetalhesPrecificacao(acesso.nivel, visaoVendedor);
   const padrao = parametrosPadrao();
@@ -471,13 +472,26 @@ function Precificacao() {
             <div className="min-w-0">
               <p className="text-xs font-bold text-green uppercase">Produto selecionado</p>
               <h2 className="mt-0.5 text-base leading-snug font-black text-foreground">{selecionado}</h2>
-              <p className="mb-1.5 mt-3 text-xs font-bold text-muted-foreground uppercase">Tipo de venda</p>
-              <div className="flex flex-wrap gap-2">
-                {CENARIOS.map((c) => (
-                  <Button key={c} type="button" size="sm" variant={cenario === c ? "default" : "outline"} onClick={() => { setCenario(c); setSalvo(null); }}>
-                    {c}
-                  </Button>
-                ))}
+              <div className="mt-3">
+                <button
+                  type="button"
+                  aria-expanded={tipoVendaAberto}
+                  onClick={() => setTipoVendaAberto((v) => !v)}
+                  className="inline-flex items-center gap-1.5 rounded-sm border border-border px-2.5 py-1.5 text-[11px] font-bold text-muted-foreground uppercase hover:bg-secondary"
+                >
+                  Tipo de venda
+                  <span className="font-black text-foreground normal-case">{cenario}</span>
+                  <ChevronDown className={`size-3.5 transition-transform ${tipoVendaAberto ? "rotate-180" : ""}`} />
+                </button>
+                {tipoVendaAberto ? (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {CENARIOS.map((c) => (
+                      <Button key={c} type="button" size="sm" variant={cenario === c ? "default" : "outline"} onClick={() => { setCenario(c); setSalvo(null); setTipoVendaAberto(false); }}>
+                        {c}
+                      </Button>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             </div>
 
