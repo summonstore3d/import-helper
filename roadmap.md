@@ -26,4 +26,4 @@
 - [x] Mostrar carregamento D'AGOSTINI em cada importação e confirmar despesas sincronizadas após salvar e conferir os dados.
 - [x] Remover o rateio de manutenção do custo por setor: manutenção de máquinas conta só no % de despesas, pelo valor real do DRE.
 
-- [ ] Dar mais destaque ao produto selecionado na Precificação (nome maior que o código) e encolher o controle de tipo de venda.
+- [x] Dar mais destaque ao produto selecionado na Precificação (nome maior que o código) e encolher o controle de tipo de venda.
