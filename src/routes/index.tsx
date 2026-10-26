@@ -38,7 +38,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { itensBom, baseIndustrial, despesasPercentual, comparativoDespesas, metodoDespesas, listaInsumos, centroCustos: ccVigente } = usePrototype();
+  const { margemProduto, itensBom, baseIndustrial, despesasPercentual, comparativoDespesas, metodoDespesas, listaInsumos, centroCustos: ccVigente } = usePrototype();
   const mesesDespesas = comparativoDespesas.meses;
   const problemas = checks();
   const criticos = problemas.filter((p) => p.severidade === "CRÍTICO");
@@ -52,13 +52,13 @@ function Dashboard() {
 
   const destaques = produtos
     .slice(0, 200)
-    .map((p) => ({ produto: p.full, cenario: cenarioSugerido(p.full), preco: precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual }) }))
+    .map((p) => ({ produto: p.full, cenario: cenarioSugerido(p.full), preco: precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual, margem: margemProduto(p.full) }) }))
     .filter((p) => p.preco !== null)
     .slice(0, 6);
 
   const produtosProntos = produtos
     .slice(0, 200)
-    .filter((p) => precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual }) !== null)
+    .filter((p) => precoRapido(p.full, "Venda Normal", { itensMP: itensBom(p.full), base: baseIndustrial, despesas: despesasPercentual, margem: margemProduto(p.full) }) !== null)
     .length;
 
   return (
@@ -183,8 +183,8 @@ function Dashboard() {
               },
               {
                 t: "6. Margem de lucro",
-                d: "Parâmetro comercial aplicado no divisor do preço",
-                v: pct(parametros.margemPadrao, 0),
+                d: "Margem cadastrada individualmente por produto",
+                v: `Inicial: ${pct(parametros.margemPadrao, 0)}`,
               },
               {
                 t: "7. Frete (quando frota própria)",

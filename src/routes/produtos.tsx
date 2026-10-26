@@ -16,6 +16,8 @@ export const Route = createFileRoute("/produtos")({
         content:
           "Catálogo com os 246 produtos reais da ferramenta de precificação, com custo de matéria-prima, custo de produção e preço calculado.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:title", content: "Produtos — Sistema de Precificação" },
       {
         property: "og:description",
@@ -33,7 +35,7 @@ function Produtos() {
   const [categoria, setCategoria] = useState("TODAS");
   const [pagina, setPagina] = useState(0);
 
-  const { itensBom, baseIndustrial, despesasPercentual } = usePrototype();
+  const { margemProduto, itensBom, baseIndustrial, despesasPercentual } = usePrototype();
   const linhas = useMemo(
     () =>
       produtos.map((p) => {
@@ -45,10 +47,10 @@ function Produtos() {
           custoMP: itens.length ? totalMP(itens) : null,
           producao: custoProducao(p.full, baseIndustrial),
           cenario: cenarioSugerido(p.full),
-          preco: precoRapido(p.full, "Venda Normal", { itensMP: itens, base: baseIndustrial, despesas: despesasPercentual }),
+          preco: precoRapido(p.full, "Venda Normal", { itensMP: itens, base: baseIndustrial, despesas: despesasPercentual, margem: margemProduto(p.full) }),
         };
       }),
-    [itensBom, baseIndustrial, despesasPercentual],
+    [margemProduto, itensBom, baseIndustrial, despesasPercentual],
   );
 
   const categorias = useMemo(

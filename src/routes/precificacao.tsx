@@ -19,7 +19,10 @@ import {
   Save,
   Eye,
   ShieldCheck,
+  LoaderCircle,
 } from "lucide-react";
+import { toast } from "sonner";
+import { margemValida } from "@/lib/margens";
 import { categoriaDoProduto, parametros, produtos } from "@/data";
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
@@ -66,6 +69,9 @@ function Precificacao() {
   const { produto } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const {
+    margemProduto,
+    salvarMargemProduto,
+    sincronizando,
     itensBom,
     registrarVersao,
     registrarAuditoria,
@@ -86,7 +92,23 @@ function Precificacao() {
     produto && produtos.some((p) => p.full === produto) ? produto : parametros.produtoExemplo;
 
   const [cenario, setCenario] = useState<Cenario>(cenarioSugerido(selecionado));
-  const [margem, setMargem] = useState(padrao.margem * 100);
+  const [margemEditada, setMargemEditada] = useState<{ produto: string; valor: number } | null>(null);
+  const margemSalva = margemProduto(selecionado) * 100;
+  const margem = margemEditada?.produto === selecionado ? margemEditada.valor : margemSalva;
+  const setMargem = (valor: number) => setMargemEditada({ produto: selecionado, valor });
+  const [salvandoMargem, setSalvandoMargem] = useState(false);
+  async function salvarMargem() {
+    setSalvandoMargem(true);
+    try {
+      await salvarMargemProduto(selecionado, margem / 100);
+      setMargemEditada(null);
+      toast.success("Margem do produto salva.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível salvar a margem.");
+    } finally {
+      setSalvandoMargem(false);
+    }
+  }
   const [comissao, setComissao] = useState(padrao.comissao * 100);
   const [inadimplencia, setInadimplencia] = useState(padrao.inadimplencia * 100);
   const despesasPct = (despesasPercentual ?? padrao.despesas) * 100;
@@ -425,7 +447,7 @@ function Precificacao() {
             <div className="max-h-72 overflow-auto p-1.5 xl:max-h-[56vh]">
               {produtosFiltrados.map((p) => {
                 const [codigo, ...descricao] = p.full.split(" - ");
-                return <Button key={p.full} variant="ghost" type="button" onClick={() => { navigate({ search: { produto: p.full } }); setCenario(cenarioSugerido(p.full)); setSalvo(null); }} className={`mb-1 h-auto w-full justify-start whitespace-normal rounded-sm border-l-2 px-3 py-2 text-left shadow-none ${selecionado === p.full ? "border-green bg-green-soft hover:bg-green-soft" : "border-transparent hover:bg-secondary"}`}>
+                return <Button key={p.full} variant="ghost" type="button" onClick={() => { navigate({ search: { produto: p.full } }); setCenario(cenarioSugerido(p.full)); setMargemEditada(null); setSalvo(null); }} className={`mb-1 h-auto w-full justify-start whitespace-normal rounded-sm border-l-2 px-3 py-2 text-left shadow-none ${selecionado === p.full ? "border-green bg-green-soft hover:bg-green-soft" : "border-transparent hover:bg-secondary"}`}>
                   <span className="min-w-0">
                   <span className="block text-xs font-black text-foreground">{codigo}</span>
                   <span className="mt-0.5 block line-clamp-2 text-[11px] text-muted-foreground">{descricao.join(" - ")}</span>
@@ -513,7 +535,8 @@ function Precificacao() {
           ) : null}
 
           {veDetalhes ? (
-          <section aria-label="Condições comerciais">
+          <section aria-label="Condições comerciais" aria-busy={salvandoMargem}>
+            <fieldset disabled={salvandoMargem || sincronizando} className="min-w-0">
             <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Condições comerciais · editáveis</p>
             <div className="grid gap-3 sm:grid-cols-3">
               {[
@@ -534,6 +557,13 @@ function Precificacao() {
                 </label>
               ))}
             </div>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">Margem cadastrada: {pct(margemSalva / 100, 2)}</p>
+              <Button type="button" size="sm" onClick={salvarMargem} disabled={!autenticado || margem === margemSalva || !margemValida(margem / 100)}>
+                {salvandoMargem ? <LoaderCircle className="size-4 animate-spin" /> : <Save className="size-4" />} Salvar margem do produto
+              </Button>
+            </div>
+            </fieldset>
           </section>
           ) : null}
 
