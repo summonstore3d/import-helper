@@ -59,11 +59,6 @@ export const Route = createFileRoute("/precificacao")({
   component: Precificacao,
 });
 
-const CENARIOS: Cenario[] = [
-  "Venda Normal",
-  "Venda com Base Reduzida",
-  "Venda com Material Via Tonial",
-];
 
 function Precificacao() {
   const { produto } = Route.useSearch();
