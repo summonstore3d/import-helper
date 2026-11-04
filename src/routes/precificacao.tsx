@@ -482,15 +482,14 @@ function Precificacao() {
 
               </div>
               <label className="inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
-                Tipo de venda
-                <select
-                  aria-label="Tipo de venda"
-                  value={cenario}
-                  onChange={(e) => { setCenario(e.target.value as Cenario); setSalvo(null); }}
-                  className="h-7 max-w-full rounded-sm border border-border bg-background px-1.5 text-[11px] font-bold text-foreground outline-none focus:border-ring"
-                >
-                  {CENARIOS.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
+                <input
+                  type="checkbox"
+                  aria-label="Tonial?"
+                  checked={cenario === "Venda com Material Via Tonial"}
+                  onChange={(e) => { setCenario(e.target.checked ? "Venda com Material Via Tonial" : cenarioSugerido(selecionado)); setSalvo(null); }}
+                  className="size-3.5 accent-primary"
+                />
+                Tonial?
               </label>
             </div>
 
