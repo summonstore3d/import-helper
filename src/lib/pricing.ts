@@ -261,7 +261,7 @@ export function precoRapido(
 }
 
 export function cenarioSugerido(produto: string): Cenario {
-  const cadastrado = (tipoVenda as Record<string, Cenario>)[produto.split(" - ")[0].trim()];
+  const cadastrado = (tipoVenda as Record<string, Cenario>)[(produto.split(" - ")[0] ?? "").trim()];
   if (cadastrado) return cadastrado;
   const categoria = categoriaDoProduto(produto);
   const reduzida = impostos.cenarios.find((c) => c.nome === "VENDA COM BASE REDUZIDA");
