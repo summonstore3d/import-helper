@@ -476,16 +476,18 @@ function Precificacao() {
                 </div>
 
               </div>
-              <label className="inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
-                <input
-                  type="checkbox"
-                  aria-label="Tonial?"
-                  checked={cenario === "Venda com Material Via Tonial"}
-                  onChange={(e) => { setCenario(e.target.checked ? "Venda com Material Via Tonial" : cenarioSugerido(selecionado)); setSalvo(null); }}
-                  className="size-3.5 accent-primary"
-                />
-                Tonial?
-              </label>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={cenario === "Venda com Material Via Tonial"}
+                onClick={() => { setCenario(cenario === "Venda com Material Via Tonial" ? cenarioSugerido(selecionado) : "Venda com Material Via Tonial"); setSalvo(null); }}
+                className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors ${cenario === "Venda com Material Via Tonial" ? "border-green bg-green-soft text-accent-foreground" : "border-border bg-secondary/60 text-muted-foreground hover:bg-secondary"}`}
+              >
+                <span className={`relative h-4 w-7 rounded-full transition-colors ${cenario === "Venda com Material Via Tonial" ? "bg-green" : "bg-border"}`}>
+                  <span className={`absolute top-0.5 size-3 rounded-full bg-background shadow transition-all ${cenario === "Venda com Material Via Tonial" ? "left-3.5" : "left-0.5"}`} />
+                </span>
+                Material via Tonial
+              </button>
             </div>
 
 
