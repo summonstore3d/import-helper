@@ -7,6 +7,7 @@ import {
   type BomLinha,
 } from "@/data";
 import { isNum } from "./format";
+import tipoVenda from "@/data/tipo-venda.json";
 import type { BaseIndustrial } from "./custos-industriais";
 import {
   custearItem,
@@ -260,6 +261,8 @@ export function precoRapido(
 }
 
 export function cenarioSugerido(produto: string): Cenario {
+  const cadastrado = (tipoVenda as Record<string, Cenario>)[(produto.split(" - ")[0] ?? "").trim()];
+  if (cadastrado) return cadastrado;
   const categoria = categoriaDoProduto(produto);
   const reduzida = impostos.cenarios.find((c) => c.nome === "VENDA COM BASE REDUZIDA");
   if (reduzida?.itens.some((i) => i.produto === categoria)) return "Venda com Base Reduzida";
