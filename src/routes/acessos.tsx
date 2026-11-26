@@ -1,15 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Eye, EyeOff, KeyRound, RefreshCw, UserPlus, X } from "lucide-react";
+import { Eye, EyeOff, KeyRound, RefreshCw, Trash2, UserPlus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 import { ABAS } from "@/components/AppShell";
 import { NIVEIS, useAcesso, type Nivel } from "@/lib/acesso";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { gerarSenhaInicial, podeGerenciarUsuarios } from "@/lib/permissoes";
-import { criarUsuario, redefinirSenha } from "@/lib/usuarios.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { gerarSenhaInicial, podeExcluirUsuario, podeGerenciarUsuarios } from "@/lib/permissoes";
+import { criarUsuario, excluirUsuario, redefinirSenha } from "@/lib/usuarios.functions";
 
 export const Route = createFileRoute("/acessos")({
   head: () => ({
@@ -217,6 +227,8 @@ function Acessos() {
   const [meuId, setMeuId] = useState<string | null>(null);
   const [formAberto, setFormAberto] = useState(false);
   const [renegando, setRenegando] = useState<Usuario | null>(null);
+  const [excluirAlvo, setExcluirAlvo] = useState<Usuario | null>(null);
+  const [excluindo, setExcluindo] = useState(false);
 
   const carregar = useCallback(async () => {
     const [{ data: p }, { data: u }, { data: me }] = await Promise.all([
@@ -270,6 +282,21 @@ function Acessos() {
 
   const ehAdmin = podeGerenciarUsuarios(acesso.nivel);
 
+  async function confirmarExclusao() {
+    if (!excluirAlvo) return;
+    setExcluindo(true);
+    const r = await excluirUsuario({ data: { user_id: excluirAlvo.user_id } });
+    setExcluindo(false);
+    if (!r.ok) {
+      toast.error(r.erro);
+      return;
+    }
+    toast.success(`${r.email ?? "Conta"} foi excluída.`);
+    setExcluirAlvo(null);
+    void carregar();
+    window.dispatchEvent(new Event("acessos-alterados"));
+  }
+
   return (
     <>
       <PageHeader
@@ -308,7 +335,7 @@ function Acessos() {
               <tr>
                 <Th>E-mail</Th>
                 <Th>Nível</Th>
-                {ehAdmin ? <Th align="right">Senha</Th> : null}
+                {ehAdmin ? <Th align="right">Ações</Th> : null}
               </tr>
             </thead>
             <tbody>
@@ -335,14 +362,27 @@ function Acessos() {
                   </Td>
                   {ehAdmin ? (
                     <Td align="right">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setRenegando((atual) => (atual?.user_id === u.user_id ? null : u))}
-                      >
-                        <KeyRound />
-                        {renegando?.user_id === u.user_id ? "Fechar" : "Redefinir senha"}
-                      </Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setRenegando((atual) => (atual?.user_id === u.user_id ? null : u))}
+                        >
+                          <KeyRound />
+                          {renegando?.user_id === u.user_id ? "Fechar" : "Redefinir senha"}
+                        </Button>
+                        {podeExcluirUsuario(acesso.nivel, u.user_id, meuId) ? (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => setExcluirAlvo(u)}
+                          >
+                            <Trash2 />
+                            Excluir
+                          </Button>
+                        ) : null}
+                      </div>
                     </Td>
                   ) : null}
                 </tr>
@@ -395,6 +435,38 @@ function Acessos() {
           </table>
         </Panel>
       </div>
+
+      <AlertDialog
+        open={excluirAlvo !== null}
+        onOpenChange={(aberto) => {
+          if (!aberto && !excluindo) setExcluirAlvo(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir esta conta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {excluirAlvo?.user_email ?? "Esta conta"} perde o acesso na hora e não consegue
+              entrar de novo até você criar outra conta para ela. O histórico de alterações
+              feitas por essa pessoa continua guardado.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={excluindo}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={excluindo}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={(e) => {
+                e.preventDefault();
+                void confirmarExclusao();
+              }}
+            >
+              <Trash2 />
+              {excluindo ? "Excluindo…" : "Excluir conta"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

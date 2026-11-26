@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
-import { podeGerenciarUsuarios } from "@/lib/permissoes";
+import { podeExcluirUsuario, podeGerenciarUsuarios } from "@/lib/permissoes";
 
 const NIVEIS_VALIDOS = ["admin", "gerente", "vendedor"] as const;
 type NivelValido = (typeof NIVEIS_VALIDOS)[number];
@@ -132,4 +132,55 @@ export const redefinirSenha = createServerFn({ method: "POST" })
     });
 
     return { ok: true, email: emailAlvo };
+  });
+
+/** Só administradores excluem contas; a própria conta nunca pode ser excluída. */
+export const excluirUsuario = createServerFn({ method: "POST" })
+  .inputValidator((data) =>
+    z
+      .object({
+        user_id: z.string().uuid("Conta inválida."),
+      })
+      .parse(data),
+  )
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }): Promise<ResultadoAcao> => {
+    const meuNivel = await nivelDoChamado(context.supabase, context.userId);
+    if (!podeGerenciarUsuarios(meuNivel)) {
+      return { ok: false, erro: "Só administradores podem excluir usuários." };
+    }
+    if (!podeExcluirUsuario(meuNivel, data.user_id, context.userId)) {
+      return { ok: false, erro: "Você não pode excluir a própria conta." };
+    }
+
+    const { data: alvo, error: erroAlvo } = await context.supabase
+      .from("user_roles")
+      .select("user_email, role")
+      .eq("user_id", data.user_id)
+      .maybeSingle();
+    if (erroAlvo) {
+      return { ok: false, erro: "Não foi possível localizar esta conta. Tente de novo." };
+    }
+    if (!alvo) {
+      return { ok: false, erro: "Esta conta não está mais na lista." };
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
+    if (error) {
+      return { ok: false, erro: traduzErro(error.message) };
+    }
+
+    await context.supabase.from("audit_log").insert({
+      user_id: context.userId,
+      user_email: emailDoToken(context.claims),
+      module: "Acessos",
+      record_label: alvo.user_email ?? data.user_id,
+      field_name: "conta",
+      previous_value: alvo.role ?? "—",
+      new_value: "excluída",
+      reason: "Conta excluída pelo administrador",
+    });
+
+    return { ok: true, email: alvo.user_email ?? data.user_id };
   });

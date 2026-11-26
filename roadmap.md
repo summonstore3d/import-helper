@@ -27,3 +27,4 @@
 - [x] Remover o rateio de manutenção do custo por setor: manutenção de máquinas conta só no % de despesas, pelo valor real do DRE.
 
 - [x] Dar mais destaque ao produto selecionado na Precificação (nome maior que o código) e encolher o controle de tipo de venda.
+- [x] Permitir excluir usuário pela tela de níveis de acesso, com confirmação e registro em auditoria.

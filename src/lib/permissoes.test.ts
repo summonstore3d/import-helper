@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { gerarSenhaInicial, podeGerenciarUsuarios } from "./permissoes";
+import {
+  gerarSenhaInicial,
+  podeExcluirUsuario,
+  podeGerenciarUsuarios,
+} from "./permissoes";
 
 describe("gerenciar usuários", () => {
   it("só quem é administrador pode adicionar usuário e redefinir senha", () => {
@@ -8,6 +12,15 @@ describe("gerenciar usuários", () => {
     expect(podeGerenciarUsuarios("vendedor")).toBe(false);
     expect(podeGerenciarUsuarios(null)).toBe(false);
     expect(podeGerenciarUsuarios(undefined)).toBe(false);
+  });
+
+  it("só administradores excluem contas, e nunca a própria conta", () => {
+    expect(podeExcluirUsuario("admin", "outra-conta", "minha-conta")).toBe(true);
+    expect(podeExcluirUsuario("admin", "minha-conta", "minha-conta")).toBe(false);
+    expect(podeExcluirUsuario("admin", "outra-conta", null)).toBe(false);
+    expect(podeExcluirUsuario("gerente", "outra-conta", "minha-conta")).toBe(false);
+    expect(podeExcluirUsuario("vendedor", "outra-conta", "minha-conta")).toBe(false);
+    expect(podeExcluirUsuario(null, "outra-conta", "minha-conta")).toBe(false);
   });
 
   it("a senha inicial gerada atende ao mínimo de 8 caracteres e tem variedade", () => {

@@ -5,6 +5,20 @@ export function podeGerenciarUsuarios(nivel: NivelAcesso | null | undefined): bo
   return nivel === "admin";
 }
 
+/**
+ * Só administradores excluem contas, e nunca a própria conta — assim o sistema
+ * nunca fica sem um administrador.
+ */
+export function podeExcluirUsuario(
+  nivel: NivelAcesso | null | undefined,
+  alvoId: string,
+  meuId: string | null,
+): boolean {
+  if (!podeGerenciarUsuarios(nivel)) return false;
+  if (!meuId || alvoId === meuId) return false;
+  return true;
+}
+
 const MAIUSCULAS = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 const MINUSCULAS = "abcdefghijkmnopqrstuvwxyz";
 const DIGITOS = "23456789";
