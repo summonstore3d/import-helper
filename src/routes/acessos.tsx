@@ -1,16 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Eye, EyeOff, KeyRound, RefreshCw, UserPlus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 import { ABAS } from "@/components/AppShell";
-import { NIVEIS, type Nivel } from "@/lib/acesso";
+import { NIVEIS, useAcesso, type Nivel } from "@/lib/acesso";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { gerarSenhaInicial, podeGerenciarUsuarios } from "@/lib/permissoes";
+import { criarUsuario, redefinirSenha } from "@/lib/usuarios.functions";
 
 export const Route = createFileRoute("/acessos")({
   head: () => ({
     meta: [
       { title: "Níveis de acesso — Ferramenta de Precificação" },
-      { name: "description", content: "Defina quais telas cada nível de acesso pode ver e o nível de cada usuário." },
+      { name: "description", content: "Adicione usuários, defina quais telas cada nível de acesso pode ver e o nível de cada pessoa." },
       { property: "og:title", content: "Níveis de acesso — Ferramenta de Precificação" },
       { property: "og:description", content: "Controle de telas por nível: administrador, gerente e vendedor." },
       { property: "og:type", content: "website" },
@@ -22,10 +27,196 @@ export const Route = createFileRoute("/acessos")({
 
 type Usuario = { user_id: string; user_email: string | null; role: Nivel };
 
+function FormNovoUsuario({ onCriado }: { onCriado: () => void }) {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [nivel, setNivel] = useState<Nivel>("vendedor");
+  const [mostrar, setMostrar] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
+
+  async function enviar(e: React.FormEvent) {
+    e.preventDefault();
+    setAviso(null);
+    setEnviando(true);
+    const senhaEnviada = senha;
+    const r = await criarUsuario({ data: { email, password: senha, role: nivel } });
+    setEnviando(false);
+    if (!r.ok) {
+      setAviso({ tipo: "erro", texto: r.erro });
+      return;
+    }
+    const nivelNome = NIVEIS.find((n) => n.id === nivel)?.nome ?? nivel;
+    setAviso({
+      tipo: "ok",
+      texto: `${r.email} foi criada com nível ${nivelNome}. Senha inicial: ${senhaEnviada} — anote e envie para essa pessoa.`,
+    });
+    setEmail("");
+    setSenha("");
+    setNivel("vendedor");
+    onCriado();
+  }
+
+  return (
+    <form
+      onSubmit={enviar}
+      className="space-y-3 border-b border-border bg-secondary/40 px-4 py-3"
+    >
+      <div className="flex flex-wrap items-end gap-3">
+        <label className="flex min-w-[240px] flex-1 flex-col gap-1">
+          <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+            E-mail
+          </span>
+          <Input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="nome@dagostini.ind.br"
+            autoComplete="off"
+          />
+        </label>
+
+        <label className="flex min-w-[220px] flex-1 flex-col gap-1">
+          <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+            Senha inicial
+          </span>
+          <div className="flex items-center gap-1">
+            <Input
+              type={mostrar ? "text" : "password"}
+              required
+              minLength={8}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              placeholder="mínimo 8 caracteres"
+              autoComplete="new-password"
+              className="font-mono"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              title={mostrar ? "Ocultar senha" : "Mostrar senha"}
+              onClick={() => setMostrar((v) => !v)}
+            >
+              {mostrar ? <EyeOff /> : <Eye />}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              title="Gerar senha forte"
+              onClick={() => {
+                setSenha(gerarSenhaInicial());
+                setMostrar(true);
+              }}
+            >
+              <RefreshCw />
+            </Button>
+          </div>
+        </label>
+
+        <label className="flex w-[170px] flex-col gap-1">
+          <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+            Nível
+          </span>
+          <select
+            value={nivel}
+            onChange={(e) => setNivel(e.target.value as Nivel)}
+            className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+          >
+            {NIVEIS.map((n) => (
+              <option key={n.id} value={n.id}>
+                {n.nome}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <Button type="submit" disabled={enviando}>
+          <UserPlus />
+          {enviando ? "Adicionando…" : "Adicionar usuário"}
+        </Button>
+      </div>
+
+      {aviso ? (
+        <p
+          className={
+            aviso.tipo === "ok"
+              ? "rounded-md border border-green/40 bg-green-soft px-3 py-2 text-xs text-accent-foreground"
+              : "rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+          }
+        >
+          {aviso.texto}
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+function RenegociacaoSenha({
+  alvo,
+  onFechar,
+  onFeito,
+}: {
+  alvo: Usuario;
+  onFechar: () => void;
+  onFeito: () => void;
+}) {
+  const [senha, setSenha] = useState(gerarSenhaInicial());
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  async function confirmar() {
+    setErro(null);
+    setSalvando(true);
+    const r = await redefinirSenha({ data: { user_id: alvo.user_id, password: senha } });
+    setSalvando(false);
+    if (!r.ok) {
+      setErro(r.erro);
+      return;
+    }
+    toast.success(`Nova senha de ${alvo.user_email ?? "usuário"} definida.`);
+    onFeito();
+    onFechar();
+  }
+
+  return (
+    <tr className="border-t border-border bg-secondary/40">
+      <Td colSpan={3} className="py-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold text-foreground">
+            Nova senha de {alvo.user_email ?? alvo.user_id}:
+          </span>
+          <Input
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            className="w-[220px] font-mono"
+            autoComplete="new-password"
+          />
+          <Button size="sm" onClick={() => setSenha(gerarSenhaInicial())} variant="outline">
+            <RefreshCw /> Gerar
+          </Button>
+          <Button size="sm" onClick={() => void confirmar()} disabled={salvando}>
+            <KeyRound /> {salvando ? "Salvando…" : "Definir senha"}
+          </Button>
+          <Button size="sm" variant="ghost" onClick={onFechar}>
+            <X /> Cancelar
+          </Button>
+        </div>
+        {erro ? <p className="mt-1 text-xs text-destructive">{erro}</p> : null}
+      </Td>
+    </tr>
+  );
+}
+
 function Acessos() {
+  const acesso = useAcesso();
   const [perms, setPerms] = useState<Set<string>>(new Set());
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [meuId, setMeuId] = useState<string | null>(null);
+  const [formAberto, setFormAberto] = useState(false);
+  const [renegando, setRenegando] = useState<Usuario | null>(null);
 
   const carregar = useCallback(async () => {
     const [{ data: p }, { data: u }, { data: me }] = await Promise.all([
@@ -77,20 +268,105 @@ function Acessos() {
     window.dispatchEvent(new Event("acessos-alterados"));
   }
 
+  const ehAdmin = podeGerenciarUsuarios(acesso.nivel);
+
   return (
     <>
       <PageHeader
         titulo="Níveis de acesso"
-        descricao="Marque quais telas cada nível pode ver. Novas contas entram como Vendedor; altere o nível de cada pessoa abaixo."
+        descricao="Adicione usuários, marque quais telas cada nível pode ver e ajuste o nível de cada pessoa. Novas contas criadas por aqui já entram com a senha inicial que você definir."
       />
       <div className="space-y-6">
+        <Panel
+          titulo="Usuários"
+          subtitulo="Contas que já podem entrar no sistema"
+          bodyClassName="p-0"
+          acoes={
+            ehAdmin ? (
+              <Button
+                size="sm"
+                variant={formAberto ? "secondary" : "default"}
+                onClick={() => setFormAberto((v) => !v)}
+              >
+                {formAberto ? <X /> : <UserPlus />}
+                {formAberto ? "Fechar" : "Adicionar usuário"}
+              </Button>
+            ) : null
+          }
+        >
+          {ehAdmin && formAberto ? (
+            <FormNovoUsuario
+              onCriado={() => {
+                void carregar();
+                window.dispatchEvent(new Event("acessos-alterados"));
+              }}
+            />
+          ) : null}
+
+          <table className="w-full text-sm">
+            <thead>
+              <tr>
+                <Th>E-mail</Th>
+                <Th>Nível</Th>
+                {ehAdmin ? <Th align="right">Senha</Th> : null}
+              </tr>
+            </thead>
+            <tbody>
+              {usuarios.map((u) => (
+                <tr key={u.user_id} className="border-t border-border">
+                  <Td>
+                    {u.user_email ?? "—"}
+                    {u.user_id === meuId ? (
+                      <span className="ml-2 text-xs text-muted-foreground">(você)</span>
+                    ) : null}
+                  </Td>
+                  <Td>
+                    <select
+                      value={u.role}
+                      onChange={(e) => void mudarNivel(u, e.target.value as Nivel)}
+                      className="rounded-sm border border-input bg-background px-2 py-1 text-sm"
+                    >
+                      {NIVEIS.map((n) => (
+                        <option key={n.id} value={n.id}>
+                          {n.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </Td>
+                  {ehAdmin ? (
+                    <Td align="right">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setRenegando((atual) => (atual?.user_id === u.user_id ? null : u))}
+                      >
+                        <KeyRound />
+                        {renegando?.user_id === u.user_id ? "Fechar" : "Redefinir senha"}
+                      </Button>
+                    </Td>
+                  ) : null}
+                </tr>
+              ))}
+              {renegando ? (
+                <RenegociacaoSenha
+                  alvo={renegando}
+                  onFechar={() => setRenegando(null)}
+                  onFeito={() => void carregar()}
+                />
+              ) : null}
+            </tbody>
+          </table>
+        </Panel>
+
         <Panel titulo="Telas por nível" bodyClassName="p-0">
           <table className="w-full text-sm">
             <thead>
               <tr>
                 <Th>Tela</Th>
                 {NIVEIS.map((n) => (
-                  <Th key={n.id} className="text-center">{n.nome}</Th>
+                  <Th key={n.id} className="text-center">
+                    {n.nome}
+                  </Th>
                 ))}
               </tr>
             </thead>
@@ -113,38 +389,6 @@ function Acessos() {
                       </Td>
                     );
                   })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Panel>
-
-        <Panel titulo="Usuários" subtitulo="Contas que já entraram no sistema" bodyClassName="p-0">
-          <table className="w-full text-sm">
-            <thead>
-              <tr>
-                <Th>E-mail</Th>
-                <Th>Nível</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {usuarios.map((u) => (
-                <tr key={u.user_id} className="border-t border-border">
-                  <Td>
-                    {u.user_email ?? "—"}
-                    {u.user_id === meuId ? <span className="ml-2 text-xs text-muted-foreground">(você)</span> : null}
-                  </Td>
-                  <Td>
-                    <select
-                      value={u.role}
-                      onChange={(e) => void mudarNivel(u, e.target.value as Nivel)}
-                      className="rounded-sm border border-input bg-background px-2 py-1 text-sm"
-                    >
-                      {NIVEIS.map((n) => (
-                        <option key={n.id} value={n.id}>{n.nome}</option>
-                      ))}
-                    </select>
-                  </Td>
                 </tr>
               ))}
             </tbody>

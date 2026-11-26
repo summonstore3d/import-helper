@@ -156,13 +156,16 @@ export function Td({
   children,
   className,
   align = "left",
+  colSpan,
 }: {
   children?: ReactNode;
   className?: string;
   align?: "left" | "right" | "center";
+  colSpan?: number;
 }) {
   return (
     <td
+      colSpan={colSpan}
       className={cn(
         "border-b border-border px-3 py-1.5 text-sm text-foreground",
         align === "right" && "text-right tabular-nums",
