@@ -25,6 +25,14 @@ describe("Desconto por produto", () => {
     expect(tetoDoProduto("TB004 - TUBO", tetos)).toBe(0.05);
     expect(tetoDoProduto("TB005 - TUBO", tetos)).toBe(0);
     expect(tetoDoProduto("TB006 - TUBO", tetos)).toBe(0.10);
-    expect(tetoValido(0.11)).toBe(false);
+    expect(tetoValido(0.30)).toBe(true);
+  });
+});
+
+describe("teto individual acima de 10%", () => {
+  it("aceita teto de 12% e bloqueia acima de 30%", () => {
+    expect(tetoValido(0.12)).toBe(true);
+    expect(tetoValido(0.31)).toBe(false);
+    expect(limitarDesconto(0.15, 0.12)).toBe(0.12);
   });
 });

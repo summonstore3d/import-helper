@@ -1,0 +1,2 @@
+/** Produtos retirados da precificação (marcados em vermelho na planilha de margens). */
+export const PRODUTOS_FORA_PRECIFICACAO = new Set<string>(["CI001", "CI002", "CI003", "CI004", "CICT002", "CICT003", "CICT004", "GAL001", "GAL002", "GAL003", "GAL008", "GAL010", "GAL011", "GAL012", "GAL017", "GAL018", "GAL019", "GAL020", "GAL021", "GAL022", "GAL024", "GAL030", "GAL031", "GAL032", "GAL035", "GRAPV001", "MF001", "MUR001", "MUR002", "PRD416880824249244", "TB001", "TB038", "TB100"]);

@@ -22,8 +22,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { DESCONTO_INICIAL, limitarDesconto, precoComDesconto, tetoValido } from "@/lib/descontos";
-import { margemValida } from "@/lib/margens";
-import { categoriaDoProduto, parametros, produtos } from "@/data";
+import { codigoMargem, margemValida } from "@/lib/margens";
+import { categoriaDoProduto, parametros, produtos as todosProdutos } from "@/data";
+import { PRODUTOS_FORA_PRECIFICACAO } from "@/lib/produtos-fora";
+
 import { money, moneyPreciso, pct, qtd } from "@/lib/format";
 import { calcularPreco, cenarioSugerido, parametrosPadrao, type Cenario } from "@/lib/pricing";
 import { usePrototype } from "@/state/prototype";
@@ -33,6 +35,9 @@ import { exportarPrecificacaoExcel, type LinhaMemoriaExport } from "@/lib/planil
 import { despesasVigentes, simplesVigente } from "@/lib/correcoes";
 import { DemoTag, EmptyNote, PageHeader, Panel, Td, Th } from "@/components/ui-kit";
 import { Button } from "@/components/ui/button";
+
+const produtos = todosProdutos.filter((p) => !PRODUTOS_FORA_PRECIFICACAO.has(codigoMargem(p.full)));
+
 
 type Search = { produto?: string | undefined };
 
@@ -577,7 +582,7 @@ function Precificacao() {
           {veDetalhes ? (
             <section aria-label="Teto de desconto" className="flex flex-wrap items-end justify-between gap-3 border-t border-border pt-4">
               <label className="text-xs font-semibold text-foreground">Teto de desconto do produto (%)
-                <input aria-label="Teto de desconto do produto (%)" type="number" min="0" max="10" step="0.5" value={tetoRascunho} disabled={sincronizando || salvandoTeto} onChange={(e) => setTetoEditado({ produto: selecionado, valor: Math.min(10, Math.max(0, Number(e.target.value) || 0)) })} className="mt-1 block h-9 w-32 rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring" />
+                <input aria-label="Teto de desconto do produto (%)" type="number" min="0" max="30" step="0.5" value={tetoRascunho} disabled={sincronizando || salvandoTeto} onChange={(e) => setTetoEditado({ produto: selecionado, valor: Math.min(30, Math.max(0, Number(e.target.value) || 0)) })} className="mt-1 block h-9 w-32 rounded-sm border border-input bg-background px-2 text-sm outline-none focus:border-ring" />
               </label>
               <Button type="button" size="sm" variant="outline" onClick={salvarTeto} disabled={sincronizando || salvandoTeto || !autenticado || tetoRascunho === teto * 100 || !tetoValido(tetoRascunho / 100)}>
                 {salvandoTeto ? <LoaderCircle className="size-4 animate-spin" /> : <Save className="size-4" />} Salvar teto do produto

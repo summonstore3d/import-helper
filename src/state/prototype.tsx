@@ -345,7 +345,7 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const tetoDescontoProduto = useCallback((produto: string) => tetoDoProduto(produto, tetos), [tetos]);
   const salvarTetoDesconto = useCallback(async (produto: string, teto: number) => {
     if (!loaded.current || !userId) throw new Error("Entre na sua conta e aguarde o carregamento dos dados.");
-    if (!tetoValido(teto)) throw new Error("Informe um teto entre 0% e 10%.");
+    if (!tetoValido(teto)) throw new Error("Informe um teto entre 0% e 30%.");
     const codigo = codigoMargem(produto);
     const domain = `discount:${codigo}`;
     const anterior = tetoDoProduto(produto, tetos);
