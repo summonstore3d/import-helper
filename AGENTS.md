@@ -22,3 +22,5 @@
 - Store discount caps per product code in `system_state` domains (`discount:<code>`), enforce manager/admin cap writes and discount limits in the database, and apply bounded discounts after final price calculation; simulations retain the original price and applied discount.
 
 - Represent logistics MOI as a synthetic excluded expense account split from gross MOI once; DRE import reconstructs the split from original monthly MOI to preserve gross totals and avoid repeated deductions.
+
+- Self sign-up is disabled; only admins create accounts (Níveis de acesso), because shared pricing data is readable by every signed-in user.

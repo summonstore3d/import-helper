@@ -21,7 +21,7 @@ const traduzir = (msg: string) => {
 };
 
 export function AuthPanel({ compact = false, onSignedIn }: { compact?: boolean; onSignedIn?: () => void }) {
-  const [modo, setModo] = useState<"entrar" | "cadastrar">("entrar");
+  const modo = "entrar" as "entrar" | "cadastrar";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -91,20 +91,6 @@ export function AuthPanel({ compact = false, onSignedIn }: { compact?: boolean; 
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 rounded-md border border-border p-1" role="tablist">
-        {(["entrar", "cadastrar"] as const).map((m) => (
-          <button
-            key={m}
-            type="button"
-            role="tab"
-            aria-selected={modo === m}
-            onClick={() => { setModo(m); setMessage(null); }}
-            className={`rounded-sm py-1.5 text-sm font-semibold ${modo === m ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-          >
-            {m === "entrar" ? "Entrar" : "Criar conta"}
-          </button>
-        ))}
-      </div>
       <form onSubmit={(e) => void enviar(e)} className="space-y-3">
         <label className="block space-y-1 text-sm font-medium">
           <span>E-mail</span>
@@ -118,9 +104,7 @@ export function AuthPanel({ compact = false, onSignedIn }: { compact?: boolean; 
           {modo === "entrar" ? <><LogIn /> Entrar</> : <><UserPlus /> Criar conta</>}
         </Button>
       </form>
-      {modo === "cadastrar" ? (
-        <p className="text-xs text-muted-foreground">Depois de criar a conta, confirme pelo link enviado ao seu e-mail para conseguir entrar.</p>
-      ) : null}
+      <p className="text-xs text-muted-foreground">Sem conta? Peça a um administrador para cadastrar você em Níveis de acesso.</p>
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <span className="h-px flex-1 bg-border" /> ou <span className="h-px flex-1 bg-border" />
       </div>
